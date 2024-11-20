@@ -1,3 +1,5 @@
+# Base configuration for OCI AMD (VM.Standard.E2.1.Micro) instances
+# Assumes a NixOS installed with NIXOS_LUSTRATE over the Ubuntu 24.04 image
 { lib, ... }: {
   boot = {
     initrd.kernelModules = [
@@ -30,10 +32,12 @@
     };
   };
 
+  # We absolutely *need* to have a swap file
+  # (...as the instance only has 1GB of RAM)
   swapDevices = [
     {
       device = "/swapfile";
-      size = 16 * 1024; # 16GB
+      size = 16 * 1024; # (16GB)
     }
   ];
 
