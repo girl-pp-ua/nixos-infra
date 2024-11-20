@@ -7,7 +7,7 @@
     #   inputs.nixpkgs.follows = "nixpkgs";
     # };
   };
-  outputs = { nixpkgs }: {
+  outputs = { nixpkgs, ... }: {
     nixosConfigurations = let
       buildNixosSystem = system: name: nixpkgs.lib.nixosSystem {
         inherit system;
