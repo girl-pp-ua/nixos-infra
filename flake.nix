@@ -1,11 +1,6 @@
 {
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable"; # small?
-    # nixos-facter-modules.url = "github:numtide/nixos-facter-modules";
-    # disko = {
-    #   url = "github:nix-community/disko";
-    #   inputs.nixpkgs.follows = "nixpkgs";
-    # };
+    nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
   };
   outputs = { nixpkgs, ... }: {
     nixosConfigurations = let
