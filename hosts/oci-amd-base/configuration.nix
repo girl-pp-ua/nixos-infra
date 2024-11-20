@@ -7,6 +7,7 @@
       "ata_piix"
       "uhci_hcd"
       "xen_blkfront"
+      # "vmw_pvscsi"
     ];
     initrd.kernelModules = [
       "virtio_scsi"
@@ -25,7 +26,7 @@
     loader = {
       efi.efiSysMountPoint = "/boot/efi";
       systemd-boot.graceful = true;
-      # grub.efiSupport = true; (if using GRUB)
+      grub.efiSupport = true; # (if using GRUB)
     };
     growPartition = true;
   };
