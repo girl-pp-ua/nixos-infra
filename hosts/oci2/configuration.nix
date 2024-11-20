@@ -1,6 +1,8 @@
 { ... }: {
-  swapDevices = [{
-    device = "/swapfile";
-    size = 16 * 1024; # 16GB
-  }];
+  imports = [
+    ./hardware-configuration.nix
+    ../oci-amd-base/configuration.nix
+  ];
+
+  networking.hostName = "secondary-vnic";
 }

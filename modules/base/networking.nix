@@ -1,6 +1,5 @@
 { ... }: {
   networking = {
-    hostName = "secondary-vnic"; # todo unhardcode
     useNetworkd = true;
     usePredictableInterfaceNames = false;
     firewall = {
