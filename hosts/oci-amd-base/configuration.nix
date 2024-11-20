@@ -1,14 +1,20 @@
 # Base configuration for OCI AMD (VM.Standard.E2.1.Micro) instances
 # Assumes a NixOS installed with NIXOS_LUSTRATE over the Ubuntu 24.04 image
 { lib, ... }: {
-  boot = {
+  boot = rec {
+    initrd.availableKernelModules = [
+      "virtio_scsi"
+      "ata_piix"
+      "uhci_hcd"
+      "xen_blkfront"
+    ];
     initrd.kernelModules = [
       "virtio_scsi"
+      "nvme"
     ];
     kernelModules = [
       "kvm-amd"
-      "virtio_scsi"
-    ];
+    ] ++ initrd.kernelModules;
     kernelParams = [
       "console=tty1"
       "console=ttyS0"
