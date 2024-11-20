@@ -11,6 +11,9 @@
 #   (restart shell after running)
 #
 # - nixos config is present at ~/nixos-infra (and is a flake)
+#
+# - to avoid running out of ram, make sure the host system has at least 4GB of swap
+#   (set up a swap file if necessary)
 
 set -e
 shopt -s dotglob
