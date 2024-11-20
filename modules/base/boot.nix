@@ -11,7 +11,8 @@
     loader = {
       systemd-boot.enable = true;
       efi.canTouchEfiVariables = true;
-      timeout = 0;
+      # actually don't set it to 0, the oracle cloud console's too slow to interrupt the boot
+      timeout = 3;
     };
     tmp = {
       # we got machine with 1gb of ram, so we can't afford to use tmpfs

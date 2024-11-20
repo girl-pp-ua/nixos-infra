@@ -1,27 +1,20 @@
 {
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable"; # small?
-    nixos-facter-modules.url = "github:numtide/nixos-facter-modules";
+    # nixos-facter-modules.url = "github:numtide/nixos-facter-modules";
     # disko = {
     #   url = "github:nix-community/disko";
     #   inputs.nixpkgs.follows = "nixpkgs";
     # };
   };
-  outputs = {
-    nixpkgs,
-    disko,
-    nixos-facter-modules,
-    ...
-  }: {
+  outputs = { nixpkgs }: {
     nixosConfigurations = let
       buildNixosSystem = system: name: nixpkgs.lib.nixosSystem {
         inherit system;
         modules = [
-          disko.nixosModules.disko
-          nixos-facter-modules.nixosModules.facter
-          { config.facter.reportPath = ./hosts/${name}/facter.json; }
-          ./hosts/${name}/disko-config.nix
-          ./configuration
+          ./hosts/${name}/hardware-configuration.nix
+          ./hosts/${name}/configuration.nix
+          ./modules/base.nix
         ];
       };
     in {

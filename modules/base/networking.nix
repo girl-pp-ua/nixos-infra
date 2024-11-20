@@ -6,6 +6,7 @@
     firewall = {
       enable = true; # enable firewall
       filterForward = true;
+      allowedTCPPorts = [ 22 ]; # just in case
     };
     nftables = {
       enable = true; # enable nftables

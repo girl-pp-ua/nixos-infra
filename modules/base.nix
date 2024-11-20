@@ -1,12 +1,12 @@
 { pkgs, ... }: {
   imports = [
-    ./modules/boot.nix
-    ./modules/system.nix
-    ./modules/networking.nix
-    ./modules/nix.nix
-    ./modules/users.nix
-    ./modules/sudo.nix
-    ./modules/ssh.nix
+    ./base/boot.nix
+    ./base/system.nix
+    ./base/networking.nix
+    ./base/nix.nix
+    ./base/users.nix
+    ./base/sudo.nix
+    ./base/ssh.nix
   ];
 
   i18n.defaultLocale = "en_US.UTF-8";
