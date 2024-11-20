@@ -17,7 +17,7 @@ set -e
 cd ~/nixos-infra
 
 echo "[MEOW] setting up nix channels"
-nix-channel --add https://nixos.org/channels/nixos-<version> nixpkgs
+nix-channel --add https://nixos.org/channels/nixos-unstable nixpkgs
 nix-channel --update
 
 echo "[MEOW] install nixos-install-tools"
