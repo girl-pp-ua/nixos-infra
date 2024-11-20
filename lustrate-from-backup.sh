@@ -13,8 +13,13 @@
 # - nixos config is present at ~/nixos-infra (and is a flake)
 
 set -e
+shopt -s dotglob
 
 cd ~/nixos-infra
+
+echo "[MEOW] copy this to /etc/nixos"
+sudo rm -r /etc/nixos/*
+sudo cp -r ./* /etc/nixos
 
 echo "[MEOW] setting up nix channels"
 nix-channel --add https://nixos.org/channels/nixos-unstable nixpkgs
@@ -43,6 +48,7 @@ echo "[MEOW] changing os gender marker and setting NIXOS_LUSTRATE"
 sudo touch /etc/NIXOS
 sudo touch /etc/NIXOS_LUSTRATE
 echo etc/nixos | sudo tee -a /etc/NIXOS_LUSTRATE
+echo root/.nix-defexpr/channels | sudo tee -a /etc/NIXOS_LUSTRATE
 
 # :3
 set +e
