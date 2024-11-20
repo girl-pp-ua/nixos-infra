@@ -9,8 +9,11 @@
       verbose = true;
     };
     loader = {
-      systemd-boot.enable = true;
       efi.canTouchEfiVariables = true;
+      systemd-boot = {
+        enable = true;
+        netbootxyz.enable = true;
+      };
       # actually don't set it to 0, the oracle cloud console's too slow to interrupt the boot
       timeout = 3;
     };

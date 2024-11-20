@@ -5,6 +5,10 @@
     initrd.kernelModules = [
       "virtio_scsi"
     ];
+    kernelModules = [
+      "kvm-amd"
+      "virtio_scsi"
+    ];
     kernelParams = [
       "console=tty1"
       "console=ttyS0"
@@ -15,8 +19,9 @@
     loader = {
       efi.efiSysMountPoint = "/boot/efi";
       systemd-boot.graceful = true;
-      grub.efiSupport = true;
+      # grub.efiSupport = true; (if using GRUB)
     };
+    growPartition = true;
   };
 
   fileSystems = {
@@ -41,6 +46,7 @@
     }
   ];
 
+  # Oracle Cloud time servers
   networking.timeServers = [
     "169.254.169.254"
   ];

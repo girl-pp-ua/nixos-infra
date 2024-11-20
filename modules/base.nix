@@ -19,9 +19,12 @@
     openFirewall = true;
   };
   environment.systemPackages = with pkgs; [
-    bottom
+    htop
     curl
     wget
     hyfetch
   ];
+  environment.variables = {
+    EDITOR = "nano";
+  };
 }
