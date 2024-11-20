@@ -1,6 +1,6 @@
 { ... }: {
   networking = {
-    hostName = "oci2"; # todo unhardcode
+    hostName = "secondary-vnic"; # todo unhardcode
     useNetworkd = true;
     usePredictableInterfaceNames = false;
     firewall = {
