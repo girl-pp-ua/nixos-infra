@@ -21,13 +21,13 @@
 
   fileSystems = {
     "/boot" = {
-      device = lib.mkOverride "/dev/disk/by-label/BOOT";
+      device = lib.mkOverride 100 "/dev/disk/by-label/BOOT";
     };
     "/boot/efi" = {
-      device = lib.mkOverride "/dev/disk/by-label/UEFI";
+      device = lib.mkOverride 100 "/dev/disk/by-label/UEFI";
     };
     "/" = {
-      device = lib.mkOverride "/dev/disk/by-label/cloudimg-rootfs";
+      device = lib.mkOverride 100 "/dev/disk/by-label/cloudimg-rootfs";
       autoResize = true;
     };
   };
