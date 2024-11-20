@@ -10,6 +10,11 @@
       "libiscsi.debug_libiscsi_eh=1"
       "crash_kexec_post_notifiers"
     ];
+    loader = {
+      efi.efiSysMountPoint = "/boot/efi";
+      systemd-boot.graceful = true;
+      grub.efiSupport = true;
+    };
   };
 
   fileSystems = {
