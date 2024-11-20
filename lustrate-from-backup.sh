@@ -45,9 +45,11 @@ sudo touch /etc/NIXOS_LUSTRATE
 echo etc/nixos | sudo tee -a /etc/NIXOS_LUSTRATE
 
 # :3
+set +e
 echo "[MEOW] nuking /boot :3"
 echo "(i assume you already have a backup dork)"
 sudo rm -rf /boot
+set -e
 
 # needs to be ran twice for some reason to install the boot entries properly
 echo "[MEOW] switching to configuration"
