@@ -30,18 +30,18 @@
     growPartition = true;
   };
 
-  fileSystems = {
-    "/boot" = {
-      device = lib.mkOverride 99 "/dev/disk/by-label/BOOT";
-    };
-    "/boot/efi" = {
-      device = lib.mkOverride 99 "/dev/disk/by-label/UEFI";
-    };
-    "/" = {
-      device = lib.mkOverride 99 "/dev/disk/by-label/cloudimg-rootfs";
-      autoResize = true;
-    };
-  };
+  # fileSystems = {
+  #   "/boot" = {
+  #     device = lib.mkOverride 99 "/dev/disk/by-label/BOOT";
+  #   };
+  #   "/boot/efi" = {
+  #     device = lib.mkOverride 99 "/dev/disk/by-label/UEFI";
+  #   };
+  #   "/" = {
+  #     device = lib.mkOverride 99 "/dev/disk/by-label/cloudimg-rootfs";
+  #     autoResize = true;
+  #   };
+  # };
 
   # We absolutely *need* to have a swap file
   # (...as the instance only has 1GB of RAM)
