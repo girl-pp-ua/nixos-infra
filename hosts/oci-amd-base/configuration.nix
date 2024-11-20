@@ -26,7 +26,6 @@
     loader = {
       efi.efiSysMountPoint = "/boot/efi";
       systemd-boot.graceful = true;
-      grub.efiSupport = true; # (if using GRUB)
     };
     growPartition = true;
   };
