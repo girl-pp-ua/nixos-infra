@@ -12,6 +12,7 @@
     ./services/openssh.nix
     ./services/fail2ban.nix
     ./services/tailscale.nix
+    ./services/caddy.nix
   ];
 
   i18n.defaultLocale = "en_US.UTF-8";
