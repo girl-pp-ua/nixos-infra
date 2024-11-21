@@ -7,7 +7,6 @@
     ./nix.nix
     ./users.nix
     ./sudo.nix
-    ./ssh.nix
 
     # Base services
     ./services/openssh.nix
