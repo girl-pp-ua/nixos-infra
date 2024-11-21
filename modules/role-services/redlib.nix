@@ -6,7 +6,7 @@
   };
   services.caddy.virtualHosts = {
     "redlib.girl.pp.ua".extraConfig = ''
-      reverse_proxy localhost:${services.redlib.port}
+      reverse_proxy localhost:${builtins.toString services.redlib.port}
     '';
   };
 }
