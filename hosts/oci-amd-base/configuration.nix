@@ -2,6 +2,8 @@
 # Assumes a NixOS installed with NIXOS_LUSTRATE over the Ubuntu 24.04 image
 { lib, ... }: {
   boot = rec {
+    # systemd-in-initrd is not supported by NIXOS_LUSTRATE
+    initrd.systemd.enable = lib.mkOverride 99 false;
     initrd.availableKernelModules = [
       "virtio_scsi"
       "ata_piix"
@@ -30,18 +32,18 @@
     growPartition = true;
   };
 
-  # fileSystems = {
-  #   "/boot" = {
-  #     device = lib.mkOverride 99 "/dev/disk/by-label/BOOT";
-  #   };
-  #   "/boot/efi" = {
-  #     device = lib.mkOverride 99 "/dev/disk/by-label/UEFI";
-  #   };
-  #   "/" = {
-  #     device = lib.mkOverride 99 "/dev/disk/by-label/cloudimg-rootfs";
-  #     autoResize = true;
-  #   };
-  # };
+  fileSystems = {
+    "/boot" = {
+      device = lib.mkOverride 99 "/dev/disk/by-label/BOOT";
+    };
+    "/boot/efi" = {
+      device = lib.mkOverride 99 "/dev/disk/by-label/UEFI";
+    };
+    "/" = {
+      device = lib.mkOverride 99 "/dev/disk/by-label/cloudimg-rootfs";
+      autoResize = true;
+    };
+  };
 
   # We absolutely *need* to have a swap file
   # (...as the instance only has 1GB of RAM)

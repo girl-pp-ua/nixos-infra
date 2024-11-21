@@ -1,9 +1,9 @@
-{ pkgs, ... }: {
+{ lib, pkgs, ... }: {
   boot = {
     kernelPackages = pkgs.linuxPackages_latest;
     initrd = {
       systemd = {
-        enable = true;
+        enable = lib.mkDefault true; # disabled on lustrated systems
         strip = true;
       };
       verbose = true;
