@@ -50,9 +50,6 @@ in rec {
 
   services.caddy.virtualHosts = {
     ${redlibSubdomain} = {
-      serverAliases = [
-        "redlib-cf.girl.pp.ua"
-      ];
       extraConfig = ''
         reverse_proxy localhost:${builtins.toString services.redlib.port}
       '';
