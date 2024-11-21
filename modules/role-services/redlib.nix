@@ -5,9 +5,9 @@
     port = 16001;
   };
   services.caddy.virtualHosts = {
-    "redlib.beeg.pp.ua" = {
+    "redlib.girl.pp.ua" = {
       serverAliases = [
-        "redlib-cf.beeg.pp.ua"
+        "redlib-cf.girl.pp.ua"
       ];
       extraConfig = ''
         reverse_proxy localhost:${builtins.toString services.redlib.port}
