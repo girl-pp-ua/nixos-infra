@@ -10,7 +10,7 @@
 
     # Base services
     ./services/openssh.nix
-    ./services/fail2ban.nix
+    ./services/sshguard.nix
     ./services/tailscale.nix
     ./services/caddy.nix
   ];
