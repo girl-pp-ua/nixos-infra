@@ -6,6 +6,7 @@ in {
     enable = true;
     settings = {
       base-url = "https://${ntfySubdomain}";
+      upstream-base-url = "https://ntfy.sh";
       listen-http = "127.0.0.1:${toString port}";
       behind-proxy = true;
       # enable-signup = true;
