@@ -1,7 +1,8 @@
 { ... }: {
-  services.tailscale = {
-    enable = true;
-    useRoutingFeatures = "server";
-    authKeyFile = "/tmp/tailscale_auth_key";
-  };
+  # TODO configure authKeyFile
+  # services.tailscale = {
+  #   enable = true;
+  #   useRoutingFeatures = "server";
+  #   authKeyFile = "/tmp/tailscale_auth_key";
+  # };
 }
