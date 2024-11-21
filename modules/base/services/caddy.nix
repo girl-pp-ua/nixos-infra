@@ -7,7 +7,6 @@
     globalConfig = ''
       grace_period 30s
       skip_install_trust
-      key_type ed25519
       renew_interval 30m
     '';
   };
