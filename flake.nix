@@ -31,7 +31,6 @@
     nixosConfigurations = {
       # oci1 = mkNixosSystem "oci1" [];
       oci2 = mkNixosSystem "oci2" [
-        { cfg.ociAmdBase.isPastFirstBoot = true; }
         ./modules/role-services/healthcheck.nix
         ./modules/role-services/redlib.nix
       ];
