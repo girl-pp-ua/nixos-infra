@@ -33,7 +33,7 @@ in rec {
     full_url = "https://${redlibSubdomain}/";
     banner = ''
       mrrp,, :3
-      <span style="display=none" aria-hidden="true">INSTANCE_IS_HEALTHY</span>
+      <span style="display:none" aria-hidden="true">INSTANCE_IS_HEALTHY</span>
       <style>
         body{background:linear-gradient(to right,rgba(0,0,0,.5),rgba(0,0,0,.9) 20%,rgba(0,0,0,.9) 25%,rgba(0,0,0,.9) 50%,rgba(0,0,0,.9) 75%,rgba(0,0,0,.9) 80%,rgba(0,0,0,.5)),linear-gradient(to bottom,#55cdfc,#b39de9,#f7a8b8,#f6d8dd,#fff 45%,#fff,#fff 55%,#f6d8dd,#f7a8b8,#b39de9,#55cdfc);background-attachment:fixed}
       </style>
