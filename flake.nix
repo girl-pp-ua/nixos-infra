@@ -11,13 +11,6 @@
     pkgs = import nixpkgs {
       inherit system;
     };
-    deployPkgs = import nixpkgs {
-      inherit system;
-      overlays = [
-        deploy-rs.overlay # or deploy-rs.overlays.default
-        (self: super: { deploy-rs = { inherit (pkgs) deploy-rs; lib = super.deploy-rs.lib; }; })
-      ];
-    };
     specialArgs = {
       inherit self inputs system pkgs;
     };
@@ -46,17 +39,19 @@
         sshUser = "nixos";
         user = "root";
         profiles.system.path =
-          deployPkgs.deploy-rs.lib.${system}.activate.nixos
+          deploy-rs.lib.${system}.activate.nixos
             self.nixosConfigurations.oci2;
       };
     };
     checks = builtins.mapAttrs
       (system: deployLib: deployLib.deployChecks self.deploy)
-      deployPkgs.deploy-rs.lib;
+      deploy-rs.lib;
 
     # dev shells
     devShells.${system}.default = pkgs.mkShell {
-      packages = [ pkgs.deploy-rs ];
+      packages = [
+        pkgs.deploy-rs
+      ];
     };
   };
 }
