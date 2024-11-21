@@ -8,6 +8,7 @@
       grace_period 30s
       skip_install_trust
       renew_interval 30m
+      admin unix//run/caddy-admin.sock
     '';
     extraConfig = ''
       (cors) {
