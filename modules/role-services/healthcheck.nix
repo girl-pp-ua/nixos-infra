@@ -7,6 +7,7 @@
         "ipv6.${host}.beeg.pp.ua"
       ];
       extraConfig = ''
+        import cors *
         respond "OK"
       '';
     };
