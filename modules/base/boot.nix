@@ -1,28 +1,30 @@
 { lib, pkgs, ... }: {
   boot = {
     kernelPackages = pkgs.linuxPackages_latest;
+    kernelParams = [
+      "nohibernate" # disable hibernation support
+    ];
     initrd = {
       systemd = {
-        enable = lib.mkDefault true; # disabled on lustrated systems
+        enable = lib.mkDefault true; # (disabled on lustrated systems)
         strip = true;
       };
       verbose = true;
     };
-
-    # actually don't set it to 0, the oracle cloud console's too slow to interrupt the boot
-    loader.timeout = 3;
-
-    # we got machine with 1gb of ram, so we can't afford to use tmpfs
+    loader.timeout = 3; # actually don't set it to 0, the oracle cloud console's too slow to interrupt the boot
     tmp = {
-      useTmpfs = false;
+      useTmpfs = lib.mkDefault true; # (disabled on hosts with low amount of ram)
       cleanOnBoot = true;
     };
   };
 
-  boot.loader.efi.canTouchEfiVariables = true;
-  boot.loader.systemd-boot = {
-    enable = true;
-    netbootxyz.enable = true;
+  boot.loader = {
+    efi.canTouchEfiVariables = true;
+    systemd-boot = {
+      enable = true;
+      netbootxyz.enable = true; # (for troubleshooting)
+      configurationLimit = 10;
+    };
   };
 
   # boot.loader.efi.canTouchEfiVariables = false;

@@ -2,17 +2,14 @@
   networking = {
     useNetworkd = true;
     usePredictableInterfaceNames = false;
-    firewall = {
-      enable = true; # enable firewall
-      filterForward = true;
-      allowedTCPPorts = [ 22 ]; # just in case
-    };
-    nftables = {
-      enable = true; # enable nftables
-    };
   };
   systemd.network = {
     enable = true;
-    # todo: configure
+    wait-online.enable = false;
+  };
+  systemd.services = {
+    NetworkManager-wait-online.enable = false;
+    systemd-networkd.stopIfChanged = false;
+    systemd-resolved.stopIfChanged = false;
   };
 }

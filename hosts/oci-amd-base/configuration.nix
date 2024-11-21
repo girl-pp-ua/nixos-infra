@@ -30,6 +30,7 @@
       systemd-boot.graceful = true;
     };
     growPartition = true;
+    tmp.useTmpfs = lib.mkOverride 99 false;
   };
 
   fileSystems = {

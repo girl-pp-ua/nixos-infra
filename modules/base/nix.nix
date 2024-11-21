@@ -24,6 +24,13 @@
         "recursive-nix"
         "verified-fetches"
       ];
+      system-features = [
+        "uid-range"
+      ];
+      trusted-users = [
+        "root"
+        "@wheel"
+      ];
       auto-allocate-uids = true;
       auto-optimise-store = true;
       fsync-store-paths = true;
@@ -49,6 +56,7 @@
       dates = "weekly";
       options = "--delete-older-than 7d";
       persistent = true;
+      randomizedDelaySec = "1800";
     };
   };
   nixpkgs = {
