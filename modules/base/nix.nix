@@ -1,28 +1,26 @@
 { pkgs, ... }: {
   nix = {
-    package = pkgs.nixVersions.git;
+    package = pkgs.lixVersions.latest;
     settings = {
       experimental-features = [
+        # 2024-11-17
+        # https://git.lix.systems/lix-project/lix/src/branch/main/src/libutil/experimental-features
         "auto-allocate-uids"
         "ca-derivations"
         "cgroups"
-        "configurable-impure-env"
         "daemon-trust-override"
         "dynamic-derivations"
         "fetch-closure"
-        "fetch-tree"
         "flakes"
-        "git-hashing"
         "impure-derivations"
-        "local-overlay-store"
-        "mounted-ssh-store"
         "nix-command"
         "no-url-literals"
         "parse-toml-timestamps"
-        "pipe-operators"
+        "pipe-operator"
         "read-only-local-store"
         "recursive-nix"
-        "verified-fetches"
+        "repl-automation"
+        # "repl-flake.md"
       ];
       system-features = [
         "uid-range"
@@ -41,16 +39,11 @@
       sandbox = true;
       use-cgroups = true;
       use-xdg-base-directories = true;
+      builders-use-substitutes = true;
     };
-    optimise = {
-      automatic = true;
-    };
-    sshServe = {
-      protocol = "ssh-ng";
-    };
-    channel = {
-      enable = false;
-    };
+    optimise.automatic = true;
+    sshServe.protocol = "ssh-ng";
+    channel.enable = false;
     gc = {
       automatic = true;
       dates = "weekly";
