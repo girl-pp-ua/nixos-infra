@@ -5,8 +5,13 @@
     port = 16001;
   };
   services.caddy.virtualHosts = {
-    "redlib.girl.pp.ua".extraConfig = ''
-      reverse_proxy localhost:${builtins.toString services.redlib.port}
-    '';
+    "redlib.beeg.pp.ua" = {
+      serverAliases = [
+        "redlib-cf.beeg.pp.ua"
+      ];
+      extraConfig = ''
+        reverse_proxy localhost:${builtins.toString services.redlib.port}
+      '';
+    };
   };
 }

@@ -14,12 +14,15 @@
     specialArgs = {
       inherit self inputs system pkgs;
     };
-    mkNixosSystem = name: extraModules: (
+    mkNixosSystem = host: extraModules: (
       nixpkgs.lib.nixosSystem {
-        inherit system specialArgs;
+        inherit system;
+        specialArgs = specialArgs // {
+          inherit host;
+        };
         modules = [
-          { networking.hostName = name; }
-          ./hosts/${name}/configuration.nix
+          { networking.hostName = host; }
+          ./hosts/${host}/configuration.nix
           ./modules/base
         ] ++ extraModules;
       }
@@ -28,6 +31,7 @@
     nixosConfigurations = {
       # oci1 = mkNixosSystem "oci1" [];
       oci2 = mkNixosSystem "oci2" [
+        ./modules/role-services/healthcheck.nix
         ./modules/role-services/redlib.nix
       ];
     };
