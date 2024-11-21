@@ -31,7 +31,7 @@
       ];
       auto-allocate-uids = true;
       auto-optimise-store = true;
-      fsync-store-paths = true;
+      # fsync-store-paths = true;
       keep-build-log = false;
       keep-derivations = false;
       keep-outputs = false;
