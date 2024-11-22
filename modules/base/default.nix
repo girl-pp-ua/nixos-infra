@@ -13,6 +13,7 @@
     ./services/openssh.nix
     ./services/sshguard.nix
     ./services/tailscale.nix
+    ./services/netdata.nix
     ./services/caddy.nix
   ];
 
