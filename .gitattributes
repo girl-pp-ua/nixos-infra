@@ -1,2 +1,3 @@
 /secrets/** filter=git-crypt diff=git-crypt
+/secrets/schema.nix !filter !diff
 .gitattributes !filter !diff
