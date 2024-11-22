@@ -54,8 +54,9 @@
 
     # dev shells
     devShells.${system}.default = pkgs.mkShell {
-      packages = [
+      packages = with pkgs; [
         pkgs.deploy-rs
+        git-crypt
       ];
     };
   };
