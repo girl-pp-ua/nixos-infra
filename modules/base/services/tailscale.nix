@@ -3,6 +3,7 @@
     "--ssh"
     "--advertise-exit-node"
     "--accept-dns=false"
+    "--auto-update=false"
   ]; in {
     enable = true;
     openFirewall = true;
