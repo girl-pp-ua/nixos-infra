@@ -21,8 +21,11 @@ shopt -s dotglob
 cd ~/nixos-infra
 
 echo "[MEOW] copy this to /etc/nixos"
+set +e
+sudo mkdir -p /etc/nixos
 sudo rm -r /etc/nixos/*
 sudo cp -r ./* /etc/nixos
+set -e
 
 echo "[MEOW] setting up nix channels"
 nix-channel --add https://nixos.org/channels/nixos-unstable nixpkgs
