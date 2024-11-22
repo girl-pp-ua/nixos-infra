@@ -23,6 +23,7 @@
         modules = [
           { networking.hostName = host; }
           ./hosts/${host}/configuration.nix
+          ./secrets/credentials.nix
           ./modules/base
         ] ++ extraModules;
       }
