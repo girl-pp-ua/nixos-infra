@@ -7,6 +7,7 @@
     ./nix.nix
     ./users.nix
     ./sudo.nix
+    ./environment.nix
 
     # Base services
     ./services/openssh.nix
@@ -18,31 +19,11 @@
   i18n.defaultLocale = "en_US.UTF-8";
   time.timeZone = "UTC";
 
-  programs = {
-    fish.enable = true;
-    git.enable = true;
-    command-not-found.enable = false;
-    mosh = {
-      enable = true;
-      openFirewall = true;
-    };
-  };
+  # disable command-not-found
+  programs.command-not-found.enable = false;
 
+  # disable the informative message when running non-nixos binaries
   environment = {
-    systemPackages = with pkgs; [
-      nano
-      htop
-      curl
-      wget
-      hyfetch
-    ];
-
-    variables = {
-      EDITOR = "nano";
-      BROWSER = "echo"; # print the url
-    };
-
-    # disable the informative message when running non-nixos binaries
     stub-ld.enable = false;
     ldso32 = null; # don't install the /lib/ld-linux.so.2 stub
   };
