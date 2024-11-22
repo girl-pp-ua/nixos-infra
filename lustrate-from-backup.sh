@@ -15,6 +15,11 @@
 # - to avoid running out of ram, make sure the host system has at least 4GB of swap
 #   (set up a swap file if necessary)
 
+if [ "$#" -ne 1 ]; then
+  echo "Usage: $0 <nixos-hostname>"
+  exit 1
+fi
+
 set -e
 shopt -s dotglob
 
