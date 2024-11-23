@@ -2,7 +2,7 @@
   # services.coredns = {
   #   enable = true;
   # };
-  services.nsd = {
+  services.nsd = rec {
     enable = true;
     interfaces = [
       "eth0"
@@ -10,7 +10,13 @@
     ];
     ipTransparent = true;
     ipFreebind = true;
-    reuseport = false;
+    serverCount = 2;
+    reuseport = serverCount > 1;
+    roundRobin = true;
+    extraConfig = ''
+      server:
+        refuse-any: yes
+    '';
     zones = let
       mkZone = domain: {
         ${domain} = {
