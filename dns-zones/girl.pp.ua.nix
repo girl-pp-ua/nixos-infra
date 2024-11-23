@@ -2,6 +2,7 @@
 with dns.lib.combinators;
 let
   zone = "girl.pp.ua.";
+  serial = 2024112303;
 
   /**
     Creates A + AAAA records and ipv4.@ and ipv6.@ subdomains
@@ -43,7 +44,7 @@ in
   SOA = {
     nameServer = "ns2.${zone}";
     adminEmail = "prasol258@gmail.com";
-    serial = 2024112302;
+    inherit serial;
   };
 
   NS = [
