@@ -1,4 +1,7 @@
 { ... }: {
+  imports = [
+    ./networking/firewall.nix
+  ];
   networking = {
     useNetworkd = true;
     usePredictableInterfaceNames = false;
