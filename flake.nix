@@ -5,14 +5,18 @@
       url = "github:serokell/deploy-rs";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    dns = {
+      url = "github:nix-community/dns.nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
-  outputs = inputs@{ self, nixpkgs, deploy-rs, ... }: let
+  outputs = inputs@{ self, nixpkgs, deploy-rs, dns, ... }: let
     system = "x86_64-linux";
     pkgs = import nixpkgs {
       inherit system;
     };
     specialArgs = {
-      inherit self inputs system pkgs;
+      inherit self inputs system pkgs dns;
     };
     mkNixosSystem = host: extraModules: (
       nixpkgs.lib.nixosSystem {
@@ -33,6 +37,7 @@
     nixosConfigurations = {
       # oci1 = mkNixosSystem "oci1" [];
       oci2 = mkNixosSystem "oci2" [
+        ./modules/role-services/dns.nix
         ./modules/role-services/healthcheck.nix
         ./modules/role-services/redlib.nix
         ./modules/role-services/ntfy.nix
