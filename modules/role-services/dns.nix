@@ -10,7 +10,7 @@
     ];
     ipTransparent = true;
     ipFreebind = true;
-    serverCount = 2;
+    serverCount = 1;
     reuseport = serverCount > 1;
     roundRobin = true;
     extraConfig = ''
