@@ -26,7 +26,7 @@ in
   SOA = {
     nameServer = "ns2.${zone}";
     adminEmail = "prasol258@gmail.com";
-    serial = 2024112200;
+    serial = 2024112300;
   };
 
   NS = [
