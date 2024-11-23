@@ -26,7 +26,7 @@ in
   SOA = {
     nameServer = "ns2.${zone}";
     adminEmail = "prasol258@gmail.com";
-    serial = 2024112300;
+    serial = 2024112302;
   };
 
   NS = [
@@ -42,22 +42,27 @@ in
 
   # TXT records
   TXT = [ "oci-domain-verification=NpKOKeYeCal32nE30tzSHLI9RXw41sPKLASaWVs0JXMpD" ];
-  subdomains._atproto.TXT = [ "did=did:plc:wvftnj7awmh4gwf3pt5mlvwq" ];
 
-  subdomains = {
+  subdomains = let
     # oci1: Oracle Cloud Infrastructure (Frankfurt) - VM.Standard.E2.1.Micro
-    oci1 = mkDualstackHost
-      "132.226.204.218"
-      "2603:c020:800c:9c7f:0:fe:fe:2";
+    oci1 = {
+      ipv4 = "132.226.204.218";
+      ipv6 = "2603:c020:800c:9c7f:0:fe:fe:2";
+    };
 
     # oci2: Oracle Cloud Infrastructure (Frankfurt) - VM.Standard.E2.1.Micro
-    oci2 = mkDualstackHost
-      "144.24.178.67"
-      "2603:c020:800c:9c7f:0:ba:be:2";
+    oci2 = {
+      ipv4 = "1144.24.178.67";
+      ipv6 = "2603:c020:800c:9c7f:0:ba:be:2";
+    };
+  in {
+    # hosts:
+    oci1 = mkDualstackHost oci1.ipv4 oci1.ipv6;
+    oci2 = mkDualstackHost oci2.ipv4 oci2.ipv6;
 
     # nameservers:
-    ns1 = mkCname "oci1.${zone}";
-    ns2 = mkCname "oci2.${zone}";
+    ns1 = host oci1.ipv4 oci1.ipv6;
+    ns2 = host oci2.ipv4 oci2.ipv6;
 
     # services:
     redlib = mkCname "oci2.${zone}";
@@ -67,5 +72,8 @@ in
     services.subdomains = {
       uptime = mkCname "oci1.${zone}";
     };
+
+    # TXT records
+    _atproto.TXT = [ "did=did:plc:wvftnj7awmh4gwf3pt5mlvwq" ];
   };
 }
