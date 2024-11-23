@@ -19,6 +19,23 @@ let
     Creates a CNAME record
   */
   mkCname = target: { CNAME = [ target ]; };
+
+  /**
+    IPv4/IPv6 addresses of physical hosts
+  */
+  hosts = {
+    # oci1: Oracle Cloud Infrastructure (Frankfurt) - VM.Standard.E2.1.Micro
+    oci1 = {
+      ipv4 = "132.226.204.218";
+      ipv6 = "2603:c020:800c:9c7f:0:fe:fe:2";
+    };
+
+    # oci2: Oracle Cloud Infrastructure (Frankfurt) - VM.Standard.E2.1.Micro
+    oci2 = {
+      ipv4 = "144.24.178.67";
+      ipv6 = "2603:c020:800c:9c7f:0:ba:be:2";
+    };
+  };
 in
 {
   TTL = 1800; # 30 minutes
@@ -43,26 +60,14 @@ in
   # TXT records
   TXT = [ "oci-domain-verification=NpKOKeYeCal32nE30tzSHLI9RXw41sPKLASaWVs0JXMpD" ];
 
-  subdomains = let
-    # oci1: Oracle Cloud Infrastructure (Frankfurt) - VM.Standard.E2.1.Micro
-    oci1 = {
-      ipv4 = "132.226.204.218";
-      ipv6 = "2603:c020:800c:9c7f:0:fe:fe:2";
-    };
-
-    # oci2: Oracle Cloud Infrastructure (Frankfurt) - VM.Standard.E2.1.Micro
-    oci2 = {
-      ipv4 = "1144.24.178.67";
-      ipv6 = "2603:c020:800c:9c7f:0:ba:be:2";
-    };
-  in {
+  subdomains = {
     # hosts:
-    oci1 = mkDualstackHost oci1.ipv4 oci1.ipv6;
-    oci2 = mkDualstackHost oci2.ipv4 oci2.ipv6;
+    oci1 = with hosts; mkDualstackHost oci1.ipv4 oci1.ipv6;
+    oci2 = with hosts; mkDualstackHost oci2.ipv4 oci2.ipv6;
 
     # nameservers:
-    ns1 = host oci1.ipv4 oci1.ipv6;
-    ns2 = host oci2.ipv4 oci2.ipv6;
+    ns1 = with hosts; host oci1.ipv4 oci1.ipv6;
+    ns2 = with hosts; host oci2.ipv4 oci2.ipv6;
 
     # services:
     redlib = mkCname "oci2.${zone}";
