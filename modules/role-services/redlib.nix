@@ -44,9 +44,13 @@ in rec {
     enable_rss = true;
     full_url = "https://${redlibSubdomain}/";
     banner = ''
-      mrrp,, :3
-      <span style="display:none" aria-hidden="true">INSTANCE_IS_HEALTHY</span>
+      <img src="/banner.webp" width="498" height="277" alt="mrrp,, :3">
+      <div class="jrusbci8">Hosted on <a href="https://infra.beeg.pp.ua/">infra.beeg.pp.ua</a> :3</div>
+      <span class="nyhis5pg" aria-hidden="true">INSTANCE_IS_HEALTHY</span>
       <style>
+        .jrusbci8{text-align:center}
+        .jrusbci8 a{text-decoration:underline}
+        .nyhis5pg{display:none}
         body{background:linear-gradient(to right,rgba(0,0,0,.5),rgba(0,0,0,.9) 20%,rgba(0,0,0,.9) 25%,rgba(0,0,0,.9) 50%,rgba(0,0,0,.9) 75%,rgba(0,0,0,.9) 80%,rgba(0,0,0,.5)),linear-gradient(to bottom,#55cdfc,#b39de9,#f7a8b8,#f6d8dd,#fff 45%,#fff,#fff 55%,#f6d8dd,#f7a8b8,#b39de9,#55cdfc);background-attachment:fixed}
         @media(max-width:802px){body{background-image:linear-gradient(to right,rgba(0,0,0,.75),rgba(0,0,0,.75)),linear-gradient(to bottom,#55cdfc,#b39de9,#f7a8b8,#f6d8dd,#fff 45%,#fff,#fff 55%,#f6d8dd,#f7a8b8,#b39de9,#55cdfc)}}
       </style>
@@ -64,6 +68,12 @@ in rec {
   services.caddy.virtualHosts = {
     ${redlibSubdomain} = {
       extraConfig = ''
+        handle /banner.webp {
+          rewrite * /tenor.webp
+          reverse_proxy https://files.girl.pp.ua {
+            header_up Host {http.reverse_proxy.upstream.host}
+          }
+        }
         reverse_proxy localhost:${builtins.toString services.redlib.port}
       '';
     };
