@@ -60,6 +60,7 @@ in
 
   # TXT records
   TXT = [ "oci-domain-verification=NpKOKeYeCal32nE30tzSHLI9RXw41sPKLASaWVs0JXMpD" ];
+  subdomains._atproto.TXT = [ "did=did:plc:wvftnj7awmh4gwf3pt5mlvwq" ];
 
   subdomains = {
     # hosts:
@@ -83,12 +84,12 @@ in
       };
     };
 
+    # misc.:
+    infra = mkCname "beeg-pp-infra.netlify.app.";
+
     # legacy services:
     services.subdomains = {
       uptime = mkCname "oci1.${zone}";
     };
-
-    # TXT records
-    _atproto.TXT = [ "did=did:plc:wvftnj7awmh4gwf3pt5mlvwq" ];
   };
 }
