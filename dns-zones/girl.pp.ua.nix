@@ -75,6 +75,14 @@ in
     redlib = mkCname "oci2.${zone}";
     ntfy   = mkCname "oci2.${zone}";
 
+    # cdn:
+    files-cdn = {
+      CNAME = [ "t.sni.global.fastly.net." ];
+      subdomains._acme-challenge = {
+        CNAME = [ "9ju9qpopwm9fbqid5n.fastly-validations.com." ];
+      };
+    };
+
     # legacy services:
     services.subdomains = {
       uptime = mkCname "oci1.${zone}";
