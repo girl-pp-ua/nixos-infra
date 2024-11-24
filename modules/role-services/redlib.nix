@@ -23,12 +23,12 @@ in rec {
   services.redlib = {
     enable = true;
     package = pkgs.redlib.overrideAttrs(old: rec {
-      version = "0.35.1-unstable-2024-11-22";
+      version = "0.35.1-unstable-2024-11-24";
       src = pkgs.fetchFromGitHub {
         owner = "redlib-org";
         repo = "redlib";
-        rev = "6be6f892a4eb159f5a27ce48f0ce615298071eac";
-        hash = "sha256-UyA/iAPTbnrI6rNe7u8swO2h8PkLV6s4XS90Jv19CQ8=";
+        rev = "7fe109df2267f292459c2154554c7bb40e77908d";
+        hash = "sha256-NOksmE8Yuy7lQg6mq2RTgK5P4K+2Rv8v5wau3LCHjls=";
       };
       cargoDeps = old.cargoDeps.overrideAttrs {
         inherit src;
@@ -48,6 +48,7 @@ in rec {
       <span style="display:none" aria-hidden="true">INSTANCE_IS_HEALTHY</span>
       <style>
         body{background:linear-gradient(to right,rgba(0,0,0,.5),rgba(0,0,0,.9) 20%,rgba(0,0,0,.9) 25%,rgba(0,0,0,.9) 50%,rgba(0,0,0,.9) 75%,rgba(0,0,0,.9) 80%,rgba(0,0,0,.5)),linear-gradient(to bottom,#55cdfc,#b39de9,#f7a8b8,#f6d8dd,#fff 45%,#fff,#fff 55%,#f6d8dd,#f7a8b8,#b39de9,#55cdfc);background-attachment:fixed}
+        @media(max-width:802px){body{background-image:linear-gradient(to right,rgba(0,0,0,.75),rgba(0,0,0,.75)),linear-gradient(to bottom,#55cdfc,#b39de9,#f7a8b8,#f6d8dd,#fff 45%,#fff,#fff 55%,#f6d8dd,#f7a8b8,#b39de9,#55cdfc)}}
       </style>
     '';
     default = {
