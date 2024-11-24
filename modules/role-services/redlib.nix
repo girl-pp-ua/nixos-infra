@@ -22,7 +22,19 @@ let
 in rec {
   services.redlib = {
     enable = true;
-    package = pkgs.redlib;
+    package = pkgs.redlib.overrideAttrs(old: rec {
+      version = "0.35.1-unstable-2024-11-22";
+      src = pkgs.fetchFromGitHub {
+        owner = "redlib-org";
+        repo = "redlib";
+        rev = "6be6f892a4eb159f5a27ce48f0ce615298071eac";
+        hash = "sha256-UyA/iAPTbnrI6rNe7u8swO2h8PkLV6s4XS90Jv19CQ8=";
+      };
+      cargoDeps = old.cargoDeps.overrideAttrs {
+        inherit src;
+        outputHash = "sha256-DrydmChlqc4Rt94ATnTlm9GFjzGJhN9tySgoeYKMpY8=";
+      };
+    });
     address = "127.0.0.1";
     port = 16001;
   };
