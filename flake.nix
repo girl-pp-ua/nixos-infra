@@ -33,12 +33,23 @@
         ] ++ extraModules;
       }
     );
+    mkDeployProfile = hostname: host: {
+      inherit hostname;
+      sshUser = "nixos";
+      user = "root";
+      profiles.system.path =
+        deploy-rs.lib.${system}.activate.nixos
+          self.nixosConfigurations.${host};
+    };
   in {
     nixosConfigurations = {
-      # oci1 = mkNixosSystem "oci1" [];
-      oci2 = mkNixosSystem "oci2" [
-        ./modules/role-services/dns.nix
+      oci1 = mkNixosSystem "oci1" [
         ./modules/role-services/healthcheck.nix
+        ./modules/role-services/dns.nix
+      ];
+      oci2 = mkNixosSystem "oci2" [
+        ./modules/role-services/healthcheck.nix
+        ./modules/role-services/dns.nix
         ./modules/role-services/file-server.nix
         ./modules/role-services/redlib.nix
         ./modules/role-services/ntfy.nix
@@ -47,15 +58,10 @@
 
     # deploy-rs configuration
     deploy.nodes = {
-      oci2 = {
-        hostname = "oci2.girl.pp.ua";
-        sshUser = "nixos";
-        user = "root";
-        profiles.system.path =
-          deploy-rs.lib.${system}.activate.nixos
-            self.nixosConfigurations.oci2;
-      };
+      oci1 = mkDeployProfile "oci1.girl.pp.ua" "oci1";
+      oci2 = mkDeployProfile "oci2.girl.pp.ua" "oci2";
     };
+
     checks = builtins.mapAttrs
       (system: deployLib: deployLib.deployChecks self.deploy)
       deploy-rs.lib;
