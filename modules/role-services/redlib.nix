@@ -79,6 +79,7 @@ in rec {
   services.caddy.virtualHosts = {
     ${redlibSubdomain} = {
       extraConfig = ''
+        import encode
         handle /banner.webp {
           rewrite * /tenor.webp
           reverse_proxy https://files.girl.pp.ua {
