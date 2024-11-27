@@ -1,6 +1,7 @@
 { pkgs, lib, ... }:
 let
   redlibSubdomain = "redlib.girl.pp.ua";
+
   mkEnvRecursive = prefix: attr:
     builtins.foldl' (acc: oldKey:
       let
@@ -19,27 +20,8 @@ let
       in acc // newAttr
     ) {} (builtins.attrNames attr);
   mkRedlibEnv = mkEnvRecursive "REDLIB";
-in rec {
-  services.redlib = {
-    enable = true;
-    package = pkgs.redlib.overrideAttrs(old: rec {
-      version = "0.35.1-unstable-2024-11-24";
-      src = pkgs.fetchFromGitHub {
-        owner = "redlib-org";
-        repo = "redlib";
-        rev = "7fe109df2267f292459c2154554c7bb40e77908d";
-        hash = "sha256-NOksmE8Yuy7lQg6mq2RTgK5P4K+2Rv8v5wau3LCHjls=";
-      };
-      cargoDeps = old.cargoDeps.overrideAttrs {
-        inherit src;
-        outputHash = "sha256-DrydmChlqc4Rt94ATnTlm9GFjzGJhN9tySgoeYKMpY8=";
-      };
-    });
-    address = "127.0.0.1";
-    port = 16001;
-  };
 
-  systemd.services.redlib.environment = mkRedlibEnv {
+  environment = mkRedlibEnv {
     robots_disable_indexing = true;
     enable_rss = true;
     full_url = "https://${redlibSubdomain}/";
@@ -63,6 +45,35 @@ in rec {
       hide_hls_notification = true;
       disable_visit_reddit_confirmation = true;
     };
+  };
+
+  redlib' = pkgs.redlib.overrideAttrs(old: rec {
+    version = "0.35.1-unstable-2024-11-27";
+    src = pkgs.fetchFromGitHub {
+      owner = "redlib-org";
+      repo = "redlib";
+      rev = "9f6b08cbb2d0f43644a34f5d0210ac32b9add30c";
+      hash = "sha256-lFvlrVFzMk6igH/h/3TZnkl8SooanVyIRYbSyleb2OU=";
+    };
+    cargoDeps = old.cargoDeps.overrideAttrs {
+      inherit src;
+      outputHash = "sha256-DrydmChlqc4Rt94ATnTlm9GFjzGJhN9tySgoeYKMpY8=";
+    };
+    postPatch = old.postPatch or "" + ''
+      sed -i 's/{{ post\.thumbnail\.url }}/{{ post.media.url }}/g' templates/post.html
+    '';
+    doCheck = false;
+  });
+in rec {
+  services.redlib = {
+    enable = true;
+    package = redlib';
+    address = "127.0.0.1";
+    port = 16001;
+  };
+
+  systemd.services.redlib = {
+    inherit environment;
   };
 
   services.caddy.virtualHosts = {
