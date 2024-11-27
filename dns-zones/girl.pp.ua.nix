@@ -48,7 +48,7 @@ in
   };
 
   NS = [
-    # "ns1.${zone}"
+    "ns1.${zone}"
     "ns2.${zone}"
   ];
 
@@ -68,7 +68,7 @@ in
     oci2 = with hosts; mkDualstackHost oci2.ipv4 oci2.ipv6;
 
     # nameservers:
-    # ns1 = with hosts; host oci1.ipv4 oci1.ipv6;
+    ns1 = with hosts; host oci1.ipv4 oci1.ipv6;
     ns2 = with hosts; host oci2.ipv4 oci2.ipv6;
 
     # services:
