@@ -2,7 +2,7 @@
 with dns.lib.combinators;
 let
   zone = "girl.pp.ua.";
-  serial = 2024112702;
+  serial = 2024112703;
 
   /**
     Creates A + AAAA records and ipv4.@ and ipv6.@ subdomains
@@ -53,9 +53,14 @@ in
   ];
 
   # TODO set up ALIAS to beeg-pp-infra.netlify.app instead
-  # apex-loadbalancer.netlify.com
   A = [
+    # apex-loadbalancer.netlify.com
     "75.2.60.5"
+  ];
+  AAAA = [
+    # from `dig AAAA beeg.pp.ua`; not guaranteed to be stable!
+    "2a05:d014:58f:6200::65"
+    "2a05:d014:58f:6201::65"
   ];
 
   DMARC = [
