@@ -48,6 +48,7 @@ let
   };
 
   redlib' = pkgs.redlib.overrideAttrs(old: rec {
+    # Use latest unstable/master branch version
     version = "0.35.1-unstable-2024-11-27";
     src = pkgs.fetchFromGitHub {
       owner = "redlib-org";
@@ -59,9 +60,14 @@ let
       inherit src;
       outputHash = "sha256-DrydmChlqc4Rt94ATnTlm9GFjzGJhN9tySgoeYKMpY8=";
     };
+
+    # Use full-resolution images for embeds
+    # (also fixes nsfw post thumbnails)
     postPatch = old.postPatch or "" + ''
       sed -i 's/{{ post\.thumbnail\.url }}/{{ post.media.url }}/g' templates/post.html
     '';
+
+    # Rate-limit check requires internet access (should be fixed upstream)
     doCheck = false;
   });
 in rec {
