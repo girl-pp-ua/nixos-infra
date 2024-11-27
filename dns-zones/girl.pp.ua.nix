@@ -2,7 +2,7 @@
 with dns.lib.combinators;
 let
   zone = "girl.pp.ua.";
-  serial = 2024112701;
+  serial = 2024112702;
 
   /**
     Creates A + AAAA records and ipv4.@ and ipv6.@ subdomains
@@ -58,9 +58,19 @@ in
     "75.2.60.5"
   ];
 
-  # TXT records
-  TXT = [ "oci-domain-verification=NpKOKeYeCal32nE30tzSHLI9RXw41sPKLASaWVs0JXMpD" ];
-  subdomains._atproto.TXT = [ "did=did:plc:wvftnj7awmh4gwf3pt5mlvwq" ];
+  DMARC = [
+    {
+      p = "reject";
+      sp = "reject";
+      adkim = "strict";
+      aspf = "strict";
+    }
+  ];
+
+  TXT = [
+    "v=spf1 -all"
+    "oci-domain-verification=NpKOKeYeCal32nE30tzSHLI9RXw41sPKLASaWVs0JXMpD"
+  ];
 
   subdomains = {
     # hosts:
@@ -91,5 +101,8 @@ in
     services.subdomains = {
       uptime = mkCname "oci1.${zone}";
     };
+
+    # TXT records:
+    _atproto.TXT = [ "did=did:plc:wvftnj7awmh4gwf3pt5mlvwq" ];
   };
 }
