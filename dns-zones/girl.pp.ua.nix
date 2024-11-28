@@ -87,7 +87,7 @@ in
     ns2 = with hosts; host oci2.ipv4 oci2.ipv6;
 
     # services:
-    files  = mkCname "oci2.${zone}";
+    files  = mkCname "oci1.${zone}";
     redlib = mkCname "oci2.${zone}";
     ntfy   = mkCname "oci2.${zone}";
 
