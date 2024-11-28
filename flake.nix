@@ -44,13 +44,13 @@
   in {
     nixosConfigurations = {
       oci1 = mkNixosSystem "oci1" [
-        ./modules/role-services/healthcheck.nix
         ./modules/role-services/dns.nix
+        ./modules/role-services/healthcheck.nix
+        ./modules/role-services/file-server.nix
       ];
       oci2 = mkNixosSystem "oci2" [
-        ./modules/role-services/healthcheck.nix
         ./modules/role-services/dns.nix
-        ./modules/role-services/file-server.nix
+        ./modules/role-services/healthcheck.nix
         ./modules/role-services/redlib.nix
         ./modules/role-services/ntfy.nix
       ];
