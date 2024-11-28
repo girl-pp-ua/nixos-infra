@@ -14,6 +14,10 @@
     ./services/sshguard.nix
     ./services/tailscale.nix
     ./services/caddy.nix
+    ./services/dns-server.nix
+    ./services/redlib.nix
+    ./services/ntfy.nix
+    ./services/nfs-server.nix
   ];
 
   i18n.defaultLocale = "en_US.UTF-8";

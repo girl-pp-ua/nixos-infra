@@ -1,7 +1,5 @@
-{ pkgs, lib, ... }:
+{ config, pkgs, lib, ... }:
 let
-  redlibSubdomain = "redlib.girl.pp.ua";
-
   mkEnvRecursive = prefix: attr:
     builtins.foldl' (acc: oldKey:
       let
@@ -24,7 +22,7 @@ let
   environment = mkRedlibEnv {
     robots_disable_indexing = true;
     enable_rss = true;
-    full_url = "https://${redlibSubdomain}/";
+    full_url = "https://${cfg.services.redlib.domain}/";
     banner = ''
       <img src="/banner.webp" width="498" height="277" alt="mrrp,, :3">
       <div class="jrusbci8">Hosted on <a href="https://infra.beeg.pp.ua/">infra.beeg.pp.ua</a> :3</div>
@@ -70,30 +68,48 @@ let
     # Rate-limit check requires internet access (should be fixed upstream)
     doCheck = false;
   });
-in rec {
-  services.redlib = {
-    enable = true;
-    package = redlib';
-    address = "127.0.0.1";
-    port = 16001;
+
+  cfg = config.cfg;
+in {
+  options = {
+    cfg.services.redlib = {
+      enable = lib.mkEnableOption "redlib";
+      port = lib.mkOption {
+        type = lib.types.int;
+        default = 16001;
+      };
+      domain = lib.mkOption {
+        type = lib.types.str;
+        default = "redlib.girl.pp.ua";
+      };
+    };
   };
 
-  systemd.services.redlib = {
-    inherit environment;
-  };
+  config = lib.mkIf cfg.services.redlib.enable {
+    services.redlib = {
+      enable = true;
+      package = redlib';
+      address = "127.0.0.1";
+      port = cfg.services.redlib.port;
+    };
 
-  services.caddy.virtualHosts = {
-    ${redlibSubdomain} = {
-      extraConfig = ''
-        import encode
-        handle /banner.webp {
-          rewrite * /tenor.webp
-          reverse_proxy https://files.girl.pp.ua {
-            header_up Host {http.reverse_proxy.upstream.host}
+    systemd.services.redlib = {
+      inherit environment;
+    };
+
+    services.caddy.virtualHosts = {
+      ${cfg.services.redlib.domain} = {
+        extraConfig = ''
+          import encode
+          handle /banner.webp {
+            rewrite * /tenor.webp
+            reverse_proxy https://files.girl.pp.ua {
+              header_up Host {http.reverse_proxy.upstream.host}
+            }
           }
-        }
-        reverse_proxy localhost:${builtins.toString services.redlib.port}
-      '';
+          reverse_proxy localhost:${builtins.toString cfg.services.redlib.port}
+        '';
+      };
     };
   };
 }

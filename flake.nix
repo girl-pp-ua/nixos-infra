@@ -44,15 +44,23 @@
   in {
     nixosConfigurations = {
       oci1 = mkNixosSystem "oci1" [
-        ./modules/role-services/dns.nix
+        {
+          cfg.services = {
+            dns-server.enable = true;
+          };
+        }
         ./modules/role-services/healthcheck.nix
         ./modules/role-services/file-server.nix
       ];
       oci2 = mkNixosSystem "oci2" [
-        ./modules/role-services/dns.nix
+        {
+          cfg.services = {
+            dns-server.enable = true;
+            redlib.enable = true;
+            ntfy.enable = true;
+          };
+        }
         ./modules/role-services/healthcheck.nix
-        ./modules/role-services/redlib.nix
-        ./modules/role-services/ntfy.nix
       ];
     };
 
