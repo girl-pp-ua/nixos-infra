@@ -11,9 +11,9 @@
     '';
     extraConfig = ''
       (cors) {
-        @origin{args.0} header Origin {args.0}
-        header @origin{args.0} Access-Control-Allow-Origin "{args.0}"
-        header @origin{args.0} Vary Origin
+        @origin{args[0]} header Origin {args[0]}
+        header @origin{args[0]} Access-Control-Allow-Origin "{args[0]}"
+        header @origin{args[0]} Vary Origin
       }
       (encode) {
         encode zstd gzip
