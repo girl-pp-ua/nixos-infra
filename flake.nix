@@ -47,10 +47,9 @@
         {
           cfg.services = {
             dns-server.enable = true;
+            file-server-endpoint.enable = true;
           };
         }
-        ./modules/role-services/healthcheck.nix
-        ./modules/role-services/file-server.nix
       ];
       oci2 = mkNixosSystem "oci2" [
         {
@@ -60,7 +59,6 @@
             ntfy.enable = true;
           };
         }
-        ./modules/role-services/healthcheck.nix
       ];
     };
 

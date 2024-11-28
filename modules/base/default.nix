@@ -18,6 +18,8 @@
     ./services/redlib.nix
     ./services/ntfy.nix
     ./services/nfs-server.nix
+    ./services/healthcheck-endpoint.nix
+    ./services/file-server-endpoint.nix
   ];
 
   i18n.defaultLocale = "en_US.UTF-8";

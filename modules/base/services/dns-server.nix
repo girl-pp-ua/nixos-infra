@@ -1,7 +1,15 @@
 { config, lib, dns, ... }:
 let cfg = config.cfg; in {
   options = {
-    cfg.services.dns-server.enable = lib.mkEnableOption "dns-server";
+    cfg.services.dns-server = {
+      enable = lib.mkEnableOption "dns-server";
+      zones = lib.mkOption {
+        type = lib.types.listOf lib.types.str;
+        default = [
+          "girl.pp.ua"
+        ];
+      };
+    };
   };
   config = lib.mkIf cfg.services.dns-server.enable {
     # TODO switch to coredns
@@ -25,18 +33,18 @@ let cfg = config.cfg; in {
       '';
       zones = let
         mkZone = domain: {
-          ${domain} = {
+          name = domain;
+          value = {
             data = dns.lib.toString domain
               (import ./../../../dns-zones/${domain}.nix { inherit dns; });
           };
         };
-      in {}
-        // mkZone "girl.pp.ua";
+      in
+        lib.listToAttrs (lib.map mkZone cfg.services.dns-server.zones);
     };
     networking.firewall = {
       allowedTCPPorts = [ 53 ];
       allowedUDPPorts = [ 53 ];
     };
   };
-
 }
