@@ -11,6 +11,8 @@ let cfg = config.cfg; in {
     services.caddy.virtualHosts = {
       "${host}.girl.pp.ua" = {
         serverAliases = [
+          "ipv4.${host}.girl.pp.ua"
+          "ipv6.${host}.girl.pp.ua"
           "${host}.beeg.pp.ua"
           "ipv4.${host}.beeg.pp.ua"
           "ipv6.${host}.beeg.pp.ua"
