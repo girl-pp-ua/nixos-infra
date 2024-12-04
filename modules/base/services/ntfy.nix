@@ -30,7 +30,9 @@ let cfg = config.cfg; in{
     services.caddy.virtualHosts = {
       ${cfg.services.ntfy.domain} = {
         extraConfig = ''
-          redir /docs/* https://docs.ntfy.sh/{uri} 301
+          handle_path /docs/* {
+            redir https://docs.ntfy.sh{path} permanent
+          }
           reverse_proxy localhost:${toString cfg.services.ntfy.port}
         '';
       };
