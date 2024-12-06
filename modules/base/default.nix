@@ -20,6 +20,7 @@
     ./services/nfs-server.nix
     ./services/healthcheck-endpoint.nix
     ./services/file-server-endpoint.nix
+    ./services/kanidm.nix
   ];
 
   i18n.defaultLocale = "en_US.UTF-8";
