@@ -9,6 +9,10 @@
       url = "github:nix-community/dns.nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    redlib = {
+      url = "github:redlib-org/redlib";
+      flake = false; # (it *is* a flake, but i'm just using it as a source for the official package)
+    };
   };
   outputs = inputs@{ self, nixpkgs, deploy-rs, dns, ... }: let
     system = "x86_64-linux";

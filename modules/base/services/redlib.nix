@@ -1,4 +1,4 @@
-{ config, pkgs, lib, ... }:
+{ config, pkgs, lib, inputs, ... }:
 let
   mkEnvRecursive = prefix: attr:
     builtins.foldl' (acc: oldKey:
@@ -45,23 +45,16 @@ let
     };
   };
 
-  redlib' = pkgs.redlib.overrideAttrs(old: rec {
-    # Use latest unstable/master branch version
-    version = "0.35.1-unstable-2024-11-27";
-    src = pkgs.fetchFromGitHub {
-      owner = "redlib-org";
-      repo = "redlib";
-      rev = "9f6b08cbb2d0f43644a34f5d0210ac32b9add30c";
-      hash = "sha256-lFvlrVFzMk6igH/h/3TZnkl8SooanVyIRYbSyleb2OU=";
-    };
-    cargoDeps = old.cargoDeps.overrideAttrs {
-      inherit src;
-      outputHash = "sha256-DrydmChlqc4Rt94ATnTlm9GFjzGJhN9tySgoeYKMpY8=";
+  # Use latest unstable/master branch version
+  redlib' = pkgs.redlib.overrideAttrs(prev: {
+    src = "${inputs.redlib}";
+    cargoDeps = pkgs.rustPlatform.importCargoLock {
+      lockFile = "${inputs.redlib}/Cargo.lock";
     };
 
     # Use full-resolution images for embeds
     # (also fixes nsfw post thumbnails)
-    postPatch = old.postPatch or "" + ''
+    postPatch = prev.postPatch or "" + ''
       sed -i 's/{{ post\.thumbnail\.url }}/{{ post.media.url }}/g' templates/post.html
     '';
 

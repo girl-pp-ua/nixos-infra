@@ -90,11 +90,28 @@
         "type": "github"
       }
     },
+    "redlib": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1733156997,
+        "narHash": "sha256-bAsSLZWGLMrD21xdQtD5NyNsNSZwLOd/+6ujZpbsyQg=",
+        "owner": "redlib-org",
+        "repo": "redlib",
+        "rev": "d7ec07cd0d713fc308e1004663b0053db8f00a0f",
+        "type": "github"
+      },
+      "original": {
+        "owner": "redlib-org",
+        "repo": "redlib",
+        "type": "github"
+      }
+    },
     "root": {
       "inputs": {
         "deploy-rs": "deploy-rs",
         "dns": "dns",
-        "nixpkgs": "nixpkgs"
+        "nixpkgs": "nixpkgs",
+        "redlib": "redlib"
       }
     },
     "systems": {
