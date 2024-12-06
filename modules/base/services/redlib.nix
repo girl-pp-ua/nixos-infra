@@ -47,6 +47,8 @@ let
 
   # Use latest unstable/master branch version
   redlib' = pkgs.redlib.overrideAttrs(prev: {
+    version = "unstable";
+
     src = "${inputs.redlib}";
     cargoDeps = pkgs.rustPlatform.importCargoLock {
       lockFile = "${inputs.redlib}/Cargo.lock";
