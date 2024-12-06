@@ -11,7 +11,7 @@
     };
     redlib = {
       url = "github:redlib-org/redlib";
-      flake = false; # (it *is* a flake, but i'm just using it as a source for the official package)
+      flake = false; # (using as source for pkgs.redlib)
     };
   };
   outputs = inputs@{ self, nixpkgs, deploy-rs, dns, ... }: let
