@@ -30,7 +30,7 @@ in {
   config = lib.mkIf cfg.services.oauth2_proxy.enable {
     # TODO
 
-    services.oauth2_proxy = {
+    services.oauth2-proxy = {
       enable = true;
 
       httpAddress = "http://127.0.0.1:${toString cfg.services.oauth2_proxy.port}";
