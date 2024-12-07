@@ -1,4 +1,4 @@
-{ config, lib, ... }:
+{ config, pkgs, lib, ... }:
 let
   cfg = config.cfg;
 in {
@@ -18,6 +18,7 @@ in {
   config = lib.mkIf cfg.services.kanidm.enable {
     services.kanidm = {
       enableServer = true;
+      package = pkgs.kanidm.withSecretProvisioning;
       serverSettings = {
         inherit (cfg.secrets.selfSignedCert) tls_key tls_chain;
         inherit (cfg.services.kanidm) domain;
@@ -33,6 +34,24 @@ in {
       provision = {
         enable = true;
         autoRemove = true;
+        instanceUrl = "https://localhost:${toString cfg.services.kanidm.port}";
+        persons = {
+          grfgh = {
+            displayName = "grfgh";
+            # groups = [ "admin" ];
+          };
+        };
+        systems.oauth2 = {
+          oauth2-proxy = {
+            displayName = "oauth2-proxy";
+            # XXX: BAD IDEA! secret is exposed in /nix/store
+            # basicSecretFile = pkgs.writeText "this_is_bad_1" cfg.secrets.oauth2_proxy.clientSecret;
+            originUrl = [
+              "https://fwauthtest1.girl.pp.ua/"
+            ];
+            originLanding = "https://fwauthtest1.girl.pp.ua/";
+          };
+        };
       };
     };
 
