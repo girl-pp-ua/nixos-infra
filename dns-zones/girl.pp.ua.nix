@@ -88,6 +88,7 @@ in
 
     # services:
     files  = mkCname "oci1.${zone}";
+    sso    = mkCname "oci1.${zone}";
     redlib = mkCname "oci2.${zone}";
     ntfy   = mkCname "oci2.${zone}";
 
