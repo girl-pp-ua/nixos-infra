@@ -38,6 +38,9 @@ in {
         persons = {
           grfgh = {
             displayName = "grfgh";
+            mailAddresses = [
+              "prasol258@gmail.com"
+            ];
             # groups = [ "admin" ];
           };
         };
