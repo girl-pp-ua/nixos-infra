@@ -7,7 +7,7 @@ in {
       enable = lib.mkEnableOption "kanidm";
       port = lib.mkOption {
         type = lib.types.int;
-        default = 16012;
+        default = 16021;
       };
       domain = lib.mkOption {
         type = lib.types.str;
@@ -29,6 +29,10 @@ in {
       clientSettings = {
         uri = "https://127.0.0.1:${toString cfg.services.kanidm.port}";
         ca_path = cfg.secrets.selfSignedCert.tls_chain;
+      };
+      provision = {
+        enable = true;
+        autoRemove = true;
       };
     };
 

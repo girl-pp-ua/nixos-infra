@@ -92,6 +92,9 @@ in
     redlib = mkCname "oci2.${zone}";
     ntfy   = mkCname "oci2.${zone}";
 
+    # testing:
+    fwauthtest1 = mkCname "oci1.${zone}";
+
     # cdn:
     files-cdn = {
       CNAME = [ "t.sni.global.fastly.net." ];

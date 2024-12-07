@@ -1,4 +1,4 @@
-{ pkgs, ... }: {
+{ ... }: {
   imports = [
     # Base configuration
     ./boot.nix
@@ -18,8 +18,8 @@
     ./services/redlib.nix
     ./services/ntfy.nix
     ./services/nfs-server.nix
-    ./services/healthcheck-endpoint.nix
-    ./services/file-server-endpoint.nix
+    ./services/endp/healthcheck-endpoint.nix
+    ./services/endp/file-server-endpoint.nix
     ./services/sso/kanidm.nix
     ./services/sso/oauth2-proxy.nix
   ];
