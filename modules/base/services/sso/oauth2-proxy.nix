@@ -31,7 +31,8 @@ in {
     # TODO
 
     services.oauth2-proxy = {
-      enable = true;
+      # TODO fix kanidm OAuth2
+      # enable = true;
 
       httpAddress = "http://127.0.0.1:${toString cfg.services.oauth2_proxy.port}";
       proxyPrefix = cfg.services.oauth2_proxy.urlPrefix;
