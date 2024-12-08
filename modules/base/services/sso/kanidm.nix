@@ -48,7 +48,7 @@ in {
           oauth2-proxy = {
             displayName = "oauth2-proxy";
             # XXX: BAD IDEA! secret is exposed in /nix/store
-            # basicSecretFile = pkgs.writeText "this_is_bad_1" cfg.secrets.oauth2_proxy.clientSecret;
+            basicSecretFile = pkgs.writeText "this_is_bad_1" cfg.secrets.oauth2_proxy.clientSecret;
             originUrl = [
               "https://fwauthtest1.girl.pp.ua/"
             ];
