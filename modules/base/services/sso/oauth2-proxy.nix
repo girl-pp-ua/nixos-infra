@@ -32,7 +32,7 @@ in {
 
     services.oauth2-proxy = {
       # TODO fix kanidm OAuth2
-      # enable = true;
+      enable = true;
 
       httpAddress = "http://127.0.0.1:${toString cfg.services.oauth2_proxy.port}";
       proxyPrefix = cfg.services.oauth2_proxy.urlPrefix;
@@ -50,6 +50,17 @@ in {
       scope = "openid profile email";
 
       cookie.secret = cfg.secrets.oauth2_proxy.cookieSecret;
+
+      approvalPrompt = "auto";
+      extraConfig = {
+        provider-display-name = "Kanidm";
+        # skip-provider-button = true;
+        code-challenge-method = "S256";
+        set-authorization-header = true;
+        pass-access-token = true;
+        skip-jwt-bearer-tokens = true;
+        upstream = "static://202";
+      };
     };
 
     systemd.services.oauth2-proxy.after = lib.optionals cfg.services.kanidm.enable [

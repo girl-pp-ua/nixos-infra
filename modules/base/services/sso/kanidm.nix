@@ -35,25 +35,29 @@ in {
         enable = true;
         autoRemove = true;
         instanceUrl = "https://localhost:${toString cfg.services.kanidm.port}";
-        persons = {
-          grfgh = {
-            displayName = "grfgh";
-            mailAddresses = [
-              "prasol258@gmail.com"
-            ];
-            # groups = [ "admin" ];
-          };
+
+        persons.grfgh = {
+          displayName = "grfgh";
+          mailAddresses = [ "prasol258@gmail.com" ];
+          groups = [
+            "oauth2-proxy.access"
+          ];
         };
-        systems.oauth2 = {
-          oauth2-proxy = {
-            displayName = "oauth2-proxy";
-            # XXX: BAD IDEA! secret is exposed in /nix/store
-            basicSecretFile = pkgs.writeText "this_is_bad_1" cfg.secrets.oauth2_proxy.clientSecret;
-            originUrl = [
-              "https://fwauthtest1.girl.pp.ua/"
-            ];
-            originLanding = "https://fwauthtest1.girl.pp.ua/";
-          };
+
+        groups."oauth2-proxy.access" = {};
+        systems.oauth2."oauth2-proxy" = {
+          displayName = "oauth2-proxy";
+          # XXX: BAD IDEA! secret is exposed in /nix/store
+          basicSecretFile = pkgs.writeText "this_is_bad_1" cfg.secrets.oauth2_proxy.clientSecret;
+          originUrl = [
+            "https://fwauthtest1.girl.pp.ua/"
+          ];
+          originLanding = "https://fwauthtest1.girl.pp.ua/";
+          scopeMaps."oauth2-proxy.access" = [
+            "openid"
+            "email"
+            "profile"
+          ];
         };
       };
     };
