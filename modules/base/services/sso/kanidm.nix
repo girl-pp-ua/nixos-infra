@@ -74,7 +74,7 @@ in {
         extraConfig = ''
           reverse_proxy https://127.0.0.1:${toString cfg.services.kanidm.port} {
             transport http {
-              tls_trusted_ca_certs ${cfg.secrets.selfSignedCert.tls_chain}
+              tls_trust_pool file ${cfg.secrets.selfSignedCert.tls_chain}
             }
           }
         '';
