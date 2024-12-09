@@ -49,6 +49,7 @@ in {
             displayName = "niko";
             mailAddresses = [ "nyanbinary@tutamail.com" ];
             groups = [
+              "fwauthtest1.access"
               "uptime-kuma.access"
             ];
           };
