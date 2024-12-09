@@ -15,6 +15,10 @@
         cookieSecret = mkOption { type = types.str; };
         # keyFile = { type = types.path; };
       };
+      webdav = {
+        username = mkOption { type = types.str; };
+        hashed_password = mkOption { type = types.str; };
+      };
     };
   };
 }

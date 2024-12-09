@@ -21,6 +21,7 @@ let cfg = config.cfg; in {
         grace_period 30s
         skip_install_trust
         renew_interval 30m
+        order webdav before file_server
       '';
       extraConfig = ''
         (cors) {

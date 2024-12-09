@@ -58,6 +58,7 @@
           cfg.services = {
             dns-server.enable = true;
             file-server-endpoint.enable = true;
+            webdav-endpoint.enable = true;
             kanidm.enable = true;
           };
         }

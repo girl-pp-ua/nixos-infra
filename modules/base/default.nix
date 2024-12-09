@@ -20,6 +20,7 @@
     ./services/nfs-server.nix
     ./services/endp/healthcheck-endpoint.nix
     ./services/endp/file-server-endpoint.nix
+    ./services/endp/webdav-endpoint.nix
     ./services/sso/kanidm.nix
     ./services/sso/oauth2-proxy.nix
   ];

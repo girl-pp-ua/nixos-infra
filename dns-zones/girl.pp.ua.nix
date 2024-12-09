@@ -88,6 +88,10 @@ in
 
     # services:
     files  = mkCname "oci1.${zone}";
+    webdav = mkCname "oci1.${zone}" // {
+      # Created as a workaround for Dolphin trying to connect over IPv6 on IPv4-only hosts
+      subdomains.legacy = mkCname "ipv4.oci1.${zone}";
+    };
     sso    = mkCname "oci1.${zone}";
     redlib = mkCname "oci2.${zone}";
     ntfy   = mkCname "oci2.${zone}";
