@@ -120,5 +120,6 @@ in
 
     # TXT records:
     _atproto.TXT = [ "did=did:plc:wvftnj7awmh4gwf3pt5mlvwq" ];
+    _discord.TXT = [ "dh=ed7fe6618b265997be79e5e393a215136aafaa28" ];
   };
 }
