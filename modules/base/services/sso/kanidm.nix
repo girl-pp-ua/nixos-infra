@@ -41,13 +41,14 @@ in {
             displayName = "grfgh";
             mailAddresses = [ "prasol258@gmail.com" ];
             groups = [
-              "oauth2-proxy-test.access"
+              "fwauthtest1.access"
+              "uptime-kuma.access"
             ];
           };
         };
 
         groups = {
-          "oauth2-proxy-test.access" = {};
+          "fwauthtest1.access" = {};
           "uptime-kuma.access" = {};
         };
 
@@ -69,13 +70,13 @@ in {
           scopeMaps = let
             scope = [ "openid" "email" "profile" ];
           in {
-            "oauth2-proxy-test.access" = scope;
+            "fwauthtest1.access" = scope;
             "uptime-kuma.access" = scope;
           };
 
           claimMaps.groups = {
             joinType = "array";
-            valuesByGroup."oauth2-proxy-test.access" = [ "oauth2_proxy_test_access" ];
+            valuesByGroup."fwauthtest1.access" = [ "fwauthtest1_access" ];
             valuesByGroup."uptime-kuma.access" = [ "uptime_kuma_access" ];
           };
         };
