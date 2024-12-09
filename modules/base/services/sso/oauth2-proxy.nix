@@ -18,7 +18,7 @@ in {
       };
       urlPrefix = lib.mkOption {
         type = lib.types.str;
-        default = "/_oauth2";
+        default = "/_oauth2_proxy";
       };
       clientID = lib.mkOption {
         type = lib.types.str;

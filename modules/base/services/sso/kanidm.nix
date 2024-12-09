@@ -56,7 +56,7 @@ in {
           basicSecretFile = pkgs.writeText "this_is_bad_1" cfg.secrets.oauth2_proxy.clientSecret;
 
           originUrl = [
-            "https://fwauthtest1.girl.pp.ua/_oauth2/callback"
+            "https://fwauthtest1.girl.pp.ua/${cfg.services.oauth2_proxy.urlPrefix}/callback"
           ];
           originLanding = "https://fwauthtest1.girl.pp.ua/";
 
