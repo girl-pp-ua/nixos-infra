@@ -18,6 +18,12 @@
     system = "x86_64-linux";
     pkgs = import nixpkgs {
       inherit system;
+      # overlay caddy
+      overlays = [
+        (final: prev: {
+          caddy = final.callPackage ./pkgs/caddy-with-plugins.nix {};
+        })
+      ];
     };
     specialArgs = {
       inherit self inputs system pkgs dns;
