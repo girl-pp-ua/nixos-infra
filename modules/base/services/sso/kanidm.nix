@@ -36,34 +36,47 @@ in {
         autoRemove = true;
         instanceUrl = "https://localhost:${toString cfg.services.kanidm.port}";
 
-        persons.grfgh = {
-          displayName = "grfgh";
-          mailAddresses = [ "prasol258@gmail.com" ];
-          groups = [
-            "oauth2_testing_only.access"
-          ];
+        persons ={
+          grfgh = {
+            displayName = "grfgh";
+            mailAddresses = [ "prasol258@gmail.com" ];
+            groups = [
+              "oauth2-proxy-test.access"
+            ];
+          };
         };
 
-        groups."oauth2_testing_only.access" = {};
+        groups = {
+          "oauth2-proxy-test.access" = {};
+          "uptime-kuma.access" = {};
+        };
 
-        systems.oauth2."oauth2-proxy" = let
-          scope = [ "openid" "email" "profile" ];
-        in {
+        systems.oauth2."oauth2-proxy" = {
           displayName = "oauth2-proxy";
           preferShortUsername = true;
 
           # XXX: BAD IDEA! secret is exposed in /nix/store
           basicSecretFile = pkgs.writeText "this_is_bad_1" cfg.secrets.oauth2_proxy.clientSecret;
 
-          originUrl = [
-            "https://fwauthtest1.girl.pp.ua${cfg.services.oauth2_proxy.urlPrefix}/callback"
-          ];
           originLanding = "https://fwauthtest1.girl.pp.ua/";
+          originUrl = let
+            mkOriginUrl = domain: "https://${domain}${cfg.services.oauth2_proxy.urlPrefix}/callback";
+          in [
+            (mkOriginUrl "fwauthtest1.girl.pp.ua")
+            (mkOriginUrl "uptime.girl.pp.ua")
+          ];
 
-          scopeMaps."oauth2_testing_only.access" = scope;
+          scopeMaps = let
+            scope = [ "openid" "email" "profile" ];
+          in {
+            "oauth2-proxy-test.access" = scope;
+            "uptime-kuma.access" = scope;
+          };
+
           claimMaps.groups = {
             joinType = "array";
-            valuesByGroup."oauth2_testing_only.access" = [ "oauth2_testing_only_access" ];
+            valuesByGroup."oauth2-proxy-test.access" = [ "oauth2_proxy_test_access" ];
+            valuesByGroup."uptime-kuma.access" = [ "uptime_kuma_access" ];
           };
         };
       };

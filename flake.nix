@@ -13,6 +13,10 @@
       url = "github:redlib-org/redlib";
       flake = false; # (using as source for pkgs.redlib)
     };
+    uptime-kuma = {
+      url = "github:louislam/uptime-kuma/2.0.0-beta.0";
+      flake = false;
+    };
   };
   outputs = inputs@{ self, nixpkgs, deploy-rs, dns, ... }: let
     system = "x86_64-linux";
@@ -60,6 +64,7 @@
             file-server-endpoint.enable = true;
             webdav-endpoint.enable = true;
             kanidm.enable = true;
+            uptime-kuma.enable = true;
           };
         }
       ];

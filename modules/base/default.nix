@@ -23,6 +23,7 @@
     ./services/endp/webdav-endpoint.nix
     ./services/sso/kanidm.nix
     ./services/sso/oauth2-proxy.nix
+    ./services/uptime-kuma.nix
   ];
 
   i18n.defaultLocale = "en_US.UTF-8";

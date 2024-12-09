@@ -111,7 +111,8 @@
         "deploy-rs": "deploy-rs",
         "dns": "dns",
         "nixpkgs": "nixpkgs",
-        "redlib": "redlib"
+        "redlib": "redlib",
+        "uptime-kuma": "uptime-kuma"
       }
     },
     "systems": {
@@ -126,6 +127,23 @@
       "original": {
         "owner": "nix-systems",
         "repo": "default",
+        "type": "github"
+      }
+    },
+    "uptime-kuma": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1730207131,
+        "narHash": "sha256-QWGrwysPS5BxhtjluI30pKWCUo7O3kpL4K8uEb5J3Ik=",
+        "owner": "louislam",
+        "repo": "uptime-kuma",
+        "rev": "4e144ec71ceb917fd08a1842a5f50538af8e5472",
+        "type": "github"
+      },
+      "original": {
+        "owner": "louislam",
+        "ref": "2.0.0-beta.0",
+        "repo": "uptime-kuma",
         "type": "github"
       }
     },
