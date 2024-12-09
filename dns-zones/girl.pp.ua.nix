@@ -93,6 +93,7 @@ in
     ntfy   = mkCname "oci2.${zone}";
 
     # testing:
+    oauth2      = mkCname "oci1.${zone}";
     fwauthtest1 = mkCname "oci1.${zone}";
 
     # cdn:

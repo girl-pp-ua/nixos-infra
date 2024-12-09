@@ -3,7 +3,7 @@ let
   cfg = config.cfg;
   idp = import ./../../../../lib/oidc-kamidm.nix {
     domain = cfg.services.oauth2_proxy.authDomain;
-    client_id =  cfg.secrets.oauth2_proxy.clientID;
+    client_id = cfg.services.oauth2_proxy.clientID;
   };
 in {
   options = {
@@ -18,7 +18,11 @@ in {
       };
       urlPrefix = lib.mkOption {
         type = lib.types.str;
-        default = "/_oauth2_proxy";
+        default = "/_oauth2";
+      };
+      clientID = lib.mkOption {
+        type = lib.types.str;
+        default = "oauth2-proxy";
       };
       authDomain = lib.mkOption {
         type = lib.types.str;
@@ -37,11 +41,15 @@ in {
       httpAddress = "http://127.0.0.1:${toString cfg.services.oauth2_proxy.port}";
       proxyPrefix = cfg.services.oauth2_proxy.urlPrefix;
       reverseProxy = true;
+      approvalPrompt = "auto";
+      setXauthrequest = true;
+      # redirectURL = "https://oauth2.girl.pp.ua/oauth2/callback";
 
       provider = "oidc";
-      inherit (cfg.secrets.oauth2_proxy) clientID clientSecret;
+      inherit (cfg.services.oauth2_proxy) clientID;
+      inherit (cfg.secrets.oauth2_proxy) clientSecret;
       oidcIssuerUrl = idp.oidc_issuer_uri;
-      loginURL = idp.api_auth;
+      loginURL = idp.api_auth; # ui?
       redeemURL = idp.token_endpoint;
       validateURL = idp.rfc7662_token_introspection;
       profileURL = idp.oidc_user_info;
@@ -51,7 +59,6 @@ in {
 
       cookie.secret = cfg.secrets.oauth2_proxy.cookieSecret;
 
-      approvalPrompt = "auto";
       extraConfig = {
         provider-display-name = "Kanidm";
         # skip-provider-button = true;

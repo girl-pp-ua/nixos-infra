@@ -40,24 +40,31 @@ in {
           displayName = "grfgh";
           mailAddresses = [ "prasol258@gmail.com" ];
           groups = [
-            "oauth2-proxy.access"
+            "oauth2_testing_only.access"
           ];
         };
 
-        groups."oauth2-proxy.access" = {};
-        systems.oauth2."oauth2-proxy" = {
+        groups."oauth2_testing_only.access" = {};
+
+        systems.oauth2."oauth2-proxy" = let
+          scope = [ "openid" "email" "profile" ];
+        in {
           displayName = "oauth2-proxy";
+          preferShortUsername = true;
+
           # XXX: BAD IDEA! secret is exposed in /nix/store
           basicSecretFile = pkgs.writeText "this_is_bad_1" cfg.secrets.oauth2_proxy.clientSecret;
+
           originUrl = [
-            "https://fwauthtest1.girl.pp.ua/"
+            "https://fwauthtest1.girl.pp.ua/_oauth2/callback"
           ];
           originLanding = "https://fwauthtest1.girl.pp.ua/";
-          scopeMaps."oauth2-proxy.access" = [
-            "openid"
-            "email"
-            "profile"
-          ];
+
+          scopeMaps."oauth2_testing_only.access" = scope;
+          claimMaps.groups = {
+            joinType = "array";
+            valuesByGroup."oauth2_testing_only.access" = [ "oauth2_testing_only_access" ];
+          };
         };
       };
     };
