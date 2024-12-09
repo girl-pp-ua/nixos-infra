@@ -45,6 +45,13 @@ in {
               "uptime-kuma.access"
             ];
           };
+          niko = {
+            displayName = "niko";
+            mailAddresses = [ "nyanbinary@tutamail.com" ];
+            groups = [
+              "uptime-kuma.access"
+            ];
+          };
         };
 
         groups = {
