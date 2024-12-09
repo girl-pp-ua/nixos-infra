@@ -61,7 +61,7 @@ in {
 
       extraConfig = {
         provider-display-name = "Kanidm";
-        # skip-provider-button = true;
+        skip-provider-button = true;
         code-challenge-method = "S256";
         set-authorization-header = true;
         pass-access-token = true;
