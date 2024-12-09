@@ -96,6 +96,7 @@ in
     redlib = mkCname "oci2.${zone}";
     ntfy   = mkCname "oci2.${zone}";
     uptime = mkCname "oci1.${zone}";
+    status = mkCname "oci1.${zone}";
 
     # testing:
     oauth2      = mkCname "oci1.${zone}";

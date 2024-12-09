@@ -15,6 +15,7 @@ let cfg = config.cfg; in {
         type = lib.types.listOf lib.types.str;
         default = [
           "status.nyanbinary.rs"
+          "status.girl.pp.ua"
         ];
       };
     };
