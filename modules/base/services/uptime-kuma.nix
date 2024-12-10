@@ -67,10 +67,15 @@ let cfg = config.cfg; in {
         serverAliases = builtins.tail cfg.services.uptime-kuma.statusPages;
         extraConfig = ''
           import encode
-          @deny {
-            path /socket.io
-            path /socket.io/*
+
+          @root {
+            path /status
+            path /status/*
           }
+          handle @root {
+            redir /
+          }
+
           @allow {
             path /
             path /manifest.json
@@ -84,13 +89,20 @@ let cfg = config.cfg; in {
             path /upload/logo*.png
             path /api/entry-page
             path /api/status-page/heartbeat/*
-          }
-          handle @deny {
-            respond 403
+            path /api/status-page/*/manifest.json
           }
           handle @allow {
             reverse_proxy http://127.0.0.1:${toString cfg.services.uptime-kuma.port}
           }
+
+          @deny {
+            path /socket.io
+            path /socket.io/*
+          }
+          handle @deny {
+            respond 403
+          }
+
           handle {
             redir https://uptime.girl.pp.ua{uri}
           }
