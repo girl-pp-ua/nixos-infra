@@ -67,13 +67,26 @@ let cfg = config.cfg; in {
         serverAliases = builtins.tail cfg.services.uptime-kuma.statusPages;
         extraConfig = ''
           import encode
+          @deny {
+            path /socket.io
+            path /socket.io/*
+          }
           @allow {
             path /
+            path /manifest.json
+            path /favicon.ico
+            path /apple-touch-icon.png
+            path /icon-192x192.png
+            path /icon-512x512.png
             path /icon.svg
-            path /assets/*
+            path /assets/index-*.js
+            path /assets/index-*.css
+            path /upload/logo*.png
             path /api/entry-page
             path /api/status-page/heartbeat/*
-            path /upload/logo*
+          }
+          handle @deny {
+            respond 403
           }
           handle @allow {
             reverse_proxy http://127.0.0.1:${toString cfg.services.uptime-kuma.port}
