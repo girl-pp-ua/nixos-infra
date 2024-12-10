@@ -73,6 +73,7 @@ let cfg = config.cfg; in {
             path /assets/*
             path /api/entry-page
             path /api/status-page/heartbeat/*
+            path /upload/logo*
           }
           handle @allow {
             reverse_proxy http://127.0.0.1:${toString cfg.services.uptime-kuma.port}
