@@ -111,7 +111,12 @@ in
     };
 
     # misc.:
-    infra = mkCname "beeg-pp-infra.netlify.app.";
+    infra.NS = [
+      "dns1.p09.nsone.net"
+      "dns2.p09.nsone.net"
+      "dns3.p09.nsone.net"
+      "dns4.p09.nsone.net"
+    ];
 
     # legacy services:
     services.subdomains = {
