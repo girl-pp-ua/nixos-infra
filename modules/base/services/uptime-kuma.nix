@@ -21,7 +21,6 @@ let cfg = config.cfg; in {
     };
   };
   config = lib.mkIf cfg.services.uptime-kuma.enable {
-
     services.uptime-kuma = {
       enable = true;
       package = pkgs.uptime-kuma.overrideAttrs (prev: rec {
@@ -68,13 +67,8 @@ let cfg = config.cfg; in {
         extraConfig = ''
           import encode
 
-          @root {
-            path /status
-            path /status/*
-          }
-          handle @root {
-            redir /
-          }
+          redir /status /
+          redir /status/* /
 
           @allow {
             path /
