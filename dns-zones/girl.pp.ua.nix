@@ -118,11 +118,6 @@ in
       "dns4.p09.nsone.net."
     ];
 
-    # legacy services:
-    services.subdomains = {
-      uptime = mkCname "oci1.${zone}";
-    };
-
     # TXT records:
     _atproto.TXT = [ "did=did:plc:wvftnj7awmh4gwf3pt5mlvwq" ];
     _discord.TXT = [ "dh=ed7fe6618b265997be79e5e393a215136aafaa28" ];
