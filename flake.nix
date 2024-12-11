@@ -1,12 +1,18 @@
 {
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable-small";
+    nixpkgs = {
+      # TODO revert to unstable-small (currently a lot of rebuilds)
+      #nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable-small";
+      url = "github:NixOS/nixpkgs/nixos-unstable";
+    };
     deploy-rs = {
       url = "github:serokell/deploy-rs";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     dns = {
-      url = "github:nix-community/dns.nix";
+      # TODO replace once https://github.com/nix-community/dns.nix/issues/35 is resolved
+      # url = "github:nix-community/dns.nix";
+      url = "github:griffi-gh/dns.nix/patch-1";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     redlib = {
