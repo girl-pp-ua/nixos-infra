@@ -2,7 +2,7 @@
 with dns.lib.combinators;
 let
   zone = "girl.pp.ua.";
-  serial = 2024112801;
+  serial = 202412160206;
 
   /**
     Creates A + AAAA records and ipv4.@ and ipv6.@ subdomains
@@ -35,6 +35,12 @@ let
     oci2 = {
       ipv4 = "144.24.178.67";
       ipv6 = "2603:c020:800c:9c7f:0:ba:be:2";
+    };
+
+    # oci-loadbalancer: Oracle Cloud Infrastructure - test-loadbalancer
+    oci-loadbalancer = {
+      ipv4 = "130.61.214.159";
+      ipv6 = null;
     };
   };
 in
@@ -85,6 +91,9 @@ in
     # nameservers:
     ns1 = with hosts; host oci1.ipv4 oci1.ipv6;
     ns2 = with hosts; host oci2.ipv4 oci2.ipv6;
+
+    # loadbalancer:
+    oci-loadbalancer.A = [ hosts.oci-loadbalancer.ipv4 ];
 
     # services:
     files  = mkCname "oci1.${zone}";
