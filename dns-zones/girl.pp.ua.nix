@@ -2,7 +2,7 @@
 with dns.lib.combinators;
 let
   zone = "girl.pp.ua.";
-  serial = 202412160206;
+  serial = 2024121602;
 
   /**
     Creates A + AAAA records and ipv4.@ and ipv6.@ subdomains
