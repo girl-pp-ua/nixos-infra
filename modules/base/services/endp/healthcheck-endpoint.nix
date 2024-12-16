@@ -22,6 +22,16 @@ let cfg = config.cfg; in {
           respond "OK"
         '';
       };
+      "http://oci-loadbalancer.girl.pp.ua" = {
+        serverAliases = [
+          "http://ipv4.oci-loadbalancer.girl.pp.ua"
+          "http://ipv6.oci-loadbalancer.girl.pp.ua"
+        ];
+        extraConfig = ''
+          import cors *
+          respond "OK ${host}"
+        '';
+      };
     };
   };
 }
