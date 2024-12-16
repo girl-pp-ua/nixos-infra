@@ -43,6 +43,7 @@ in {
             groups = [
               "fwauthtest1.access"
               "uptime-kuma.access"
+              "oracle-cloud-infrastructure.access"
             ];
           };
           niko = {
@@ -55,16 +56,14 @@ in {
           };
         };
 
-        groups = {
-          "fwauthtest1.access" = {};
-          "uptime-kuma.access" = {};
-        };
-
+        # FIXME: currently, enabling ANY of oauth2-proxy groups allows access to ALL services proxied by oauth2-proxy
+        groups."fwauthtest1.access" = {};
+        groups."uptime-kuma.access" = {};
         systems.oauth2."oauth2-proxy" = {
           displayName = "oauth2-proxy";
           preferShortUsername = true;
 
-          # XXX: BAD IDEA! secret is exposed in /nix/store
+          # FIXME: BAD IDEA! secret is exposed in /nix/store
           basicSecretFile = pkgs.writeText "this_is_bad_1" cfg.secrets.oauth2_proxy.clientSecret;
 
           originLanding = "https://fwauthtest1.girl.pp.ua/";
@@ -86,6 +85,35 @@ in {
             joinType = "array";
             valuesByGroup."fwauthtest1.access" = [ "fwauthtest1_access" ];
             valuesByGroup."uptime-kuma.access" = [ "uptime_kuma_access" ];
+          };
+        };
+
+        groups."oracle-cloud-infrastructure.access" = {};
+        systems.oauth2."oracle-cloud-infrastructure" = {
+          displayName = "Oracle Cloud Infrastructure";
+          preferShortUsername = true;
+
+          # Oracle Cloud does not support PKCE
+          allowInsecureClientDisablePkce = true;
+
+          # FIXME: BAD IDEA! secret is exposed in /nix/store
+          basicSecretFile = pkgs.writeText "this_is_bad_2" cfg.secrets.ociTenancy.clientSecret;
+
+          originLanding = "https://cloud.oracle.com/?tenant=${cfg.secrets.ociTenancy.tenancyName}&region=${cfg.secrets.ociTenancy.tenancyRegion}";
+          originUrl = [
+            "https://${cfg.secrets.ociTenancy.identityDomain}/oauth2/v1/social/callback"
+            "https://${cfg.secrets.ociTenancy.identityDomain}:443/oauth2/v1/social/callback"
+          ];
+
+          scopeMaps."oracle-cloud-infrastructure.access" = [
+            "openid" "email" "profile"
+          ];
+
+          claimMaps.groups = {
+            joinType = "array";
+            valuesByGroup."oracle-cloud-infrastructure.access" = [
+              "oracle_cloud_infrastructure_access"
+            ];
           };
         };
       };
