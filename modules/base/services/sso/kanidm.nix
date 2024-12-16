@@ -69,7 +69,7 @@ in {
 
           originLanding = "https://fwauthtest1.girl.pp.ua/";
           originUrl = let
-            mkOriginUrl = domain: "https://${domain}${cfg.services.oauth2_proxy.urlPrefix}/callback";
+            mkOriginUrl = domain: "https://${domain}${cfg.services.oauth2_proxy.urlPrefix}/callback/";
           in [
             (mkOriginUrl "fwauthtest1.girl.pp.ua")
             (mkOriginUrl "uptime.girl.pp.ua")
@@ -102,8 +102,8 @@ in {
 
           originLanding = "https://cloud.oracle.com/?tenant=${cfg.secrets.ociTenancy.tenancyName}&region=${cfg.secrets.ociTenancy.tenancyRegion}";
           originUrl = [
-            "https://${cfg.secrets.ociTenancy.identityDomain}/oauth2/v1/social/callback"
-            "https://${cfg.secrets.ociTenancy.identityDomain}:443/oauth2/v1/social/callback"
+            "https://${cfg.secrets.ociTenancy.identityDomain}/oauth2/v1/social/callback/"
+            "https://${cfg.secrets.ociTenancy.identityDomain}:443/oauth2/v1/social/callback/"
           ];
 
           scopeMaps."oracle-cloud-infrastructure.access" = [
