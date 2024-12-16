@@ -52,6 +52,7 @@ in {
             groups = [
               "fwauthtest1.access"
               "uptime-kuma.access"
+              "oracle-cloud-infrastructure.access"
             ];
           };
         };
