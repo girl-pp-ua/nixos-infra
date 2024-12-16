@@ -40,7 +40,7 @@ let
     # oci-loadbalancer: Oracle Cloud Infrastructure - test-loadbalancer
     oci-loadbalancer = {
       ipv4 = "130.61.214.159";
-      ipv6 = null;
+      ipv6 = "2603:c020:800c:9c7f:3906:822b:23d9:899c";
     };
   };
 in
@@ -87,13 +87,11 @@ in
     # hosts:
     oci1 = with hosts; mkDualstackHost oci1.ipv4 oci1.ipv6;
     oci2 = with hosts; mkDualstackHost oci2.ipv4 oci2.ipv6;
+    oci-loadbalancer = with hosts; mkDualstackHost oci-loadbalancer.ipv4 oci-loadbalancer.ipv6;
 
     # nameservers:
     ns1 = with hosts; host oci1.ipv4 oci1.ipv6;
     ns2 = with hosts; host oci2.ipv4 oci2.ipv6;
-
-    # loadbalancer:
-    oci-loadbalancer.A = [ hosts.oci-loadbalancer.ipv4 ];
 
     # services:
     files  = mkCname "oci1.${zone}";
