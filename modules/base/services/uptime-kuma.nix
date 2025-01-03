@@ -29,7 +29,7 @@ let cfg = config.cfg; in {
         npmDeps = pkgs.fetchNpmDeps {
           inherit src;
           name = "${prev.pname}-${version}-npm-deps";
-          hash = "sha256-DuXBu536Ro6NA3pPnP1mL+hBdgKCSudV0rxD2vZwX3o=";
+          hash = "sha256-NfgfDkL87NKbCEanYNzrj7PT1jwjnBvRZxBqKTSrOYs=";
         };
         patches = []; # (patch does not apply to 2.0.0-beta, see workaround below)
       });

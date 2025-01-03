@@ -76,11 +76,11 @@
     },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1734649271,
-        "narHash": "sha256-4EVBRhOjMDuGtMaofAIqzJbg4Ql7Ai0PSeuVZTHjyKQ=",
+        "lastModified": 1735834308,
+        "narHash": "sha256-dklw3AXr3OGO4/XT1Tu3Xz9n/we8GctZZ75ZWVqAVhk=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "d70bd19e0a38ad4790d3913bf08fcbfc9eeca507",
+        "rev": "6df24922a1400241dae323af55f30e4318a6ca65",
         "type": "github"
       },
       "original": {
@@ -133,16 +133,16 @@
     "uptime-kuma": {
       "flake": false,
       "locked": {
-        "lastModified": 1730207131,
-        "narHash": "sha256-QWGrwysPS5BxhtjluI30pKWCUo7O3kpL4K8uEb5J3Ik=",
+        "lastModified": 1734684179,
+        "narHash": "sha256-+s7shACltkSy1j+7y8Z1PMqs7cWShxC6WhpM5jQhDPU=",
         "owner": "louislam",
         "repo": "uptime-kuma",
-        "rev": "4e144ec71ceb917fd08a1842a5f50538af8e5472",
+        "rev": "20da4d29ab9c7325050f158f8af6ad1eed353002",
         "type": "github"
       },
       "original": {
         "owner": "louislam",
-        "ref": "2.0.0-beta.0",
+        "ref": "2.0.0-beta.1",
         "repo": "uptime-kuma",
         "type": "github"
       }

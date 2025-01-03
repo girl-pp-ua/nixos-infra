@@ -17,21 +17,22 @@
       flake = false; # (using as source for pkgs.redlib)
     };
     uptime-kuma = {
-      url = "github:louislam/uptime-kuma/2.0.0-beta.0";
+      url = "github:louislam/uptime-kuma/2.0.0-beta.1";
       flake = false;
     };
   };
   outputs = inputs@{ self, nixpkgs, deploy-rs, dns, ... }: let
     system = "x86_64-linux";
-    pkgs = import nixpkgs {
-      inherit system;
-      # overlay caddy
-      overlays = [
-        (final: prev: {
-          caddy = final.callPackage ./pkgs/caddy-with-plugins.nix {};
-        })
-      ];
-    };
+    pkgs = nixpkgs.legacyPackages.${system};
+    # pkgs = import nixpkgs {
+    #   inherit system;
+    #   # overlay caddy
+    #   overlays = [
+    #     (final: prev: {
+    #       caddy = final.callPackage ./pkgs/caddy-with-plugins.nix {};
+    #     })
+    #   ];
+    # };
     specialArgs = {
       inherit self inputs system pkgs dns;
     };
