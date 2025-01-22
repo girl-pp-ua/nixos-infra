@@ -24,17 +24,8 @@
   outputs = inputs@{ self, nixpkgs, deploy-rs, dns, ... }: let
     system = "x86_64-linux";
     pkgs = nixpkgs.legacyPackages.${system};
-    # pkgs = import nixpkgs {
-    #   inherit system;
-    #   # overlay caddy
-    #   overlays = [
-    #     (final: prev: {
-    #       caddy = final.callPackage ./pkgs/caddy-with-plugins.nix {};
-    #     })
-    #   ];
-    # };
     specialArgs = {
-      inherit self inputs system pkgs dns;
+      inherit self inputs system dns;
     };
     mkNixosSystem = host: extraModules: (
       nixpkgs.lib.nixosSystem {
