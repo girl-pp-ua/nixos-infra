@@ -24,6 +24,9 @@
         identityDomain = mkOption { type = types.str; };
         clientSecret = mkOption { type = types.str; };
       };
+      twitter = {
+        credentials = mkOption { type = types.str; };
+      };
     };
   };
 }

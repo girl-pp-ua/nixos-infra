@@ -24,6 +24,7 @@
     ./services/sso/kanidm.nix
     ./services/sso/oauth2-proxy.nix
     ./services/uptime-kuma.nix
+    ./services/nitter.nix
   ];
 
   i18n.defaultLocale = "en_US.UTF-8";

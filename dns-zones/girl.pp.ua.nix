@@ -101,6 +101,7 @@ in
     };
     sso    = mkCname "oci1.${zone}";
     redlib = mkCname "oci2.${zone}";
+    nitter = mkCname "oci2.${zone}";
     ntfy   = mkCname "oci2.${zone}";
     uptime = mkCname "oci1.${zone}";
     status = mkCname "oci1.${zone}";

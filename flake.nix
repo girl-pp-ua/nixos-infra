@@ -68,6 +68,7 @@
           cfg.services = {
             dns-server.enable = true;
             redlib.enable = true;
+            nitter.enable = true;
             ntfy.enable = true;
           };
         }
