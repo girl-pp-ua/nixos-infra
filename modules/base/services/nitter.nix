@@ -4,6 +4,8 @@ let
   crenentialsFile = pkgs.writeText "twitter-credentials.json" cfg.secrets.twitter.credentials;
 in
 {
+  # TODO fix this
+
   options = {
     cfg.services.nitter = {
       enable = lib.mkEnableOption "redlib";
@@ -39,7 +41,7 @@ in
     };
 
     systemd.services.nitter.environment = {
-      "DISABLE_NGINX" = "true";
+      # "DISABLE_NGINX" = "true";
       "TWITTER_CREDENTIALS_FILE" = "${crenentialsFile}";
     };
 

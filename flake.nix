@@ -68,7 +68,7 @@
           cfg.services = {
             dns-server.enable = true;
             redlib.enable = true;
-            nitter.enable = true;
+            # nitter.enable = true; # TODO fix; borked
             ntfy.enable = true;
           };
         }
