@@ -12,7 +12,7 @@ let cfg = config.cfg; in {
         plugins = [
           "github.com/mholt/caddy-webdav@v0.0.0-20241008162340-42168ba04c9d"
         ];
-        hash = "sha256-3qFQIxBhL2R7JADpNuFRkzCm4wpZytq5Mepr+7ulz10=";
+        hash = "sha256-Q9pocz1FE1ttUfR10J8kEykW4NTQMI4lj54PTXBZZ0M=";
       };
       enableReload = true;
       adapter = "caddyfile";
