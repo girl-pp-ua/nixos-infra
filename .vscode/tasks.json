@@ -10,14 +10,21 @@
         "kind": "build",
         "isDefault": true
       },
-      "presentation": {
-        "echo": true,
-        "reveal": "always",
-        "focus": false,
-        "panel": "dedicated",
-        "clear": true
-      },
       "problemMatcher": []
+    },
+    {
+      "label": "deploy: oci1",
+      "type": "shell",
+      "command": "deploy .#oci1",
+      "problemMatcher": [],
+      "group": "build"
+    },
+    {
+      "label": "deploy: oci2",
+      "type": "shell",
+      "command": "deploy .#oci2",
+      "problemMatcher": [],
+      "group": "build"
     }
   ]
 }
