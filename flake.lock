@@ -76,11 +76,11 @@
     },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1738142207,
-        "narHash": "sha256-NGqpVVxNAHwIicXpgaVqJEJWeyqzoQJ9oc8lnK9+WC4=",
+        "lastModified": 1739866667,
+        "narHash": "sha256-EO1ygNKZlsAC9avfcwHkKGMsmipUk1Uc0TbrEZpkn64=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "9d3ae807ebd2981d593cddd0080856873139aa40",
+        "rev": "73cf49b8ad837ade2de76f87eb53fc85ed5d4680",
         "type": "github"
       },
       "original": {
@@ -93,11 +93,11 @@
     "redlib": {
       "flake": false,
       "locked": {
-        "lastModified": 1733156997,
-        "narHash": "sha256-bAsSLZWGLMrD21xdQtD5NyNsNSZwLOd/+6ujZpbsyQg=",
+        "lastModified": 1739850061,
+        "narHash": "sha256-tcazjCxioVg13BexUnuybWKG/zaXo4xBAvb7BSvpShI=",
         "owner": "redlib-org",
         "repo": "redlib",
-        "rev": "d7ec07cd0d713fc308e1004663b0053db8f00a0f",
+        "rev": "efcf2fc24c455acdf2ddc4adc8d20606883aa118",
         "type": "github"
       },
       "original": {
