@@ -5,7 +5,7 @@
       url = "github:NixOS/nixpkgs/nixos-unstable";
     };
     deploy-rs = {
-      url = "github:serokell/deploy-rs";
+      url = "github:PhilTaken/deploy-rs/phil/async-build-and-push";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     dns = {
@@ -88,7 +88,7 @@
     # dev shells
     devShells.${system}.default = pkgs.mkShell {
       packages = with pkgs; [
-        pkgs.deploy-rs
+        deploy-rs.outputs.packages.${system}.deploy-rs
         git-crypt
       ];
     };
