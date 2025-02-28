@@ -18,13 +18,20 @@
     ./services/redlib.nix
     ./services/ntfy.nix
     ./services/nfs-server.nix
+    ./services/uptime-kuma.nix
+    ./services/nitter.nix
+
+    # SSO
+    ./services/sso/kanidm.nix
+    ./services/sso/oauth2-proxy.nix
+
+    # Caddy endpoint configuration
     ./services/endp/healthcheck-endpoint.nix
     ./services/endp/file-server-endpoint.nix
     ./services/endp/webdav-endpoint.nix
-    ./services/sso/kanidm.nix
-    ./services/sso/oauth2-proxy.nix
-    ./services/uptime-kuma.nix
-    ./services/nitter.nix
+
+    # Testing/non-prod services
+    # ./services/testing/asterisk.nix
   ];
 
   i18n.defaultLocale = "en_US.UTF-8";
