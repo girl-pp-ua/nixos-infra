@@ -31,7 +31,7 @@
     ./services/endp/webdav-endpoint.nix
 
     # Testing/non-prod services
-    # ./services/testing/asterisk.nix
+    ./services/testing/asterisk.nix
   ];
 
   i18n.defaultLocale = "en_US.UTF-8";
