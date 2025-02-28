@@ -74,4 +74,11 @@
     AllowSuspend=no
     AllowHibernation=no
   '';
+
+  # disable the lid switch (if present)
+  services.logind = {
+    lidSwitch = "ignore";
+    lidSwitchDocked = "ignore";
+    lidSwitchExternalPower = "ignore";
+  };
 }
