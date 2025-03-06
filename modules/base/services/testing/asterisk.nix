@@ -3,6 +3,11 @@ let cfg = config.cfg; in {
   options = {
     cfg.services.testing.asterisk = {
       enable = lib.mkEnableOption "asterisk phone system";
+      domain = lib.mkOption {
+        type = lib.types.str;
+        default = "voip.girl.pp.ua";
+        description = "Domain name for the asterisk server";
+      };
     };
   };
   config = lib.mkIf cfg.services.testing.asterisk.enable {
@@ -14,32 +19,13 @@ let cfg = config.cfg; in {
         debug=10
       '';
       confFiles = {
-        # "asterisk.conf" = ''
-        #   [directories](!)
-        #   astetcdir => /etc/asterisk
-        #   astmoddir => /usr/lib/asterisk/modules
-        #   astvarlibdir => /var/lib/asterisk
-        #   astdbdir => /var/lib/asterisk
-        #   astkeydir => /var/lib/asterisk
-        #   astdatadir => /var/lib/asterisk
-        #   astagidir => /var/lib/asterisk/agi-bin
-        #   astspooldir => /var/spool/asterisk
-        #   ; [options]
-        #   ; astrundir => /var/run/asterisk
-        #   ; astlogdir => /var/log/asterisk
-        #   ; astsbindir => /usr/sbin
-        #   ; runuser = asterisk ; The user to run as. The default is root.
-        #   ; rungroup = asterisk ; The group to run as. The default is root
-        # '';
         "modules.conf" = ''
           [modules]
           autoload=yes
-          ; preload=res_odbc.so
-          ; preload=res_config_odbc.so
           noload=chan_sip.so ; deprecated SIP module from days gone by
-          noload=res_adsi.so
-          noload=app_adsiprog.so
-          noload=app_getcpeid.so
+          noload=res_adsi.so     ; fails to load
+          noload=app_adsiprog.so ; fails to load
+          noload=app_getcpeid.so ; fails to load
         '';
         "logger.conf" = ''
           [general]
@@ -48,93 +34,65 @@ let cfg = config.cfg; in {
           full => notice,warning,error ;,debug,verbose
           syslog.local0 => notice,warning,error ;,debug,verbose
         '';
-        "pjsip.conf" = ''
+        "extensions.conf" = ''
+          [from-internal]
+          exten = 100,1,Answer()
+          same = n,Wait(1)
+          same = n,Playback(hello-world)
+          same = n,Hangup()
+        '';
+        "pjsip.conf" = let
+          mkEndpoint = { username, password }: ''
+
+            [${username}]
+            type=endpoint
+            context=from-internal
+            disallow=all
+            allow=ulaw
+            auth=${username}
+            aors=${username}
+            direct_media=no
+
+            [${username}]
+            type=auth
+            auth_type=userpass
+            password=${password}
+            username=${username}
+
+            [${username}]
+            type=aor
+            max_contacts=1
+          '';
+        in ''
           [global]
 
           [transport-udp]
-          type=transport
-          protocol=udp
-          bind=0.0.0.0
+          type = transport
+          protocol = udp
+          bind = 0.0.0.0:5060
+          local_net=127.0.0.0/8
+          local_net=10.0.0.0/8
+          external_media_address = ${cfg.services.testing.asterisk.domain}
+          external_signaling_address = ${cfg.services.testing.asterisk.domain}
 
-          [transport-tcp]
-          type=transport
-          protocol=tls
-          bind=0.0.0.0
+          ${mkEndpoint {
+            username = "6001";
+            password = "aec2Eenoh6";
+          }}
 
-          [apstest1-aors]
-          type=aor
-          max_contacts=1
-
-          [apstest1-auth]
-          type=auth
-          auth_type=userpass
-          username=apstest1
-          password=thah8EeB
-          realm=voip.girl.pp.ua
-
-          [apstest1-endpoint]
-          type=endpoint
-          context=softphones
-          disallow=all
-          allow=g722
-          allow=ulaw
-          allow=alaw
-          auth=apstest1-auth
-          aors=apstest1-aors
-
-          [apstest1-registration]
-          type=registration
-          transport=transport-udp
-          outbound_auth=apstest1-auth
-          server_uri=sip:voip.girl.pp.ua
-          client_uri=sip:apstest@voip.girl.pp.ua
-          contact_user=apstest1
-
-          [apstest1-identify]
-          type=identify
-          endpoint=apstest1
-
-          [apstest2-aors]
-          type=aor
-          max_contacts=1
-
-          [apstest2-auth]
-          type=auth
-          auth_type=userpass
-          username=apstest2
-          password=ooQu1ohz0U
-          realm=voip.girl.pp.ua
-
-          [apstest2-endpoint]
-          type=endpoint
-          context=softphones
-          disallow=all
-          allow=g722
-          allow=ulaw
-          allow=alaw
-          auth=apstest2-auth
-          aors=apstest2-aors
-
-          [apstest2-registration]
-          type=registration
-          transport=transport-udp
-          outbound_auth=apstest2-auth
-          server_uri=sip:voip.girl.pp.ua
-          client_uri=sip:apstest@voip.girl.pp.ua
-          contact_user=apstest2
-
-          [apstest2-identify]
-          type=identify
-          endpoint=apstest2
+          ${mkEndpoint {
+            username = "6002";
+            password = "wo9UawaD4u";
+          }}
         '';
-        "iax.conf" = ''
-          [general]
-          context=unauthenticated
-          allowguest=no
-          srvlookup=no  ; Don't do DNS lookup
-          udpbindaddr=0.0.0.0  ; Listen on all interfaces
-          tcpenable=no
-        '';
+        # "iax.conf" = ''
+        #   [general]
+        #   context=unauthenticated
+        #   allowguest=no
+        #   srvlookup=no  ; Don't do DNS lookup
+        #   udpbindaddr=0.0.0.0  ; Listen on all interfaces
+        #   tcpenable=no
+        # '';
       };
     };
     networking.firewall = {
