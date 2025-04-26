@@ -33,12 +33,12 @@ in
     services.uptime-kuma = {
       enable = true;
       package = pkgs.uptime-kuma.overrideAttrs (prev: rec {
-        version = "2.0.0-beta";
+        version = "2.0.0";
         src = "${inputs.uptime-kuma}";
         npmDeps = pkgs.fetchNpmDeps {
           inherit src;
           name = "${prev.pname}-${version}-npm-deps";
-          hash = "sha256-NfgfDkL87NKbCEanYNzrj7PT1jwjnBvRZxBqKTSrOYs=";
+          hash = "sha256-YZS6rUE7qi11gFqiZ7AU4u2JKmTLeqiQ0wVPbOA8KBg=";
         };
         patches = [ ]; # (patch does not apply to 2.0.0-beta, see workaround below)
       });
