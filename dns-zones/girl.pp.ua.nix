@@ -2,7 +2,7 @@
 with dns.lib.combinators;
 let
   zone = "girl.pp.ua.";
-  serial = 2025022601;
+  serial = 2025042600;
 
   /**
     Creates A + AAAA records and ipv4.@ and ipv6.@ subdomains
@@ -102,11 +102,9 @@ in
     };
     sso = mkCname "oci1.${zone}";
     redlib = mkCname "oci2.${zone}";
-    nitter = mkCname "oci2.${zone}";
     ntfy = mkCname "oci2.${zone}";
     uptime = mkCname "oci1.${zone}";
     status = mkCname "oci1.${zone}";
-    voip = mkCname "oci2.${zone}";
 
     # testing:
     oauth2 = mkCname "oci1.${zone}";
