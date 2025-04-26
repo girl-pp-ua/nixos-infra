@@ -1,5 +1,8 @@
 { lib, config, ... }:
-let cfg = config.cfg; in {
+let
+  cfg = config.cfg;
+in
+{
   options = {
     cfg.services.webdav-endpoint = {
       enable = lib.mkEnableOption "caddy webdav endpoint";

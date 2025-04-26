@@ -1,7 +1,13 @@
-{ config, pkgs, lib, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
 let
   cfg = config.cfg;
-in {
+in
+{
   options = {
     cfg.services.kanidm = {
       enable = lib.mkEnableOption "kanidm";
@@ -36,7 +42,7 @@ in {
         autoRemove = true;
         instanceUrl = "https://localhost:${toString cfg.services.kanidm.port}";
 
-        persons ={
+        persons = {
           grfgh = {
             displayName = "grfgh";
             mailAddresses = [ "prasol258@gmail.com" ];
@@ -58,8 +64,8 @@ in {
         };
 
         # FIXME: currently, enabling ANY of oauth2-proxy groups allows access to ALL services proxied by oauth2-proxy
-        groups."fwauthtest1.access" = {};
-        groups."uptime-kuma.access" = {};
+        groups."fwauthtest1.access" = { };
+        groups."uptime-kuma.access" = { };
         systems.oauth2."oauth2-proxy" = {
           displayName = "oauth2-proxy";
           preferShortUsername = true;
@@ -68,19 +74,27 @@ in {
           basicSecretFile = pkgs.writeText "this_is_bad_1" cfg.secrets.oauth2_proxy.clientSecret;
 
           originLanding = "https://fwauthtest1.girl.pp.ua/";
-          originUrl = let
-            mkOriginUrl = domain: "https://${domain}${cfg.services.oauth2_proxy.urlPrefix}/callback";
-          in [
-            (mkOriginUrl "fwauthtest1.girl.pp.ua")
-            (mkOriginUrl "uptime.girl.pp.ua")
-          ];
+          originUrl =
+            let
+              mkOriginUrl = domain: "https://${domain}${cfg.services.oauth2_proxy.urlPrefix}/callback";
+            in
+            [
+              (mkOriginUrl "fwauthtest1.girl.pp.ua")
+              (mkOriginUrl "uptime.girl.pp.ua")
+            ];
 
-          scopeMaps = let
-            scope = [ "openid" "email" "profile" ];
-          in {
-            "fwauthtest1.access" = scope;
-            "uptime-kuma.access" = scope;
-          };
+          scopeMaps =
+            let
+              scope = [
+                "openid"
+                "email"
+                "profile"
+              ];
+            in
+            {
+              "fwauthtest1.access" = scope;
+              "uptime-kuma.access" = scope;
+            };
 
           claimMaps.groups = {
             joinType = "array";
@@ -89,7 +103,7 @@ in {
           };
         };
 
-        groups."oracle-cloud-infrastructure.access" = {};
+        groups."oracle-cloud-infrastructure.access" = { };
         systems.oauth2."oracle-cloud-infrastructure" = {
           displayName = "Oracle Cloud Infrastructure";
           preferShortUsername = true;
@@ -107,7 +121,9 @@ in {
           ];
 
           scopeMaps."oracle-cloud-infrastructure.access" = [
-            "openid" "email" "profile"
+            "openid"
+            "email"
+            "profile"
           ];
 
           claimMaps.groups = {

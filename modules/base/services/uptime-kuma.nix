@@ -1,5 +1,14 @@
-{ config, pkgs, lib, inputs, ... }:
-let cfg = config.cfg; in {
+{
+  config,
+  pkgs,
+  lib,
+  inputs,
+  ...
+}:
+let
+  cfg = config.cfg;
+in
+{
   options = {
     cfg.services.uptime-kuma = {
       enable = lib.mkEnableOption "uptime-kuma";
@@ -31,7 +40,7 @@ let cfg = config.cfg; in {
           name = "${prev.pname}-${version}-npm-deps";
           hash = "sha256-NfgfDkL87NKbCEanYNzrj7PT1jwjnBvRZxBqKTSrOYs=";
         };
-        patches = []; # (patch does not apply to 2.0.0-beta, see workaround below)
+        patches = [ ]; # (patch does not apply to 2.0.0-beta, see workaround below)
       });
       settings = {
         UPTIME_KUMA_HOST = "127.0.0.1";
@@ -53,55 +62,57 @@ let cfg = config.cfg; in {
       "f /var/lib/uptime-kuma/kuma.db 0644 - - -"
     ];
 
-    services.caddy.virtualHosts = {
-      ${cfg.services.uptime-kuma.domain} = {
-        extraConfig = ''
-          import oauth2_proxy
-          import encode
-          reverse_proxy http://127.0.0.1:${toString cfg.services.uptime-kuma.port}
-        '';
-      };
-    } // (lib.optionalAttrs (builtins.length cfg.services.uptime-kuma.statusPages != 0) {
-      ${builtins.head cfg.services.uptime-kuma.statusPages} = {
-        serverAliases = builtins.tail cfg.services.uptime-kuma.statusPages;
-        extraConfig = ''
-          import encode
-
-          redir /status /
-          redir /status/* /
-
-          @allow {
-            path /
-            path /manifest.json
-            path /favicon.ico
-            path /apple-touch-icon.png
-            path /icon-192x192.png
-            path /icon-512x512.png
-            path /icon.svg
-            path /assets/index-*.js
-            path /assets/index-*.css
-            path /upload/logo*.png
-            path /api/entry-page
-            path /api/status-page/heartbeat/*
-            path /api/status-page/*/manifest.json
-          }
-          handle @allow {
+    services.caddy.virtualHosts =
+      {
+        ${cfg.services.uptime-kuma.domain} = {
+          extraConfig = ''
+            import oauth2_proxy
+            import encode
             reverse_proxy http://127.0.0.1:${toString cfg.services.uptime-kuma.port}
-          }
+          '';
+        };
+      }
+      // (lib.optionalAttrs (builtins.length cfg.services.uptime-kuma.statusPages != 0) {
+        ${builtins.head cfg.services.uptime-kuma.statusPages} = {
+          serverAliases = builtins.tail cfg.services.uptime-kuma.statusPages;
+          extraConfig = ''
+            import encode
 
-          @deny {
-            path /socket.io
-            path /socket.io/*
-          }
-          handle @deny {
-            respond 403
-          }
+            redir /status /
+            redir /status/* /
 
-          handle {
-            redir https://uptime.girl.pp.ua{uri}
-          }
-        '';
-      };
-    });
+            @allow {
+              path /
+              path /manifest.json
+              path /favicon.ico
+              path /apple-touch-icon.png
+              path /icon-192x192.png
+              path /icon-512x512.png
+              path /icon.svg
+              path /assets/index-*.js
+              path /assets/index-*.css
+              path /upload/logo*.png
+              path /api/entry-page
+              path /api/status-page/heartbeat/*
+              path /api/status-page/*/manifest.json
+            }
+            handle @allow {
+              reverse_proxy http://127.0.0.1:${toString cfg.services.uptime-kuma.port}
+            }
+
+            @deny {
+              path /socket.io
+              path /socket.io/*
+            }
+            handle @deny {
+              respond 403
+            }
+
+            handle {
+              redir https://uptime.girl.pp.ua{uri}
+            }
+          '';
+        };
+      });
   };
 }

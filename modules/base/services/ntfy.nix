@@ -1,5 +1,8 @@
 { config, lib, ... }:
-let cfg = config.cfg; in{
+let
+  cfg = config.cfg;
+in
+{
   options = {
     cfg.services.ntfy = {
       enable = lib.mkEnableOption "ntfy-sh";

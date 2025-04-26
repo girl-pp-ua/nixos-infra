@@ -1,5 +1,8 @@
 { config, lib, ... }:
-let cfg = config.cfg; in {
+let
+  cfg = config.cfg;
+in
+{
   options = {
     cfg.services.testing.asterisk = {
       enable = lib.mkEnableOption "asterisk phone system";
@@ -41,50 +44,54 @@ let cfg = config.cfg; in {
           same = n,Playback(hello-world)
           same = n,Hangup()
         '';
-        "pjsip.conf" = let
-          mkEndpoint = { username, password }: ''
+        "pjsip.conf" =
+          let
+            mkEndpoint =
+              { username, password }:
+              ''
 
-            [${username}]
-            type=endpoint
-            context=from-internal
-            disallow=all
-            allow=ulaw
-            auth=${username}
-            aors=${username}
-            direct_media=no
+                [${username}]
+                type=endpoint
+                context=from-internal
+                disallow=all
+                allow=ulaw
+                auth=${username}
+                aors=${username}
+                direct_media=no
 
-            [${username}]
-            type=auth
-            auth_type=userpass
-            password=${password}
-            username=${username}
+                [${username}]
+                type=auth
+                auth_type=userpass
+                password=${password}
+                username=${username}
 
-            [${username}]
-            type=aor
-            max_contacts=1
+                [${username}]
+                type=aor
+                max_contacts=1
+              '';
+          in
+          ''
+            [global]
+
+            [transport-udp]
+            type = transport
+            protocol = udp
+            bind = 0.0.0.0:5060
+            local_net=127.0.0.0/8
+            local_net=10.0.0.0/8
+            external_media_address = ${cfg.services.testing.asterisk.domain}
+            external_signaling_address = ${cfg.services.testing.asterisk.domain}
+
+            ${mkEndpoint {
+              username = "6001";
+              password = "aec2Eenoh6";
+            }}
+
+            ${mkEndpoint {
+              username = "6002";
+              password = "wo9UawaD4u";
+            }}
           '';
-        in ''
-          [global]
-
-          [transport-udp]
-          type = transport
-          protocol = udp
-          bind = 0.0.0.0:5060
-          local_net=127.0.0.0/8
-          local_net=10.0.0.0/8
-          external_media_address = ${cfg.services.testing.asterisk.domain}
-          external_signaling_address = ${cfg.services.testing.asterisk.domain}
-
-          ${mkEndpoint {
-            username = "6001";
-            password = "aec2Eenoh6";
-          }}
-
-          ${mkEndpoint {
-            username = "6002";
-            password = "wo9UawaD4u";
-          }}
-        '';
         # "iax.conf" = ''
         #   [general]
         #   context=unauthenticated
@@ -101,7 +108,10 @@ let cfg = config.cfg; in {
       allowedUDPPorts = [ 5060 ];
       # RTP
       allowedUDPPortRanges = [
-        { from = 5000; to = 31000; }
+        {
+          from = 5000;
+          to = 31000;
+        }
       ];
     };
   };

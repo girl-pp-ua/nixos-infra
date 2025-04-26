@@ -1,4 +1,5 @@
-{ lib, ... }: {
+{ lib, ... }:
+{
   options = with lib; {
     cfg.secrets = {
       selfSignedCert = {

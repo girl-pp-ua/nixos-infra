@@ -7,7 +7,8 @@ let
   /**
     Creates A + AAAA records and ipv4.@ and ipv6.@ subdomains
   */
-  mkDualstackHost = ipv4: ipv6:
+  mkDualstackHost =
+    ipv4: ipv6:
     host ipv4 ipv6
     // {
       subdomains = {
@@ -94,21 +95,21 @@ in
     ns2 = with hosts; host oci2.ipv4 oci2.ipv6;
 
     # services:
-    files  = mkCname "oci1.${zone}";
+    files = mkCname "oci1.${zone}";
     webdav = mkCname "oci1.${zone}" // {
       # (workaround: Dolphin trying to connect over IPv6 on IPv4-only hosts)
       subdomains.legacy = mkCname "ipv4.oci1.${zone}";
     };
-    sso    = mkCname "oci1.${zone}";
+    sso = mkCname "oci1.${zone}";
     redlib = mkCname "oci2.${zone}";
     nitter = mkCname "oci2.${zone}";
-    ntfy   = mkCname "oci2.${zone}";
+    ntfy = mkCname "oci2.${zone}";
     uptime = mkCname "oci1.${zone}";
     status = mkCname "oci1.${zone}";
-    voip   = mkCname "oci2.${zone}";
+    voip = mkCname "oci2.${zone}";
 
     # testing:
-    oauth2      = mkCname "oci1.${zone}";
+    oauth2 = mkCname "oci1.${zone}";
     fwauthtest1 = mkCname "oci1.${zone}";
 
     # cdn:

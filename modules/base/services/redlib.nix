@@ -1,7 +1,15 @@
-{ config, pkgs, lib, inputs, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  inputs,
+  ...
+}:
 let
-  mkEnvRecursive = prefix: attr:
-    builtins.foldl' (acc: oldKey:
+  mkEnvRecursive =
+    prefix: attr:
+    builtins.foldl' (
+      acc: oldKey:
       let
         value = attr.${oldKey};
         newKey = "${prefix}_${lib.toUpper oldKey}";
@@ -9,14 +17,16 @@ let
           if builtins.isAttrs value then
             mkEnvRecursive newKey value
           else if builtins.isList value then
-            { ${newKey} = builtins.concatStringsSep "+"
-                (builtins.map (builtins.toString) value); }
+            {
+              ${newKey} = builtins.concatStringsSep "+" (builtins.map (builtins.toString) value);
+            }
           else if builtins.isBool value then
             { ${newKey} = if value then "on" else "off"; }
           else
             { ${newKey} = builtins.toString value; };
-      in acc // newAttr
-    ) {} (builtins.attrNames attr);
+      in
+      acc // newAttr
+    ) { } (builtins.attrNames attr);
   mkRedlibEnv = mkEnvRecursive "REDLIB";
 
   environment = mkRedlibEnv {
@@ -46,7 +56,7 @@ let
   };
 
   # Use latest unstable/master branch version
-  redlib' = pkgs.redlib.overrideAttrs(prev: {
+  redlib' = pkgs.redlib.overrideAttrs (prev: {
     version = "unstable";
 
     src = "${inputs.redlib}";
@@ -56,16 +66,19 @@ let
 
     # Use full-resolution images for embeds
     # (also fixes nsfw post thumbnails)
-    postPatch = prev.postPatch or "" + ''
-      sed -i 's/{{ post\.thumbnail\.url }}/{{ post.media.url }}/g' templates/post.html
-    '';
+    postPatch =
+      prev.postPatch or ""
+      + ''
+        sed -i 's/{{ post\.thumbnail\.url }}/{{ post.media.url }}/g' templates/post.html
+      '';
 
     # Rate-limit check requires internet access (should be fixed upstream)
     doCheck = false;
   });
 
   cfg = config.cfg;
-in {
+in
+{
   options = {
     cfg.services.redlib = {
       enable = lib.mkEnableOption "redlib";

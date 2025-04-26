@@ -1,4 +1,5 @@
-{ ... }: {
+{ ... }:
+{
   system.stateVersion = "25.05";
 
   imports = [
@@ -10,7 +11,10 @@
     "/data" = {
       device = "/dev/disk/by-label/data";
       fsType = "btrfs";
-      options = [ "noatime" "compress=zstd:1" ];
+      options = [
+        "noatime"
+        "compress=zstd:1"
+      ];
     };
   };
 

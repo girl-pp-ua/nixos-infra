@@ -1,4 +1,9 @@
-{ config, pkgs, lib, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
 let
   cfg = config.cfg;
   crenentialsFile = pkgs.writeText "twitter-credentials.json" cfg.secrets.twitter.credentials;
@@ -19,7 +24,7 @@ in
       };
     };
   };
-  config = lib.mkIf cfg.services.nitter.enable  {
+  config = lib.mkIf cfg.services.nitter.enable {
     services.nitter = {
       enable = true;
       # package: https://github.com/zedeus/nitter ?

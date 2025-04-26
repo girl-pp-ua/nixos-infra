@@ -5,7 +5,8 @@ let
     domain = cfg.services.oauth2_proxy.authDomain;
     client_id = cfg.services.oauth2_proxy.clientID;
   };
-in {
+in
+{
   options = {
     cfg.services.oauth2_proxy = {
       enable = lib.mkEnableOption "oauth2_proxy" // {

@@ -1,5 +1,13 @@
-{ config, lib, dns, ... }:
-let cfg = config.cfg; in {
+{
+  config,
+  lib,
+  dns,
+  ...
+}:
+let
+  cfg = config.cfg;
+in
+{
   options = {
     cfg.services.dns-server = {
       enable = lib.mkEnableOption "dns-server";
@@ -31,15 +39,15 @@ let cfg = config.cfg; in {
         server:
           refuse-any: yes
       '';
-      zones = let
-        mkZone = domain: {
-          name = domain;
-          value = {
-            data = dns.lib.toString domain
-              (import ./../../../dns-zones/${domain}.nix { inherit dns; });
+      zones =
+        let
+          mkZone = domain: {
+            name = domain;
+            value = {
+              data = dns.lib.toString domain (import ./../../../dns-zones/${domain}.nix { inherit dns; });
+            };
           };
-        };
-      in
+        in
         lib.listToAttrs (lib.map mkZone cfg.services.dns-server.zones);
     };
     networking.firewall = {

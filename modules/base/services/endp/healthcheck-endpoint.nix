@@ -1,5 +1,13 @@
-{ config, lib, host, ... }:
-let cfg = config.cfg; in {
+{
+  config,
+  lib,
+  host,
+  ...
+}:
+let
+  cfg = config.cfg;
+in
+{
   options = {
     cfg.services.healthcheck-endpoint = {
       enable = lib.mkEnableOption "caddy heathcheck endpoint" // {

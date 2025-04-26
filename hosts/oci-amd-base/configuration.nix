@@ -1,6 +1,7 @@
 # Base configuration for OCI AMD (VM.Standard.E2.1.Micro) instances
 # Assumes a NixOS installed with NIXOS_LUSTRATE over the Ubuntu 24.04 image
-{ lib, ... }: {
+{ lib, ... }:
+{
   boot = rec {
     # systemd-in-initrd is not supported by NIXOS_LUSTRATE
     initrd.systemd.enable = lib.mkOverride 99 false;

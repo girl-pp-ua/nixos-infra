@@ -21,77 +21,96 @@
       flake = false;
     };
   };
-  outputs = inputs@{ self, nixpkgs, deploy-rs, dns, ... }: let
-    system = "x86_64-linux";
-    pkgs = nixpkgs.legacyPackages.${system};
-    specialArgs = {
-      inherit self inputs system dns;
-    };
-    mkNixosSystem = host: extraModules: (
-      nixpkgs.lib.nixosSystem {
-        inherit system;
-        specialArgs = specialArgs // {
-          inherit host;
-        };
-        modules = [
-          { networking.hostName = host; }
-          ./hosts/${host}/configuration.nix
-          ./secrets/schema.nix
-          ./secrets/credentials.nix
-          ./modules/base
-        ] ++ extraModules;
-      }
-    );
-    mkDeployProfile = hostname: host: {
-      inherit hostname;
-      sshUser = "nixos";
-      user = "root";
-      profiles.system.path =
-        deploy-rs.lib.${system}.activate.nixos
-          self.nixosConfigurations.${host};
-    };
-  in {
-    nixosConfigurations = {
-      oci1 = mkNixosSystem "oci1" [
-        {
-          cfg.services = {
-            dns-server.enable = true;
-            file-server-endpoint.enable = true;
-            webdav-endpoint.enable = true;
-            kanidm.enable = true;
-            uptime-kuma.enable = true;
+  outputs =
+    inputs@{
+      self,
+      nixpkgs,
+      deploy-rs,
+      dns,
+      ...
+    }:
+    let
+      system = "x86_64-linux";
+      pkgs = nixpkgs.legacyPackages.${system};
+      specialArgs = {
+        inherit
+          self
+          inputs
+          system
+          dns
+          ;
+      };
+      mkNixosSystem =
+        host: extraModules:
+        (nixpkgs.lib.nixosSystem {
+          inherit system;
+          specialArgs = specialArgs // {
+            inherit host;
           };
-        }
-      ];
-      oci2 = mkNixosSystem "oci2" [
-        {
-          cfg.services = {
-            dns-server.enable = true;
-            redlib.enable = true;
-            # nitter.enable = true; # TODO fix; borked
-            ntfy.enable = true;
-            # testing.asterisk.enable = true;
-          };
-        }
-      ];
-    };
+          modules = [
+            { networking.hostName = host; }
+            ./hosts/${host}/configuration.nix
+            ./secrets/schema.nix
+            ./secrets/credentials.nix
+            ./modules/base
+          ] ++ extraModules;
+        });
+      mkDeployProfile = hostname: host: {
+        inherit hostname;
+        sshUser = "nixos";
+        user = "root";
+        profiles.system.path = deploy-rs.lib.${system}.activate.nixos self.nixosConfigurations.${host};
+      };
+    in
+    {
+      nixosConfigurations = {
+        oci1 = mkNixosSystem "oci1" [
+          {
+            cfg.services = {
+              dns-server.enable = true;
+              file-server-endpoint.enable = true;
+              webdav-endpoint.enable = true;
+              kanidm.enable = true;
+              uptime-kuma.enable = true;
+            };
+          }
+        ];
+        oci2 = mkNixosSystem "oci2" [
+          {
+            cfg.services = {
+              dns-server.enable = true;
+              redlib.enable = true;
+              # nitter.enable = true; # TODO fix; borked
+              ntfy.enable = true;
+              # testing.asterisk.enable = true;
+            };
+          }
+        ];
+      };
 
-    # deploy-rs configuration
-    deploy.nodes = {
-      oci1 = mkDeployProfile "oci1.girl.pp.ua" "oci1";
-      oci2 = mkDeployProfile "oci2.girl.pp.ua" "oci2";
-    };
+      # deploy-rs configuration
+      deploy.nodes = {
+        oci1 = mkDeployProfile "oci1.girl.pp.ua" "oci1";
+        oci2 = mkDeployProfile "oci2.girl.pp.ua" "oci2";
+      };
 
-    checks = builtins.mapAttrs
-      (system: deployLib: deployLib.deployChecks self.deploy)
-      deploy-rs.lib;
+      checks = builtins.mapAttrs (system: deployLib: deployLib.deployChecks self.deploy) deploy-rs.lib;
 
-    # dev shells
-    devShells.${system}.default = pkgs.mkShell {
-      packages = with pkgs; [
-        deploy-rs.outputs.packages.${system}.deploy-rs
-        git-crypt
-      ];
+      # dev shells
+      devShells.${system}.default = pkgs.mkShell {
+        packages =
+          [
+            deploy-rs.outputs.packages.${system}.deploy-rs
+          ]
+          ++ (with pkgs; [
+            git-crypt
+            nil
+            nixd
+            nixfmt-rfc-style
+            nixfmt-tree
+          ]);
+      };
+
+      formatter.${system} = nixpkgs.legacyPackages.${system}.nixfmt-tree;
     };
-  };
 }

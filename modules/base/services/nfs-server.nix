@@ -1,4 +1,5 @@
-{ ... }: {
+{ ... }:
+{
   # TODO
   # services.nfs.server = {
   #   enable = true;

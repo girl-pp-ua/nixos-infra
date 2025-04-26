@@ -1,5 +1,13 @@
-{ config, pkgs, lib, ... }:
-let cfg = config.cfg; in {
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
+let
+  cfg = config.cfg;
+in
+{
   options = {
     cfg.services.caddy.enable = lib.mkEnableOption "caddy" // {
       default = true;
@@ -35,7 +43,10 @@ let cfg = config.cfg; in {
       '';
     };
     networking.firewall = {
-      allowedTCPPorts = [ 80 443 ];
+      allowedTCPPorts = [
+        80
+        443
+      ];
       allowedUDPPorts = [ 443 ];
     };
   };
