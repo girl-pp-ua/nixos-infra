@@ -20,7 +20,6 @@
     ./services/ntfy.nix
     ./services/nfs-server.nix
     ./services/uptime-kuma.nix
-    ./services/nitter.nix
 
     # SSO
     ./services/sso/kanidm.nix
@@ -30,9 +29,6 @@
     ./services/endp/healthcheck-endpoint.nix
     ./services/endp/file-server-endpoint.nix
     ./services/endp/webdav-endpoint.nix
-
-    # Testing/non-prod services
-    ./services/testing/asterisk.nix
   ];
 
   i18n.defaultLocale = "en_US.UTF-8";
