@@ -2,7 +2,7 @@
 with dns.lib.combinators;
 let
   zone = "girl.pp.ua.";
-  serial = 2025042600;
+  serial = 2025060400;
 
   /**
     Creates A + AAAA records and ipv4.@ and ipv6.@ subdomains
@@ -42,6 +42,12 @@ let
     oci-loadbalancer = {
       ipv4 = "130.61.214.159";
       ipv6 = "2603:c020:800c:9c7f:3906:822b:23d9:899c";
+    };
+
+    # (intranet) dell-sv
+    dell-sv = {
+      ipv4 = "100.64.0.2";
+      ipv6 = "fd7a:115c:a1e0::2901:2214";
     };
   };
 in
@@ -129,5 +135,11 @@ in
     # TXT records:
     _atproto.TXT = [ "did=did:plc:wvftnj7awmh4gwf3pt5mlvwq" ];
     _discord.TXT = [ "dh=ed7fe6618b265997be79e5e393a215136aafaa28" ];
+
+    # internal services (tailscale/vpn)
+    intra = {
+      dell-sv = mkDualstackHost hosts.dell-sv.ipv4 hosts.dell-sv.ipv6;
+      nextcloud = mkCname "dell-sv.intranet.${zone}";
+    };
   };
 }

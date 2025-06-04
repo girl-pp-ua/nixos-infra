@@ -16,6 +16,11 @@
       url = "github:nix-community/dns.nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    nextcloud-testumgebung = {
+      url = "github:onny/nixos-nextcloud-testumgebung";
+      flake = false; # (importing single file)
+      # inputs.nixpkgs.follows = "nixpkgs";
+    };
     redlib = {
       url = "github:redlib-org/redlib";
       flake = false; # (using as source for pkgs.redlib)
@@ -94,7 +99,7 @@
             };
           }
         ];
-        dell = mkNixosSystem "dell" [
+        dell-sv = mkNixosSystem "dell-sv" [
           {
             cfg.services = {
               # TODO
@@ -107,7 +112,7 @@
       deploy.nodes = {
         oci1 = mkDeployProfile "oci1.girl.pp.ua" "oci1";
         oci2 = mkDeployProfile "oci2.girl.pp.ua" "oci2";
-        dell = mkDeployProfile "dell.saga-mirzam.ts.net" "dell";
+        dell-sv = mkDeployProfile "dell-sv.saga-mirzam.ts.net" "dell-sv";
       };
 
       checks = builtins.mapAttrs (system: deployLib: deployLib.deployChecks self.deploy) deploy-rs.lib;

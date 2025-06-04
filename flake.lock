@@ -75,7 +75,91 @@
         "type": "github"
       }
     },
+    "keycloak-realms": {
+      "locked": {
+        "lastModified": 1721562747,
+        "narHash": "sha256-uHNWpe/j5Q7Ak9+SNQkCPy7t9ayQUDAt+2tZ7OFYv6Q=",
+        "owner": "rorosen",
+        "repo": "nixpkgs",
+        "rev": "79862894befe49e2837e3f5eefe11433eef6611a",
+        "type": "github"
+      },
+      "original": {
+        "owner": "rorosen",
+        "ref": "keycloak-realm-import",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "nextcloud-testumgebung": {
+      "inputs": {
+        "keycloak-realms": "keycloak-realms",
+        "nixos-shell": "nixos-shell",
+        "nixpkgs": "nixpkgs_2"
+      },
+      "locked": {
+        "lastModified": 1730827799,
+        "narHash": "sha256-79sE72rlztvhx37PYh6m2TLE2J6ybVvDRMQBRWaohqc=",
+        "owner": "onny",
+        "repo": "nixos-nextcloud-testumgebung",
+        "rev": "c3fdbf165814d403a8f8e81ff8e15adcbe7eadd0",
+        "type": "github"
+      },
+      "original": {
+        "owner": "onny",
+        "repo": "nixos-nextcloud-testumgebung",
+        "type": "github"
+      }
+    },
+    "nixos-shell": {
+      "inputs": {
+        "nixpkgs": "nixpkgs"
+      },
+      "locked": {
+        "lastModified": 1728308049,
+        "narHash": "sha256-wjAkG8f5orZ4+wgXmEaFAJkVJS6ORqfgM0zzLEvbUNw=",
+        "owner": "Mic92",
+        "repo": "nixos-shell",
+        "rev": "9373ca9522f844a3b8029720c74f340e560e4462",
+        "type": "github"
+      },
+      "original": {
+        "owner": "Mic92",
+        "repo": "nixos-shell",
+        "type": "github"
+      }
+    },
     "nixpkgs": {
+      "locked": {
+        "lastModified": 1628465643,
+        "narHash": "sha256-QSNw9bDq9uGUniQQtakRuw4m21Jxugm23SXLVgEV4DM=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "6ef4f522d63f22b40004319778761040d3197390",
+        "type": "github"
+      },
+      "original": {
+        "id": "nixpkgs",
+        "ref": "nixos-unstable",
+        "type": "indirect"
+      }
+    },
+    "nixpkgs_2": {
+      "locked": {
+        "lastModified": 1749057139,
+        "narHash": "sha256-FUu5z3ng3BMfc1t7jMwoWSHE4B61ZVuVAWgE+xeH+AI=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "c731d5ffb2df2aa04ac2f93a19f73b6655525906",
+        "type": "github"
+      },
+      "original": {
+        "id": "nixpkgs",
+        "ref": "master",
+        "type": "indirect"
+      }
+    },
+    "nixpkgs_3": {
       "locked": {
         "lastModified": 1748929857,
         "narHash": "sha256-lcZQ8RhsmhsK8u7LIFsJhsLh/pzR9yZ8yqpTzyGdj+Q=",
@@ -111,7 +195,8 @@
       "inputs": {
         "deploy-rs": "deploy-rs",
         "dns": "dns",
-        "nixpkgs": "nixpkgs",
+        "nextcloud-testumgebung": "nextcloud-testumgebung",
+        "nixpkgs": "nixpkgs_3",
         "redlib": "redlib",
         "secrets": "secrets",
         "sops-nix": "sops-nix",
@@ -121,11 +206,11 @@
     "secrets": {
       "flake": false,
       "locked": {
-        "lastModified": 1749055903,
-        "narHash": "sha256-e6vgEnWHy6MumbddFnHt92zjOdPsCyS5nPAsC0cC34g=",
+        "lastModified": 1749058026,
+        "narHash": "sha256-ZtJJaeuYKz659NJaOmyVDTxrOXtvHdGOzWZbucgmAqw=",
         "ref": "refs/heads/master",
-        "rev": "0e1d02c93bdf2b9b858dee2911ce1baa71176b41",
-        "revCount": 10,
+        "rev": "040f6a317296cec236f760ecd381aba9bdc1a128",
+        "revCount": 11,
         "type": "git",
         "url": "file:./secrets"
       },
