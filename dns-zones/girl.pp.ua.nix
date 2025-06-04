@@ -2,7 +2,7 @@
 with dns.lib.combinators;
 let
   zone = "girl.pp.ua.";
-  serial = 2025060401;
+  serial = 2025060403;
 
   /**
     Creates A + AAAA records and ipv4.@ and ipv6.@ subdomains
@@ -139,7 +139,10 @@ in
     # internal services (tailscale/vpn)
     intranet.subdomains = {
       dell-sv = mkDualstackHost hosts.dell-sv.ipv4 hosts.dell-sv.ipv6;
-      nextcloud = mkCname "dell-sv.intranet.${zone}";
+      nextcloud = mkCname "dell-sv.intranet.${zone}" // {
+        # TODO self-host this
+        subdomains._acme-challenge = mkCname "49c8c05e-fb20-4012-8217-66692b5c8a96.auth.acme-dns.io";
+      };
     };
   };
 }

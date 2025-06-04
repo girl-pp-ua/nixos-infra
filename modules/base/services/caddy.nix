@@ -19,8 +19,9 @@ in
       package = pkgs.caddy.withPlugins {
         plugins = [
           "github.com/mholt/caddy-webdav@v0.0.0-20241008162340-42168ba04c9d"
+          "github.com/caddy-dns/acmedns@v0.4.1"
         ];
-        hash = "sha256-fURqPgMpZ17ubhvr+JmY8jBgDaKBb654wo9Z4izjlro=";
+        hash = "sha256-+cfmKSbh3pJQW8ikAckA0RTbXuUsSPPiIQkt1Ev65ZQ=";
       };
       enableReload = true;
       adapter = "caddyfile";

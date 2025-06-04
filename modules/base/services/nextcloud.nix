@@ -30,6 +30,7 @@ in
 
       webserver = "caddy";
       hostName = cfg.services.nextcloud.domain;
+      https = true;
 
       # enable redis cache
       configureRedis = true;
@@ -64,6 +65,22 @@ in
     sops.secrets."nextcloud/adminpass" = {
       mode = "0400";
       owner = "nextcloud";
+    };
+
+    # TODO generalize this
+    services.caddy.virtualHosts = let
+      caddyHost = "${if config.services.nextcloud.https then "https" else "http"}://${cfg.services.nextcloud.domain}";
+    in {
+      "${caddyHost}".extraConfig = ''
+        tls {
+          dns acmedns {
+            username ${cfg.secrets.acmedns.username}
+            password ${cfg.secrets.acmedns.password}
+            subdomain ${cfg.secrets.acmedns.subdomain}
+            server_url https://auth.acme-dns.io
+          }
+        }
+      '';
     };
   };
 }

@@ -22,6 +22,11 @@
         tenancyRegion = mkOption { type = types.str; };
         identityDomain = mkOption { type = types.str; };
       };
+      acmedns = {
+        username = mkOption { type = types.str; };
+        password = mkOption { type = types.str; };
+        subdomain = mkOption { type = types.str; };
+      };
     };
   };
 }
