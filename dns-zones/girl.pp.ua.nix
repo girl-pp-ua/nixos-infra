@@ -2,7 +2,7 @@
 with dns.lib.combinators;
 let
   zone = "girl.pp.ua.";
-  serial = 2025060400;
+  serial = 2025060401;
 
   /**
     Creates A + AAAA records and ipv4.@ and ipv6.@ subdomains
@@ -137,7 +137,7 @@ in
     _discord.TXT = [ "dh=ed7fe6618b265997be79e5e393a215136aafaa28" ];
 
     # internal services (tailscale/vpn)
-    intra.subdomains = {
+    intranet.subdomains = {
       dell-sv = mkDualstackHost hosts.dell-sv.ipv4 hosts.dell-sv.ipv6;
       nextcloud = mkCname "dell-sv.intranet.${zone}";
     };

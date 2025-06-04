@@ -18,7 +18,7 @@ in
       enable = lib.mkEnableOption "nextcloud";
       domain = lib.mkOption {
         type = lib.types.str;
-        default = "nextcloud.intra.girl.pp.ua";
+        default = "nextcloud.intranet.girl.pp.ua";
       };
     };
   };
