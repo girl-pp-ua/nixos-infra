@@ -7,6 +7,8 @@
     };
     nixos = {
       isNormalUser = true;
+      home = "/home/nixos";
+      createHome = true;
       initialHashedPassword = "";
       extraGroups = [ "wheel" ];
       shell = pkgs.fish;

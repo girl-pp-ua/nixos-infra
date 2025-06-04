@@ -20,7 +20,7 @@ in
         plugins = [
           "github.com/mholt/caddy-webdav@v0.0.0-20241008162340-42168ba04c9d"
         ];
-        hash = "sha256-rrkUDnTPKehdKMBDaZdFbaEL2QOsHb3tn6dst2UclE8";
+        hash = "sha256-fURqPgMpZ17ubhvr+JmY8jBgDaKBb654wo9Z4izjlro=";
       };
       enableReload = true;
       adapter = "caddyfile";

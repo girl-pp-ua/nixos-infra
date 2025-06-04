@@ -84,12 +84,20 @@
             };
           }
         ];
+        dell = mkNixosSystem "dell" [
+          {
+            cfg.services = {
+              # TODO
+            };
+          }
+        ];
       };
 
       # deploy-rs configuration
       deploy.nodes = {
         oci1 = mkDeployProfile "oci1.girl.pp.ua" "oci1";
         oci2 = mkDeployProfile "oci2.girl.pp.ua" "oci2";
+        dell = mkDeployProfile "dell.saga-mirzam.ts.net" "dell";
       };
 
       checks = builtins.mapAttrs (system: deployLib: deployLib.deployChecks self.deploy) deploy-rs.lib;

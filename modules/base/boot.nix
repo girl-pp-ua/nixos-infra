@@ -6,10 +6,7 @@
       "nohibernate" # disable hibernation support
     ];
     initrd = {
-      systemd = {
-        enable = lib.mkDefault true; # (disabled on lustrated systems)
-        strip = true;
-      };
+      systemd.enable = lib.mkDefault true; # (disabled on lustrated systems)
       verbose = true;
     };
     loader.timeout = 3; # actually don't set it to 0, the oracle cloud console's too slow to interrupt the boot
