@@ -22,6 +22,7 @@
     ./services/ntfy.nix
     ./services/nfs-server.nix
     ./services/uptime-kuma.nix
+    ./services/nextcloud.nix
 
     # SSO
     ./services/sso/kanidm.nix
