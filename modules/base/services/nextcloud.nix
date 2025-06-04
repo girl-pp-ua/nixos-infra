@@ -41,6 +41,7 @@ in
       # options
       maxUploadSize = "16G";
       config = {
+        adminuser = "root";
         adminpassFile = config.sops.secrets."nextcloud/adminpass".path;
       };
       settings = {
