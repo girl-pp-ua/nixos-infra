@@ -4,6 +4,10 @@
       # url = "github:NixOS/nixpkgs/nixos-unstable-small";
       url = "github:NixOS/nixpkgs/nixos-unstable";
     };
+    sops-nix = {
+      url = "github:Mic92/sops-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     deploy-rs = {
       url = "github:PhilTaken/deploy-rs/phil/async-build-and-push";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -27,6 +31,7 @@
       nixpkgs,
       deploy-rs,
       dns,
+      sops-nix,
       ...
     }:
     let
@@ -50,9 +55,10 @@
           modules = [
             { networking.hostName = host; }
             ./hosts/${host}/configuration.nix
-            ./secrets/schema.nix
-            ./secrets/credentials.nix
+            ./secrets-old/schema.nix
+            ./secrets-old/credentials.nix
             ./modules/base
+            sops-nix.nixosModules.sops
           ] ++ extraModules;
         });
       mkDeployProfile = hostname: host: {
@@ -109,12 +115,17 @@
             deploy-rs.outputs.packages.${system}.deploy-rs
           ]
           ++ (with pkgs; [
-            git-crypt
             nil
             nixd
             nixfmt-rfc-style
             nixfmt-tree
+            sops
+            age
+            ssh-to-age
           ]);
+        shellHook = ''
+          export SOPS_AGE_KEY=$(ssh-to-age -i ~/.ssh/id_ed25519 -private-key)
+        '';
       };
 
       formatter.${system} = nixpkgs.legacyPackages.${system}.nixfmt-tree;

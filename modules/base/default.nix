@@ -1,6 +1,8 @@
 { ... }:
 {
   imports = [
+    ./sops.nix
+
     # Base configuration
     ./boot.nix
     ./system.nix

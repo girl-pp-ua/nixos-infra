@@ -1,0 +1,4 @@
+[submodule "secrets"]
+	path = secrets
+	url = https://github.com/girl-pp-ua/secrets
+	branch = master
