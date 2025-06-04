@@ -102,7 +102,7 @@
         dell-sv = mkNixosSystem "dell-sv" [
           {
             cfg.services = {
-              # TODO
+              nextcloud.enable = true;
             };
           }
         ];
