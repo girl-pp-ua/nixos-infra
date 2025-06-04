@@ -2,7 +2,17 @@
 with dns.lib.combinators;
 let
   zone = "girl.pp.ua.";
-  serial = 2025060407; # YYYYMMDDNN
+  serial = 2025060408; # YYYYMMDDNN
+
+  /**
+    Creates a CNAME record
+  */
+  mkCname = target: { CNAME = [ target ]; };
+
+  /**
+    Shorthand for { subdomains = ...; }
+   */
+  withSubdomains = subdomains: { inherit subdomains; };
 
   /**
     Creates A + AAAA records and ipv4.@ and ipv6.@ subdomains
@@ -10,17 +20,10 @@ let
   mkDualstackHost =
     ipv4: ipv6:
     host ipv4 ipv6
-    // {
-      subdomains = {
-        ipv4 = host ipv4 null;
-        ipv6 = host null ipv6;
-      };
+    // withSubdomains {
+      ipv4 = host ipv4 null;
+      ipv6 = host null ipv6;
     };
-
-  /**
-    Creates a CNAME record
-  */
-  mkCname = target: { CNAME = [ target ]; };
 
   /**
     IPv4/IPv6 addresses of physical hosts
@@ -102,9 +105,9 @@ in
 
     # services:
     files = mkCname "oci1.${zone}";
-    webdav = mkCname "oci1.${zone}" // {
+    webdav = mkCname "oci1.${zone}" // withSubdomains {
       # (workaround: Dolphin trying to connect over IPv6 on IPv4-only hosts)
-      subdomains.legacy = mkCname "ipv4.oci1.${zone}";
+      legacy = mkCname "ipv4.oci1.${zone}";
     };
     sso = mkCname "oci1.${zone}";
     redlib = mkCname "oci2.${zone}";
@@ -117,9 +120,8 @@ in
     fwauthtest1 = mkCname "oci1.${zone}";
 
     # cdn:
-    files-cdn = {
-      CNAME = [ "t.sni.global.fastly.net." ];
-      subdomains._acme-challenge = mkCname "9ju9qpopwm9fbqid5n.fastly-validations.com.";
+    files-cdn = mkCname "t.sni.global.fastly.net." // withSubdomains {
+      _acme-challenge = mkCname "9ju9qpopwm9fbqid5n.fastly-validations.com.";
     };
 
     # misc.:
@@ -137,7 +139,7 @@ in
 
     # internal services (tailscale/vpn)
     intranet.subdomains = {
-      dell-sv = mkDualstackHost hosts.dell-sv.ipv4 hosts.dell-sv.ipv6;
+      dell-sv = with hosts; mkDualstackHost dell-sv.ipv4 dell-sv.ipv6;
       nextcloud = mkCname "dell-sv.intranet.${zone}";
     };
   };
