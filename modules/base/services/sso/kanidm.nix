@@ -70,8 +70,7 @@ in
           displayName = "oauth2-proxy";
           preferShortUsername = true;
 
-          # FIXME: BAD IDEA! secret is exposed in /nix/store
-          basicSecretFile = pkgs.writeText "this_is_bad_1" cfg.secrets.oauth2_proxy.clientSecret;
+          basicSecretFile = config.sops.secrets."oauth2_proxy/clientSecret".path;
 
           originLanding = "https://fwauthtest1.girl.pp.ua/";
           originUrl =
@@ -111,8 +110,7 @@ in
           # Oracle Cloud does not support PKCE
           allowInsecureClientDisablePkce = true;
 
-          # FIXME: BAD IDEA! secret is exposed in /nix/store
-          basicSecretFile = pkgs.writeText "this_is_bad_2" cfg.secrets.ociTenancy.clientSecret;
+          basicSecretFile = config.sops.secrets."ociTenancy/clientSecret".path;
 
           originLanding = "https://cloud.oracle.com/?tenant=${cfg.secrets.ociTenancy.tenancyName}&region=${cfg.secrets.ociTenancy.tenancyRegion}";
           originUrl = [
@@ -146,6 +144,17 @@ in
           }
         '';
       };
+    };
+
+    sops.secrets."ociTenancy/clientSecret" = {
+      mode = "0400";
+      owner = "kanidm";
+      group = "kanidm";
+    };
+    sops.secrets."oauth2_proxy/clientSecret" = {
+      mode = "0400";
+      owner = "kanidm";
+      group = "kanidm";
     };
   };
 }

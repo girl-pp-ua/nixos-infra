@@ -39,6 +39,8 @@ in
       # TODO fix kanidm OAuth2
       enable = true;
 
+      keyFile = config.sops.secrets."oauth2_proxy/keyFile".path;
+
       httpAddress = "http://127.0.0.1:${toString cfg.services.oauth2_proxy.port}";
       proxyPrefix = cfg.services.oauth2_proxy.urlPrefix;
       reverseProxy = true;
@@ -48,7 +50,6 @@ in
 
       provider = "oidc";
       inherit (cfg.services.oauth2_proxy) clientID;
-      inherit (cfg.secrets.oauth2_proxy) clientSecret;
       oidcIssuerUrl = idp.oidc_issuer_uri;
       loginURL = idp.api_auth; # ui?
       redeemURL = idp.token_endpoint;
@@ -57,8 +58,6 @@ in
 
       email.domains = [ "*" ];
       scope = "openid profile email";
-
-      cookie.secret = cfg.secrets.oauth2_proxy.cookieSecret;
 
       extraConfig = {
         provider-display-name = "Kanidm";
@@ -96,5 +95,11 @@ in
       import oauth2_proxy
       respond "OK"
     '';
+
+    sops.secrets."oauth2_proxy/keyFile" = {
+      mode = "0400";
+      owner = "oauth2-proxy";
+      group = "oauth2-proxy";
+    };
   };
 }

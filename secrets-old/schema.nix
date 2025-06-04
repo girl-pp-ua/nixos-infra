@@ -11,9 +11,7 @@
         expiry = mkOption { type = types.str; };
       };
       oauth2_proxy = {
-        clientSecret = mkOption { type = types.str; };
         cookieSecret = mkOption { type = types.str; };
-        # keyFile = { type = types.path; };
       };
       webdav = {
         username = mkOption { type = types.str; };
@@ -23,7 +21,6 @@
         tenancyName = mkOption { type = types.str; };
         tenancyRegion = mkOption { type = types.str; };
         identityDomain = mkOption { type = types.str; };
-        clientSecret = mkOption { type = types.str; };
       };
     };
   };
