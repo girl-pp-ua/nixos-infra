@@ -113,8 +113,25 @@
         "dns": "dns",
         "nixpkgs": "nixpkgs",
         "redlib": "redlib",
+        "secrets": "secrets",
         "sops-nix": "sops-nix",
         "uptime-kuma": "uptime-kuma"
+      }
+    },
+    "secrets": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1749051439,
+        "narHash": "sha256-3GgjxjQkb7nIUohcpQ1FXy4iYINTHQIBvHpRPhFziFo=",
+        "ref": "refs/heads/master",
+        "rev": "5cb24cb2343d786bd4d2617c780e10d89c92ef27",
+        "revCount": 3,
+        "type": "git",
+        "url": "file:./secrets"
+      },
+      "original": {
+        "type": "git",
+        "url": "file:./secrets"
       }
     },
     "sops-nix": {

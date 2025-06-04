@@ -1,9 +1,11 @@
 keys:
   - &nixos_infra age1gzpwvl0x7qxqpkcxss5yjcyusl57vqghkn6plfn7ycutxrmfec5qz6jevp
   - &fw13 age1qhf2km5853hu8fa7rjdc4gc4l8vhjsrel2m4sghz3ykva984s3rse55keq
+  - &host_dell age133qkn62g07yaw533pwh3dfa752jsgtarv7k3jfcu98la2ngcddlqd505s4
 creation_rules:
   - path_regex: secrets/[^/]+\.(yaml|json|env|ini|sops)$
     key_groups:
       - age:
         - *nixos_infra
         - *fw13
+        - *host_dell

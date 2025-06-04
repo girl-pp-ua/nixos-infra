@@ -24,7 +24,12 @@ in
         disableTaildrop = true;
         extraSetFlags = commonFlags;
         extraUpFlags = commonFlags;
-        inherit (cfg.secrets.tailscale) authKeyFile;
+        authKeyFile = config.sops.secrets."tailscale/authKey".path;
+      };
+      sops.secrets."tailscale/authKey" = {
+        mode = "0400";
+        owner = "root";
+        group = "root";
       };
   };
 }

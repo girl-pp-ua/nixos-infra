@@ -24,6 +24,10 @@
       url = "github:louislam/uptime-kuma/2.0.0-beta.2";
       flake = false;
     };
+    secrets = {
+      url = "git+file:./secrets";
+      flake = false;
+    };
   };
   outputs =
     inputs@{
