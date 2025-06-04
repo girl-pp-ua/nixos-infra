@@ -119,9 +119,7 @@ in
     # cdn:
     files-cdn = {
       CNAME = [ "t.sni.global.fastly.net." ];
-      subdomains._acme-challenge = {
-        CNAME = [ "9ju9qpopwm9fbqid5n.fastly-validations.com." ];
-      };
+      subdomains._acme-challenge = mkCname "9ju9qpopwm9fbqid5n.fastly-validations.com.";
     };
 
     # misc.:
