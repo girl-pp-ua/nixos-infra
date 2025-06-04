@@ -2,7 +2,7 @@
 with dns.lib.combinators;
 let
   zone = "girl.pp.ua.";
-  serial = 2025060405;
+  serial = 2025060406; # YYYYMMDDNN
 
   /**
     Creates A + AAAA records and ipv4.@ and ipv6.@ subdomains
@@ -135,6 +135,7 @@ in
     # TXT records:
     _atproto.TXT = [ "did=did:plc:wvftnj7awmh4gwf3pt5mlvwq" ];
     _discord.TXT = [ "dh=ed7fe6618b265997be79e5e393a215136aafaa28" ];
+    _mythic-beasts-challenge.TXT = [ "deLHF0cTTKZyR/l41XoMJcDVKGwpOXj+gpyO6o1sLdQ" ];
 
     # internal services (tailscale/vpn)
     intranet.subdomains = {
