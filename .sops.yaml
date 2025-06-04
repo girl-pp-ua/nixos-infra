@@ -5,7 +5,6 @@ keys:
 creation_rules:
   - path_regex: secrets/[^/]+\.(yaml|json|env|ini|sops)$
     key_groups:
-      - age:
-        - *nixos_infra
-        - *fw13
-        - *host_dell
+      - age: [*nixos_infra]
+      - age: [*fw13]
+      - age: [*host_dell]
