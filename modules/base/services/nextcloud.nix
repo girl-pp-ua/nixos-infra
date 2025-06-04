@@ -9,6 +9,10 @@ let
   cfg = config.cfg;
 in
 {
+  imports = [
+    "${inputs.nextcloud-testumgebung}/nextcloud-extras.nix"
+  ];
+
   options = {
     cfg.services.nextcloud = {
       enable = lib.mkEnableOption "nextcloud";
@@ -18,11 +22,8 @@ in
       };
     };
   };
-  config = lib.mkIf cfg.services.nextcloud.enable {
-    imports = [
-      "${inputs.nextcloud-testumgebung}/nextcloud-extras.nix"
-    ];
 
+  config = lib.mkIf cfg.services.nextcloud.enable {
     services.nextcloud = {
       enable = true;
       package = pkgs.nextcloud31;
