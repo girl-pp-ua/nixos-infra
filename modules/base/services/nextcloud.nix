@@ -30,6 +30,7 @@ in
 
       webserver = "caddy";
       hostName = cfg.services.nextcloud.domain;
+      https = false;
 
       # enable redis cache
       configureRedis = true;
