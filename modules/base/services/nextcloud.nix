@@ -73,7 +73,7 @@ in
         lost_password_link = "disabled";
 
         # using only oidc, that already uses webauthn
-        auth.webauthn.enabled = false;
+        "auth.webauthn.enabled" = false;
 
         # oidc
         oidc_login_provider_url = idp.oidc_discovery_prefix;
