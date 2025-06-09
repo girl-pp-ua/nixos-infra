@@ -18,12 +18,15 @@ let
     Creates A + AAAA records and ipv4.@ and ipv6.@ subdomains
   */
   mkDualstackHost =
-    ipv4: ipv6:
-    host ipv4 ipv6
-    // withSubdomains {
-      ipv4 = host ipv4 null;
-      ipv6 = host null ipv6;
-    };
+    dsHost:
+      with dsHost;
+      (
+        host ipv4 ipv6
+        // withSubdomains {
+          ipv4 = host ipv4 null;
+          ipv6 = host null ipv6;
+        }
+      );
 
   /**
     IPv4/IPv6 addresses of physical hosts
@@ -101,10 +104,10 @@ in
 
   subdomains = {
     # hosts (public):
-    oci1 = with hosts; mkDualstackHost oci1.ipv4 oci1.ipv6;
-    oci2 = with hosts; mkDualstackHost oci2.ipv4 oci2.ipv6;
-    oci-loadbalancer = with hosts; mkDualstackHost oci-loadbalancer.ipv4 oci-loadbalancer.ipv6;
-    cocoa = with hosts; mkDualstackHost cocoa.ipv4 cocoa.ipv6;
+    oci1 = mkDualstackHost hosts.oci1;
+    oci2 = mkDualstackHost hosts.oci2;
+    oci-loadbalancer = mkDualstackHost hosts.oci-loadbalancer;
+    cocoa = mkDualstackHost hosts.cocoa;
 
     # nameservers:
     ns1 = with hosts; host oci1.ipv4 oci1.ipv6;
@@ -146,7 +149,7 @@ in
 
     # internal services (tailscale/vpn)
     intranet.subdomains = {
-      dell-sv = with hosts; mkDualstackHost dell-sv.ipv4 dell-sv.ipv6;
+      dell-sv = mkDualstackHost hosts.dell-sv;
       nextcloud = mkCname "dell-sv.intranet.${zone}";
     };
   };
