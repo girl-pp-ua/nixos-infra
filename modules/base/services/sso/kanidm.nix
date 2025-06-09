@@ -51,7 +51,6 @@ in
               "uptime-kuma.access"
               "oracle-cloud-infrastructure.access"
               "nextcloud.access"
-              "nextcloud.admin"
             ];
           };
           niko = {
@@ -135,7 +134,6 @@ in
         };
 
         groups."nextcloud.access" = { };
-        groups."nextcloud.admin" = { };
         systems.oauth2."nextcloud" = {
           displayName = "Nextcloud";
           preferShortUsername = true;
@@ -158,9 +156,9 @@ in
             "openid"
           ];
 
-          supplementaryScopeMaps."nextcloud.admin" = [
-            "nextcloud_admin"
-          ];
+          # supplementaryScopeMaps."nextcloud.admin" = [
+          #   "nextcloudadmin"
+          # ];
 
           claimMaps.groups = {
             joinType = "array";

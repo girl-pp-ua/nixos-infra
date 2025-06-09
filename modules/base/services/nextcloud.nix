@@ -80,17 +80,18 @@ in
         oidc_login_client_id = cfg.services.nextcloud.clientID;
         oidc_login_end_session_redirect = false; # no need
         oidc_login_button_text = "Log in with Girlcock";
-        oidc_login_hide_password_form = false;
+        oidc_login_hide_password_form = true;
         oidc_login_attributes = {
           id = "preferred_username";
           name = "name";
           mail = "email";
-          groups = "groups";
-          is_admin = "nextcloud_admin";
+          # groups = "groups";
+          # is_admin = "nextcloudadmin";
         };
         oidc_login_use_id_token = true;
         oidc_login_scope = "openid profile email groups";
         oidc_login_default_group = "oidc";
+        oidc_create_groups = true;
         # oidc_login_update_avatar = true; # kanidm doesnt provide those
         oidc_login_disable_registration = false; # automatically create user accountss
         oidc_login_proxy_ldap = false;
