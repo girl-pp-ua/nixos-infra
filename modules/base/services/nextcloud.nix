@@ -105,6 +105,8 @@ in
         "memories.vod.vaapi" = true;
         "memories.vod.ffmpeg" = "${pkgs.ffmpeg}/bin/ffmpeg";
         "memories.vod.ffprobe" = "${pkgs.ffmpeg}/bin/ffprobe";
+
+        preview_ffmpeg_path = "${pkgs.ffmpeg}/bin/ffmpeg";
       };
       secretFile = config.sops.secrets."nextcloud/secretFile".path;
       phpOptions = {
@@ -126,6 +128,9 @@ in
           oidc_login;
       };
       extraAppsEnable = true;
+    };
+    users.users.nextcloud = {
+      extraGroups = [ "render" ];
     };
 
     sops.secrets = let
