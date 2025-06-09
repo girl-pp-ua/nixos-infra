@@ -141,7 +141,9 @@ in
           preferShortUsername = true;
 
           basicSecretFile = config.sops.secrets."nextcloud/clientSecret".path;
-          # enableLegacyCrypto = true;
+
+          # Nextcloud does not support ES256
+          enableLegacyCrypto = true;
 
           originLanding = "http://${cfg.services.nextcloud.domain}/";
           originUrl = [
