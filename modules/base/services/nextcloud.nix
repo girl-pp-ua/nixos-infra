@@ -12,6 +12,15 @@ let
     domain = cfg.services.kanidm.domain;
     client_id = cfg.services.nextcloud.clientID;
   };
+  exiftool_12_70 = pkgs.exiftool.overrideAttrs (old: rec {
+    version = "12.70";
+    src = pkgs.fetchFromGitHub {
+      owner = "exiftool";
+      repo = "exiftool";
+      tag = version;
+      hash = "sha256-YMWYPI2SDi3s4KCpSNwovemS5MDj5W9ai0sOkvMa8Zg=";
+    };
+  });
 in
 {
   imports = [
@@ -100,9 +109,9 @@ in
         oidc_login_code_challenge_method = "S256";
 
         "memories.readonly" = true;
-        "memories.exiftool" = "${pkgs.exiftool}/bin/exiftool";
+        "memories.exiftool" = "${exiftool_12_70}/bin/exiftool";
         "memories.vod.disable" = false;
-        "memories.vod.vaapi" = true;
+        "memories.vod.vaapi" = config.hardware.graphics.enable;
         "memories.vod.ffmpeg" = "${pkgs.ffmpeg}/bin/ffmpeg";
         "memories.vod.ffprobe" = "${pkgs.ffmpeg}/bin/ffprobe";
 
