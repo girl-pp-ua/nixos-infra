@@ -108,6 +108,9 @@
             };
           }
         ];
+        cocoa = mkNixosSystem "cocoa" [
+          # TODO
+        ];
       };
 
       # deploy-rs configuration
@@ -115,6 +118,7 @@
         oci1 = mkDeployProfile "oci1.girl.pp.ua" "oci1";
         oci2 = mkDeployProfile "oci2.girl.pp.ua" "oci2";
         dell-sv = mkDeployProfile "dell-sv.saga-mirzam.ts.net" "dell-sv";
+        cocoa = mkDeployProfile "cocoa.girl.pp.ua" "cocoa";
       };
 
       checks = builtins.mapAttrs (system: deployLib: deployLib.deployChecks self.deploy) deploy-rs.lib;

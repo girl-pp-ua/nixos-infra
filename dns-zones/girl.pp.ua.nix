@@ -2,7 +2,7 @@
 with dns.lib.combinators;
 let
   zone = "girl.pp.ua.";
-  serial = 2025060408; # YYYYMMDDNN
+  serial = 2025060901; # YYYYMMDDNN
 
   /**
     Creates a CNAME record
@@ -47,10 +47,16 @@ let
       ipv6 = "2603:c020:800c:9c7f:3906:822b:23d9:899c";
     };
 
-    # (intranet) dell-sv
+    # (intranet) dell-sv; tailscale ips
     dell-sv = {
       ipv4 = "100.64.0.2";
       ipv6 = "fd7a:115c:a1e0::2901:2214";
+    };
+
+    # cocoa: "Cocoa" host - AMD (testing only)
+    cocoa = {
+      ipv4 = "45.8.201.26";
+      ipv6 = null; # no ipv6 :<
     };
   };
 in
@@ -58,7 +64,7 @@ in
   TTL = 1800; # 30 minutes
 
   SOA = {
-    nameServer = "ns2.${zone}";
+    nameServer = "ns1.${zone}";
     adminEmail = "prasol258@gmail.com";
     inherit serial;
   };
@@ -94,10 +100,11 @@ in
   ];
 
   subdomains = {
-    # hosts:
+    # hosts (public):
     oci1 = with hosts; mkDualstackHost oci1.ipv4 oci1.ipv6;
     oci2 = with hosts; mkDualstackHost oci2.ipv4 oci2.ipv6;
     oci-loadbalancer = with hosts; mkDualstackHost oci-loadbalancer.ipv4 oci-loadbalancer.ipv6;
+    cocoa = with hosts; mkDualstackHost cocoa.ipv4 cocoa.ipv6;
 
     # nameservers:
     ns1 = with hosts; host oci1.ipv4 oci1.ipv6;
