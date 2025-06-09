@@ -108,7 +108,7 @@ in
           tasks
           notes
           memories
-          onlyoffice
+          # onlyoffice
           # whiteboard
           oidc_login;
       };
