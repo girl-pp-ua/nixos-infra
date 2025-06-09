@@ -108,7 +108,7 @@ in
         # oidc_login_password_authentication = true; # might be required for davx5
         oidc_login_code_challenge_method = "S256";
 
-        # "memories.readonly" = true;
+        "memories.readonly" = true;
         "memories.exiftool" = "${exiftool_12_70}/bin/exiftool";
         "memories.vod.disable" = false;
         "memories.vod.vaapi" = config.hardware.graphics.enable;
@@ -139,7 +139,10 @@ in
       extraAppsEnable = true;
     };
     users.users.nextcloud = {
-      extraGroups = [ "render" ];
+      extraGroups = [
+        "render"
+        "video"
+      ];
     };
 
     sops.secrets = let
