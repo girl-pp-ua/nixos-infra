@@ -37,6 +37,7 @@ in
       enable = true;
       package = pkgs.nextcloud31;
 
+      # web server
       webserver = "caddy";
       hostName = cfg.services.nextcloud.domain;
       https = false;
@@ -97,19 +98,29 @@ in
         oidc_login_proxy_ldap = false;
         # oidc_login_password_authentication = true; # might be required for davx5
         oidc_login_code_challenge_method = "S256";
+
+        "memories.readonly" = true;
+        "memories.exiftool" = "${pkgs.exiftool}/bin/exiftool";
+        "memories.vod.disable" = false;
+        "memories.vod.vaapi" = true;
+        "memories.vod.ffmpeg" = "${pkgs.ffmpeg}/bin/ffmpeg";
+        "memories.vod.ffprobe" = "${pkgs.ffmpeg}/bin/ffprobe";
       };
       secretFile = config.sops.secrets."nextcloud/secretFile".path;
       phpOptions = {
         "opcache.interned_strings_buffer" = "24";
       };
+
       # apps
       extraApps = {
         inherit (config.services.nextcloud.package.packages.apps)
+          app_api
           contacts
           calendar
           tasks
           notes
           memories
+          recognize
           # onlyoffice
           # whiteboard
           oidc_login;

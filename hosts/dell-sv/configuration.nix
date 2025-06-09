@@ -7,6 +7,9 @@ in {
 
   system.stateVersion = "24.11";
 
+  # this system has a gpu :3
+  hardware.graphics.enable = true;
+
   # kernel param
   boot.kernelParams = [
     "nohibernate" # HACK: disable hibernation
