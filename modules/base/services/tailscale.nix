@@ -26,10 +26,13 @@ in
         extraUpFlags = commonFlags;
         authKeyFile = config.sops.secrets."tailscale/authKey".path;
       };
-      sops.secrets."tailscale/authKey" = {
-        mode = "0400";
-        owner = "root";
-        group = "root";
-      };
+    networking.firewall = {
+      trustedInterfaces = [ "tailscale0" ];
+    };
+    sops.secrets."tailscale/authKey" = {
+      mode = "0400";
+      owner = "root";
+      group = "root";
+    };
   };
 }
