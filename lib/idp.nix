@@ -1,6 +1,7 @@
 { domain, client_id }:
 {
   # kanidm
+  oidc_discovery_prefix = "https://${domain}/oauth2/openid/${client_id}";
   oidc_discovery = "https://${domain}/oauth2/openid/${client_id}/.well-known/openid-configuration";
   rfc8144_authorization_server_metadata = "https://${domain}/oauth2/openid/${client_id}/.well-known/oauth-authorization-server";
   user_auth = "https://${domain}/ui/oauth2";

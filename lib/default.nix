@@ -1,0 +1,3 @@
+{ ... }: {
+  idp = import ./idp.nix;
+}

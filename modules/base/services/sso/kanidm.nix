@@ -50,6 +50,8 @@ in
               "fwauthtest1.access"
               "uptime-kuma.access"
               "oracle-cloud-infrastructure.access"
+              "nextcloud.access"
+              "nextcloud.admin"
             ];
           };
           niko = {
@@ -131,6 +133,40 @@ in
             ];
           };
         };
+
+        groups."nextcloud.access" = { };
+        groups."nextcloud.admin" = { };
+        systems.oauth2."nextcloud" = {
+          displayName = "Nextcloud";
+          preferShortUsername = true;
+
+          basicSecretFile = config.sops.secrets."nextcloud/clientSecret".path;
+          # enableLegacyCrypto = true;
+
+          originLanding = "http://${cfg.services.nextcloud.domain}/";
+          originUrl = [
+            # "https://${cfg.services.nextcloud.domain}/apps/oidc_login/oidc"
+            "http://${cfg.services.nextcloud.domain}/apps/oidc_login/oidc"
+          ];
+
+          scopeMaps."nextcloud.access" = [
+            "profile"
+            "email"
+            "groups"
+            "openid"
+          ];
+
+          supplementaryScopeMaps."nextcloud.admin" = [
+            "nextcloud_admin"
+          ];
+
+          claimMaps.groups = {
+            joinType = "array";
+            valuesByGroup."nextcloud.access" = [
+              "nextcloud_access"
+            ];
+          };
+        };
       };
     };
 
@@ -146,15 +182,16 @@ in
       };
     };
 
-    sops.secrets."ociTenancy/clientSecret" = {
-      mode = "0400";
-      owner = "kanidm";
-      group = "kanidm";
-    };
-    sops.secrets."oauth2_proxy/clientSecret" = {
-      mode = "0400";
-      owner = "kanidm";
-      group = "kanidm";
+    sops.secrets = let
+      secret = {
+        mode = "0400";
+        owner = "kanidm";
+        group = "kanidm";
+      };
+    in {
+      "ociTenancy/clientSecret" = secret;
+      "oauth2_proxy/clientSecret" = secret;
+      "nextcloud/clientSecret" = secret;
     };
   };
 }

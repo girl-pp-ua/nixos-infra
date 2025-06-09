@@ -1,8 +1,8 @@
-{ config, lib, ... }:
+{ config, lib, libx, ... }:
 let
   cfg = config.cfg;
-  idp = import ./../../../../lib/oidc-kamidm.nix {
-    domain = cfg.services.oauth2_proxy.authDomain;
+  idp = libx.idp {
+    domain = cfg.services.kanidm.domain;
     client_id = cfg.services.oauth2_proxy.clientID;
   };
 in
@@ -24,10 +24,6 @@ in
       clientID = lib.mkOption {
         type = lib.types.str;
         default = "oauth2-proxy";
-      };
-      authDomain = lib.mkOption {
-        type = lib.types.str;
-        default = cfg.services.kanidm.domain;
       };
     };
   };

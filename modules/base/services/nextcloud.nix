@@ -3,10 +3,15 @@
   config,
   pkgs,
   lib,
+  libx,
   ...
 }:
 let
   cfg = config.cfg;
+  idp = libx.idp {
+    domain = cfg.services.kanidm.domain;
+    client_id = cfg.services.nextcloud.clientID;
+  };
 in
 {
   imports = [
@@ -19,6 +24,10 @@ in
       domain = lib.mkOption {
         type = lib.types.str;
         default = "nextcloud.intranet.girl.pp.ua";
+      };
+      clientID = lib.mkOption {
+        type = lib.types.str;
+        default = "nextcloud";
       };
     };
   };
@@ -59,12 +68,61 @@ in
           "OC\\Preview\\XBitmap"
           "OC\\Preview\\HEIC"
         ];
+
+        allow_user_to_change_display_name = false;
+        lost_password_link = "disabled";
+
+        # using only oidc, that already uses webauthn
+        auth.webauthn.enabled = false;
+
+        # oidc
+        oidc_login_provider_url = idp.oidc_discovery_prefix;
+        oidc_login_client_id = cfg.services.nextcloud.clientID;
+        oidc_login_end_session_redirect = false; # no need
+        oidc_login_button_text = "Log in with Girlcock";
+        oidc_login_hide_password_form = false;
+        oidc_login_attributes = {
+          id = "preferred_username";
+          name = "name";
+          mail = "email";
+          groups = "groups";
+          is_admin = "nextcloud_admin";
+        };
+        oidc_login_use_id_token = true;
+        oidc_login_scope = "openid profile email groups";
+        oidc_login_default_group = "oidc";
+        # oidc_login_update_avatar = true; # kanidm doesnt provide those
+        oidc_login_disable_registration = false; # automatically create user accountss
+        oidc_login_proxy_ldap = false;
+        # oidc_login_password_authentication = true; # might be required for davx5
+        oidc_login_code_challenge_method = "S256";
       };
+      secretFile = config.sops.secrets."nextcloud/secretFile".path;
+
+      # apps
+      extraApps = {
+        inherit (config.services.nextcloud.package.packages.apps)
+          contacts
+          calendar
+          tasks
+          notes
+          memories
+          onlyoffice
+          # whiteboard
+          oidc_login;
+      };
+      extraAppsEnable = true;
     };
 
-    sops.secrets."nextcloud/adminpass" = {
-      mode = "0400";
-      owner = "nextcloud";
+    sops.secrets = let
+      secret = {
+        mode = "0400";
+        owner = "nextcloud";
+        group = "nextcloud";
+      };
+    in {
+      "nextcloud/adminpass" = secret;
+      "nextcloud/secretFile" = secret;
     };
   };
 }
