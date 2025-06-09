@@ -99,7 +99,9 @@ in
         oidc_login_code_challenge_method = "S256";
       };
       secretFile = config.sops.secrets."nextcloud/secretFile".path;
-
+      phpOptions = {
+        "opcache.interned_strings_buffer" = "24";
+      };
       # apps
       extraApps = {
         inherit (config.services.nextcloud.package.packages.apps)
