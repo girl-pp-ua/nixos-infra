@@ -26,7 +26,7 @@
       flake = false; # (using as source for pkgs.redlib)
     };
     uptime-kuma = {
-      url = "github:louislam/uptime-kuma/2.0.0-beta.2";
+      url = "github:louislam/uptime-kuma/2.0.0-beta.3";
       flake = false;
     };
     secrets = {

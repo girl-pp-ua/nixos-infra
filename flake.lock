@@ -257,16 +257,16 @@
     "uptime-kuma": {
       "flake": false,
       "locked": {
-        "lastModified": 1743175528,
-        "narHash": "sha256-eETFLCKL6HoxrdwsqunbOrwaHp3N/dLu1InN3H2rnko=",
+        "lastModified": 1749007863,
+        "narHash": "sha256-uE1SLt901NfXQ9cpmvJI8e2mniJ1gnhZ2WKXevw4jHY=",
         "owner": "louislam",
         "repo": "uptime-kuma",
-        "rev": "74448d39e82216c288754ba06c3286bcd33b0021",
+        "rev": "63c5ebe62426a5bf25e5e9248ca5bfae281dcc0e",
         "type": "github"
       },
       "original": {
         "owner": "louislam",
-        "ref": "2.0.0-beta.2",
+        "ref": "2.0.0-beta.3",
         "repo": "uptime-kuma",
         "type": "github"
       }

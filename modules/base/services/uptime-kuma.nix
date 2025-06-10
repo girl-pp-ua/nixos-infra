@@ -38,7 +38,7 @@ in
         npmDeps = pkgs.fetchNpmDeps {
           inherit src;
           name = "${prev.pname}-${version}-npm-deps";
-          hash = "sha256-YZS6rUE7qi11gFqiZ7AU4u2JKmTLeqiQ0wVPbOA8KBg=";
+          hash = "sha256-9j+tDdSKode9hsz76eDCWy0vVZquHEG8Jw9JPD/czLE=";
         };
         patches = [ ]; # (patch does not apply to 2.0.0-beta, see workaround below)
       });
@@ -46,7 +46,7 @@ in
         UPTIME_KUMA_HOST = "127.0.0.1";
         UPTIME_KUMA_PORT = builtins.toString cfg.services.uptime-kuma.port;
         UPTIME_KUMA_DB_TYPE = "sqlite";
-        NODE_EXTRA_CA_CERTS = "/run/credentials/uptime-kuma.service/uptime_kuma_tls_chain.pem";
+        NODE_EXTRA_CA_CERTS = "/run/credentials/uptime-kuma.service/tls_chain.pem";
       };
       # // (
       #   lib.optionalAttrs
@@ -116,7 +116,7 @@ in
       });
 
     systemd.services.uptime-kuma.serviceConfig = {
-      LoadCredential = "uptime_kuma_tls_chain.pem:${config.sops.secrets."uptime_kuma_tls_chain".path}";
+      LoadCredential = "tls_chain.pem:${config.sops.secrets."uptime_kuma_tls_chain".path}";
     };
     sops.secrets."uptime_kuma_tls_chain" = {
       sopsFile = "${inputs.secrets}/certs/tls_chain.sops.pem";
