@@ -77,6 +77,12 @@ in
           cfg.services.nextcloud.intraDomain
         ];
 
+        trusted_proxies = [
+          "45.8.201.26" # cocoa
+          "127.0.0.1"
+          "::1"
+        ];
+
         "profile.enabled" = true;
 
         enabledPreviewProviders = [
@@ -130,6 +136,8 @@ in
         "memories.vod.ffprobe" = "${pkgs.ffmpeg}/bin/ffprobe";
 
         preview_ffmpeg_path = "${pkgs.ffmpeg}/bin/ffmpeg";
+
+        maintenance_window_start = 2; # 2 AM UTC ~= 3-4 AM Europe/Warsaw
       };
       secretFile = config.sops.secrets."nextcloud/secretFile".path;
       phpOptions = {
