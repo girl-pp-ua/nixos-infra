@@ -4,11 +4,15 @@ let
 in
 {
   options = {
-    cfg.services.caddy.file-server-endpoint = {
+    cfg.services.caddy.endpoints.file-server = {
       enable = lib.mkEnableOption "caddy file server endpoint";
+      path = lib.mkOption {
+        type = lib.types.path;
+        default = "/data/files/public";
+      };
     };
   };
-  config = lib.mkIf cfg.services.caddy.file-server-endpoint.enable {
+  config = lib.mkIf cfg.services.caddy.endpoints.file-server.enable {
     services.caddy.virtualHosts = {
       "files.girl.pp.ua" = {
         serverAliases = [
@@ -18,7 +22,7 @@ in
         extraConfig = ''
           import cors *
           import encode
-          root * /data/files/public
+          root * ${cfg.services.caddy.endpoints.file-server.path}
           file_server browse
         '';
       };

@@ -32,6 +32,10 @@ in
       enable = lib.mkEnableOption "nextcloud";
       domain = lib.mkOption {
         type = lib.types.str;
+        default = "cloud.girl.pp.ua";
+      };
+      intraDomain = lib.mkOption {
+        type = lib.types.str;
         default = "nextcloud.intranet.girl.pp.ua";
       };
       clientID = lib.mkOption {
@@ -65,6 +69,15 @@ in
         adminpassFile = config.sops.secrets."nextcloud/adminpass".path;
       };
       settings = {
+        overwriteprotocol = "https";
+
+        trusted_domains = [
+          cfg.services.nextcloud.domain
+          cfg.services.nextcloud.intraDomain
+        ];
+
+        "profile.enabled" = true;
+
         enabledPreviewProviders = [
           "OC\\Preview\\BMP"
           "OC\\Preview\\GIF"
@@ -139,6 +152,16 @@ in
       };
       extraAppsEnable = true;
     };
+
+    services.caddy.virtualHosts.${cfg.services.nextcloud.domain} = {
+      serverAliases = [
+        cfg.services.nextcloud.intraDomain
+      ];
+      extraConfig = ''
+        import encode
+      '';
+    };
+
     users.users.nextcloud = {
       extraGroups = [
         "render"

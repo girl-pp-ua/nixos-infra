@@ -2,7 +2,7 @@
 with dns.lib.combinators;
 let
   zone = "girl.pp.ua.";
-  serial = 2025060901; # YYYYMMDDNN
+  serial = 2025061001; # YYYYMMDDNN
 
   /**
     Creates a CNAME record
@@ -126,6 +126,7 @@ in
     ntfy = mkCname "oci2.${zone}";
     uptime = mkCname "oci1.${zone}";
     status = mkCname "oci1.${zone}";
+    cloud = mkCname "cocoa.${zone}"; # (proxy -> dell-sv)
 
     # testing:
     oauth2 = mkCname "oci1.${zone}";

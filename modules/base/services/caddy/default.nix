@@ -8,6 +8,12 @@ let
   cfg = config.cfg;
 in
 {
+  imports = [
+    ./endpoints/file-server.nix
+    ./endpoints/healthcheck.nix
+    ./endpoints/nextcloud-proxy.nix
+    ./endpoints/webdav.nix
+  ];
   options = {
     cfg.services.caddy.enable = lib.mkEnableOption "caddy";
   };

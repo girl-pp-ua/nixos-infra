@@ -147,8 +147,9 @@ in
 
           originLanding = "http://${cfg.services.nextcloud.domain}/";
           originUrl = [
-            # "https://${cfg.services.nextcloud.domain}/apps/oidc_login/oidc"
-            "http://${cfg.services.nextcloud.domain}/apps/oidc_login/oidc"
+            "https://${cfg.services.nextcloud.domain}/apps/oidc_login/oidc"
+            "https://${cfg.services.nextcloud.intraDomain}/apps/oidc_login/oidc"
+            # "http://${cfg.services.nextcloud.domain}/apps/oidc_login/oidc"
           ];
 
           scopeMaps."nextcloud.access" = [

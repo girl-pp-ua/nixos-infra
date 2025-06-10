@@ -85,11 +85,11 @@
           {
             networking.domain = "girl.pp.ua";
             cfg.services = {
-              caddy = {
-                enable = true;
-                file-server-endpoint.enable = true;
-                healthcheck-endpoint.enable = true;
-                webdav-endpoint.enable = true;
+              caddy.enable = true;
+              caddy.endpoints = {
+                file-server.enable = true;
+                healthcheck.enable = true;
+                webdav.enable = true;
               };
               dns-server.enable = true;
               kanidm.enable = true;
@@ -103,7 +103,7 @@
             cfg.services = {
               caddy = {
                 enable = true;
-                healthcheck-endpoint.enable = true;
+                endpoints.healthcheck.enable = true;
               };
               dns-server.enable = true;
               redlib.enable = true;
@@ -123,7 +123,10 @@
         cocoa = mkNixosSystem "cocoa" [
           {
             networking.domain = "girl.pp.ua";
-            # TODO
+            cfg.services = {
+              caddy.enable = true;
+              caddy.endpoints.nextcloud-proxy.enable = true;
+            };
           }
         ];
       };

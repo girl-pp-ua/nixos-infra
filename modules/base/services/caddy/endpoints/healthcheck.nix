@@ -9,11 +9,11 @@ let
 in
 {
   options = {
-    cfg.services.caddy.healthcheck-endpoint = {
+    cfg.services.caddy.endpoints.healthcheck = {
       enable = lib.mkEnableOption "caddy heathcheck endpoint";
     };
   };
-  config = lib.mkIf cfg.services.caddy.healthcheck-endpoint.enable {
+  config = lib.mkIf cfg.services.caddy.endpoints.healthcheck.enable {
     services.caddy.virtualHosts = {
       "${host}.girl.pp.ua" = {
         serverAliases = [

@@ -13,10 +13,10 @@
     ./environment.nix
 
     # Base services
+    ./services/caddy
     ./services/openssh.nix
     ./services/sshguard.nix
     ./services/tailscale.nix
-    ./services/caddy.nix
     ./services/dns-server.nix
     ./services/redlib.nix
     ./services/ntfy.nix
@@ -27,11 +27,6 @@
     # SSO
     ./services/sso/kanidm.nix
     ./services/sso/oauth2-proxy.nix
-
-    # Caddy endpoint configuration
-    ./services/endp/healthcheck-endpoint.nix
-    ./services/endp/file-server-endpoint.nix
-    ./services/endp/webdav-endpoint.nix
   ];
 
   i18n.defaultLocale = "en_US.UTF-8";
