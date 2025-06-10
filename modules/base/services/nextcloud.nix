@@ -102,7 +102,7 @@ in
         oidc_login_provider_url = idp.oidc_discovery_prefix;
         oidc_login_client_id = cfg.services.nextcloud.clientID;
         oidc_login_end_session_redirect = false; # no need
-        oidc_login_button_text = "Log in with Girlcock";
+        oidc_login_button_text = "Log in with Girlcock™";
         oidc_login_hide_password_form = true;
         oidc_login_attributes = {
           id = "preferred_username";
@@ -134,6 +134,15 @@ in
       phpOptions = {
         "opcache.interned_strings_buffer" = "24";
       };
+      extraOCCCommands =
+        let
+          occ = "${config.services.nextcloud.occ}/bin/nextcloud-occ";
+        in
+        ''
+          ${occ} theming:config name "Girlcloud"
+          ${occ} theming:config color "#F5C2E7"
+          ${occ} theming:config primary_color "#F5C2E7"
+        '';
 
       # apps
       extraApps = {
