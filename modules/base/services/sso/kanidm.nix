@@ -1,4 +1,5 @@
 {
+  inputs,
   config,
   pkgs,
   lib,
@@ -26,8 +27,9 @@ in
       enableServer = true;
       package = pkgs.kanidm.withSecretProvisioning;
       serverSettings = {
-        inherit (cfg.secrets.selfSignedCert) tls_key tls_chain;
         inherit (cfg.services.kanidm) domain;
+        tls_key = config.sops.secrets."kanidm_tls_key".path;
+        tls_chain = config.sops.secrets."kanidm_tls_chain".path;
         origin = "https://${cfg.services.kanidm.domain}";
         bindaddress = "127.0.0.1:${toString cfg.services.kanidm.port}";
         trust_x_forward_for = true;
@@ -35,7 +37,7 @@ in
       enableClient = true;
       clientSettings = {
         uri = "https://127.0.0.1:${toString cfg.services.kanidm.port}";
-        ca_path = cfg.secrets.selfSignedCert.tls_chain;
+        ca_path = config.sops.secrets."kanidm_tls_chain".path;
       };
       provision = {
         enable = true;
@@ -175,7 +177,7 @@ in
         extraConfig = ''
           reverse_proxy https://127.0.0.1:${toString cfg.services.kanidm.port} {
             transport http {
-              tls_trust_pool file ${cfg.secrets.selfSignedCert.tls_chain}
+              tls_trust_pool file ${config.sops.secrets."kanidm_caddy_tls_chain".path}
             }
           }
         '';
@@ -183,15 +185,30 @@ in
     };
 
     sops.secrets = let
-      secret = {
+      kanidmSecret = {
         mode = "0400";
         owner = "kanidm";
         group = "kanidm";
       };
     in {
-      "ociTenancy/clientSecret" = secret;
-      "oauth2_proxy/clientSecret" = secret;
-      "nextcloud/clientSecret" = secret;
+      "ociTenancy/clientSecret" = kanidmSecret;
+      "oauth2_proxy/clientSecret" = kanidmSecret;
+      "nextcloud/clientSecret" = kanidmSecret;
+      "kanidm_tls_key" = kanidmSecret // {
+        sopsFile = "${inputs.secrets}/certs/tls_key.sops.pem";
+        format = "binary";
+      };
+      "kanidm_tls_chain" = kanidmSecret // {
+        sopsFile = "${inputs.secrets}/certs/tls_chain.sops.pem";
+        format = "binary";
+      };
+      "kanidm_caddy_tls_chain" = {
+        sopsFile = "${inputs.secrets}/certs/tls_chain.sops.pem";
+        format = "binary";
+        mode = "0400";
+        owner = "caddy";
+        group = "caddy";
+      };
     };
   };
 }
