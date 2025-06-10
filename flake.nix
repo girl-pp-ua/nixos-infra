@@ -83,10 +83,15 @@
       nixosConfigurations = {
         oci1 = mkNixosSystem "oci1" [
           {
+            networking.domain = "girl.pp.ua";
             cfg.services = {
+              caddy = {
+                enable = true;
+                file-server-endpoint.enable = true;
+                healthcheck-endpoint.enable = true;
+                webdav-endpoint.enable = true;
+              };
               dns-server.enable = true;
-              file-server-endpoint.enable = true;
-              webdav-endpoint.enable = true;
               kanidm.enable = true;
               uptime-kuma.enable = true;
             };
@@ -94,7 +99,12 @@
         ];
         oci2 = mkNixosSystem "oci2" [
           {
+            networking.domain = "girl.pp.ua";
             cfg.services = {
+              caddy = {
+                enable = true;
+                healthcheck-endpoint.enable = true;
+              };
               dns-server.enable = true;
               redlib.enable = true;
               ntfy.enable = true;
@@ -103,13 +113,18 @@
         ];
         dell-sv = mkNixosSystem "dell-sv" [
           {
+            networking.domain = "intranet.girl.pp.ua";
             cfg.services = {
+              caddy.enable = true;
               nextcloud.enable = true;
             };
           }
         ];
         cocoa = mkNixosSystem "cocoa" [
-          # TODO
+          {
+            networking.domain = "girl.pp.ua";
+            # TODO
+          }
         ];
       };
 

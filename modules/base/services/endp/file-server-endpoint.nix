@@ -4,11 +4,11 @@ let
 in
 {
   options = {
-    cfg.services.file-server-endpoint = {
+    cfg.services.caddy.file-server-endpoint = {
       enable = lib.mkEnableOption "caddy file server endpoint";
     };
   };
-  config = lib.mkIf cfg.services.file-server-endpoint.enable {
+  config = lib.mkIf cfg.services.caddy.file-server-endpoint.enable {
     services.caddy.virtualHosts = {
       "files.girl.pp.ua" = {
         serverAliases = [

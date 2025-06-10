@@ -4,11 +4,11 @@ let
 in
 {
   options = {
-    cfg.services.webdav-endpoint = {
+    cfg.services.caddy.webdav-endpoint = {
       enable = lib.mkEnableOption "caddy webdav endpoint";
     };
   };
-  config = lib.mkIf cfg.services.webdav-endpoint.enable {
+  config = lib.mkIf cfg.services.caddy.webdav-endpoint.enable {
     services.caddy.virtualHosts = {
       "webdav.girl.pp.ua" = {
         serverAliases = [

@@ -9,9 +9,7 @@ let
 in
 {
   options = {
-    cfg.services.caddy.enable = lib.mkEnableOption "caddy" // {
-      default = true;
-    };
+    cfg.services.caddy.enable = lib.mkEnableOption "caddy";
   };
   config = lib.mkIf cfg.services.caddy.enable {
     services.caddy = {
