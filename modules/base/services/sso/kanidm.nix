@@ -184,31 +184,33 @@ in
       };
     };
 
-    sops.secrets = let
-      kanidmSecret = {
-        mode = "0400";
-        owner = "kanidm";
-        group = "kanidm";
+    sops.secrets =
+      let
+        kanidmSecret = {
+          mode = "0400";
+          owner = "kanidm";
+          group = "kanidm";
+        };
+      in
+      {
+        "ociTenancy/clientSecret" = kanidmSecret;
+        "oauth2_proxy/clientSecret" = kanidmSecret;
+        "nextcloud/clientSecret" = kanidmSecret;
+        "kanidm_tls_key" = kanidmSecret // {
+          sopsFile = "${inputs.secrets}/certs/tls_key.sops.pem";
+          format = "binary";
+        };
+        "kanidm_tls_chain" = kanidmSecret // {
+          sopsFile = "${inputs.secrets}/certs/tls_chain.sops.pem";
+          format = "binary";
+        };
+        "kanidm_caddy_tls_chain" = {
+          sopsFile = "${inputs.secrets}/certs/tls_chain.sops.pem";
+          format = "binary";
+          mode = "0400";
+          owner = "caddy";
+          group = "caddy";
+        };
       };
-    in {
-      "ociTenancy/clientSecret" = kanidmSecret;
-      "oauth2_proxy/clientSecret" = kanidmSecret;
-      "nextcloud/clientSecret" = kanidmSecret;
-      "kanidm_tls_key" = kanidmSecret // {
-        sopsFile = "${inputs.secrets}/certs/tls_key.sops.pem";
-        format = "binary";
-      };
-      "kanidm_tls_chain" = kanidmSecret // {
-        sopsFile = "${inputs.secrets}/certs/tls_chain.sops.pem";
-        format = "binary";
-      };
-      "kanidm_caddy_tls_chain" = {
-        sopsFile = "${inputs.secrets}/certs/tls_chain.sops.pem";
-        format = "binary";
-        mode = "0400";
-        owner = "caddy";
-        group = "caddy";
-      };
-    };
   };
 }

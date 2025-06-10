@@ -1,24 +1,30 @@
-{ ... }: {
+{ ... }:
+{
   imports = [
     ./hardware-configuration.nix
   ];
 
   system.stateVersion = "25.05";
 
-  fileSystems = let
-    btrfsOptions = [ "noatime" "compress=zstd" ];
-  in {
-    "/".options = btrfsOptions;
-    "/home".options = btrfsOptions;
-    "/nix".options =  btrfsOptions;
-    "/swap".options = [ "noatime" ];
-    "/boot".options = [ "noatime" ];
-  };
+  fileSystems =
+    let
+      btrfsOptions = [
+        "noatime"
+        "compress=zstd"
+      ];
+    in
+    {
+      "/".options = btrfsOptions;
+      "/home".options = btrfsOptions;
+      "/nix".options = btrfsOptions;
+      "/swap".options = [ "noatime" ];
+      "/boot".options = [ "noatime" ];
+    };
 
   swapDevices = [
     {
       device = "/swap/swapfile";
-      size = 8*1024; # 8 GiB
+      size = 8 * 1024; # 8 GiB
     }
   ];
 

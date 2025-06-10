@@ -1,4 +1,9 @@
-{ config, lib, libx, ... }:
+{
+  config,
+  lib,
+  libx,
+  ...
+}:
 let
   cfg = config.cfg;
   idp = libx.idp {

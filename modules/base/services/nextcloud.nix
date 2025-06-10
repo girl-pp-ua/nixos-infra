@@ -134,7 +134,8 @@ in
           recognize
           # onlyoffice
           # whiteboard
-          oidc_login;
+          oidc_login
+          ;
       };
       extraAppsEnable = true;
     };
@@ -145,15 +146,17 @@ in
       ];
     };
 
-    sops.secrets = let
-      secret = {
-        mode = "0400";
-        owner = "nextcloud";
-        group = "nextcloud";
+    sops.secrets =
+      let
+        nextcloudSecret = {
+          mode = "0400";
+          owner = "nextcloud";
+          group = "nextcloud";
+        };
+      in
+      {
+        "nextcloud/adminpass" = nextcloudSecret;
+        "nextcloud/secretFile" = nextcloudSecret;
       };
-    in {
-      "nextcloud/adminpass" = secret;
-      "nextcloud/secretFile" = secret;
-    };
   };
 }

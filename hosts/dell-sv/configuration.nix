@@ -1,6 +1,8 @@
-{ pkgs, ... }: let
+{ pkgs, ... }:
+let
   cur_rocmPackages = pkgs.rocmPackages;
-in {
+in
+{
   imports = [
     ./hardware-configuration.nix
   ];
@@ -25,24 +27,37 @@ in {
   ];
 
   # hip/rocm
-  systemd.tmpfiles.rules = let
-    rocmEnv = pkgs.symlinkJoin {
-      name = "rocm-combined";
-      paths = with cur_rocmPackages; [ rocblas hipblas clr ];
-    };
-  in [
-    "L+    /opt/rocm   -    -    -     -    ${rocmEnv}"
-  ];
+  systemd.tmpfiles.rules =
+    let
+      rocmEnv = pkgs.symlinkJoin {
+        name = "rocm-combined";
+        paths = with cur_rocmPackages; [
+          rocblas
+          hipblas
+          clr
+        ];
+      };
+    in
+    [
+      "L+    /opt/rocm   -    -    -     -    ${rocmEnv}"
+    ];
 
   # fs
-  fileSystems = let
-    btrfsOptions = [ "ssd" "noatime" "nodiscard" "compress=zstd:1" ];
-  in {
-    "/".options = btrfsOptions;
-    "/home".options = btrfsOptions;
-    "/nix".options =  btrfsOptions;
-    "/boot".options = [ "noatime" ];
-  };
+  fileSystems =
+    let
+      btrfsOptions = [
+        "ssd"
+        "noatime"
+        "nodiscard"
+        "compress=zstd:1"
+      ];
+    in
+    {
+      "/".options = btrfsOptions;
+      "/home".options = btrfsOptions;
+      "/nix".options = btrfsOptions;
+      "/boot".options = [ "noatime" ];
+    };
 
   # services
   services.fstrim.enable = true;

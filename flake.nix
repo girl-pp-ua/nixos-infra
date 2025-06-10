@@ -48,7 +48,7 @@
       pkgs = nixpkgs.legacyPackages.${system};
       specialArgs = {
         root = ./.;
-        libx = import ./lib {};
+        libx = import ./lib { };
         inherit
           self
           inputs
