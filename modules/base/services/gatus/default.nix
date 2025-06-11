@@ -34,7 +34,7 @@ let
 in
 {
   imports = [
-    ./multi-instance.nix
+    ./gatus-multi-instance.nix
   ];
   options = {
     cfg.services.gatus = {
