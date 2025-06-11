@@ -98,7 +98,7 @@ in
 
         updatechecker = false;
         "profile.enabled" = true;
-        token_auth_enforced = true;  # disable username/password auth in 3rd party apps
+        token_auth_enforced = true; # disable username/password auth in 3rd party apps
         maintenance_window_start = 2; # 2 AM UTC ~= 3-4 AM Europe/Warsaw
         default_locale = "en_150"; # English (Europe)
         "simpleSignUpLink.shown" = false; # disable sign-up ad

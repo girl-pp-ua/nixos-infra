@@ -14,10 +14,7 @@ in
 {
   options = {
     cfg.services.oauth2_proxy = {
-      enable = lib.mkEnableOption "oauth2_proxy" // {
-        # if canidm is enabled, oauth2_proxy will be enabled by default
-        default = cfg.services.kanidm.enable;
-      };
+      enable = lib.mkEnableOption "oauth2_proxy";
       port = lib.mkOption {
         type = lib.types.int;
         default = 16022;
@@ -34,10 +31,7 @@ in
   };
 
   config = lib.mkIf cfg.services.oauth2_proxy.enable {
-    # TODO
-
     services.oauth2-proxy = {
-      # TODO fix kanidm OAuth2
       enable = true;
 
       keyFile = config.sops.secrets."oauth2_proxy/keyFile".path;
@@ -82,7 +76,7 @@ in
         }
         handle {
           forward_auth http://127.0.0.1:${toString cfg.services.oauth2_proxy.port} {
-            uri ${cfg.services.oauth2_proxy.urlPrefix}/auth
+            uri ${cfg.services.oauth2_proxy.urlPrefix}/auth?allowed_groups={args[0]}
             @bad status 4xx
             handle_response @bad {
               redir * ${cfg.services.oauth2_proxy.urlPrefix}/start

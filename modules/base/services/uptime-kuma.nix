@@ -30,6 +30,8 @@ in
     };
   };
   config = lib.mkIf cfg.services.uptime-kuma.enable {
+    cfg.services.oauth2_proxy.enable = true;
+
     services.uptime-kuma = {
       enable = true;
       package = pkgs.uptime-kuma.overrideAttrs (prev: rec {
@@ -66,7 +68,7 @@ in
       {
         ${cfg.services.uptime-kuma.domain} = {
           extraConfig = ''
-            import oauth2_proxy
+            import oauth2_proxy "uptime-kuma.access"
             import encode
             reverse_proxy http://127.0.0.1:${toString cfg.services.uptime-kuma.port}
           '';

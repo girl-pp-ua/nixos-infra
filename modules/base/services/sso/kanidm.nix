@@ -49,7 +49,8 @@ in
             displayName = "grfgh";
             mailAddresses = [ "prasol258@gmail.com" ];
             groups = [
-              "oauth2-proxy.access"
+              "authtest.access"
+              "uptime-kuma.access"
               "oracle-cloud-infrastructure.access"
               "nextcloud.access"
             ];
@@ -58,15 +59,15 @@ in
             displayName = "niko";
             mailAddresses = [ "nyanbinary@tutamail.com" ];
             groups = [
-              "oauth2-proxy.access"
+              "authtest.access"
+              "uptime-kuma.access"
               "oracle-cloud-infrastructure.access"
             ];
           };
         };
 
-        # TODO: more granular access control
-        # currently, only gates uptime-kuma access
-        groups."oauth2-proxy.access" = { };
+        groups."authtest.access" = { };
+        groups."uptime-kuma.access" = { };
         systems.oauth2."oauth2-proxy" = {
           displayName = "oauth2-proxy";
           preferShortUsername = true;
@@ -86,20 +87,23 @@ in
           scopeMaps =
             let
               scope = [
-                "openid"
-                "email"
                 "profile"
+                "email"
+                "groups"
+                "openid"
               ];
             in
             {
-              "oauth2-proxy.access" = scope;
+              "authtest.access" = scope;
+              "uptime-kuma.access" = scope;
             };
 
           claimMaps.groups = {
             joinType = "array";
-            valuesByGroup."oauth2-proxy.access" = [
-              "oauth2_proxy_access"
-            ];
+            valuesByGroup = {
+              "authtest.access" = [ "authtest_access" ];
+              "uptime-kuma.access" = [ "uptime_kuma_access" ];
+            };
           };
         };
 

@@ -31,12 +31,16 @@ in
       extraApps = {
         inherit (config.services.nextcloud.package.packages.apps) whiteboard;
       };
-      extraOCCCommands = let
-        occ = "${config.services.nextcloud.occ}/bin/nextcloud-occ";
-      in ''
-        ${occ} config:app:set whiteboard collabBackendUrl --value="https://${cfg.services.nextcloud.domain}/whiteboard/"
-        ${occ} config:app:set whiteboard jwt_secret_key --value="$(cat ${config.sops.secrets."nextcloud/whiteboard/jwt_secret_key".path})"
-      '';
+      extraOCCCommands =
+        let
+          occ = "${config.services.nextcloud.occ}/bin/nextcloud-occ";
+        in
+        ''
+          ${occ} config:app:set whiteboard collabBackendUrl --value="https://${cfg.services.nextcloud.domain}/whiteboard/"
+          ${occ} config:app:set whiteboard jwt_secret_key --value="$(cat ${
+            config.sops.secrets."nextcloud/whiteboard/jwt_secret_key".path
+          })"
+        '';
     };
 
     services.caddy.virtualHosts."http://${cfg.services.nextcloud.domain}" = {
@@ -47,7 +51,7 @@ in
       '';
     };
 
-    sops.secrets."nextcloud/whiteboard/secretFile" = {};
-    sops.secrets."nextcloud/whiteboard/jwt_secret_key" = {};
+    sops.secrets."nextcloud/whiteboard/secretFile" = { };
+    sops.secrets."nextcloud/whiteboard/jwt_secret_key" = { };
   };
 }
