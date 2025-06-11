@@ -32,7 +32,7 @@ let
     inherit url conditions;
   };
 
-  mergeCommon = common: lib.map (value: common // value);
+  mergeAll = common: lib.map (value: common // value);
 in
 {
   imports = [
@@ -71,7 +71,7 @@ in
                 ];
               };
             in
-            mergeCommon withAlert (mkGroups {
+            mergeAll withAlert (mkGroups {
               hosts = mkEndpoints {
                 oci1 = mkPing "oci1.girl.pp.ua";
                 oci2 = mkPing "oci2.girl.pp.ua";
