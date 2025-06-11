@@ -72,14 +72,18 @@ in
     services.caddy.extraConfig = ''
       (oauth2_proxy) {
         handle ${cfg.services.oauth2_proxy.urlPrefix}/* {
-          reverse_proxy http://127.0.0.1:${toString cfg.services.oauth2_proxy.port}
+          reverse_proxy http://127.0.0.1:${toString cfg.services.oauth2_proxy.port} {
+            header_up X-Real-IP {remote_host}
+			      header_up X-Forwarded-Uri {uri}
+          }
         }
         handle {
           forward_auth http://127.0.0.1:${toString cfg.services.oauth2_proxy.port} {
             uri ${cfg.services.oauth2_proxy.urlPrefix}/auth?allowed_groups={args[0]}
-            @bad status 4xx
-            handle_response @bad {
-              redir * ${cfg.services.oauth2_proxy.urlPrefix}/start
+            header_up X-Real-IP {remote_host}
+            @error status 401
+            handle_response @error {
+              redir * ${cfg.services.oauth2_proxy.urlPrefix}/sign_in?rd={scheme}://{host}{uri}
             }
           }
         }
