@@ -53,5 +53,8 @@ in
       ];
       allowedUDPPorts = [ 443 ];
     };
+
+    # force nginx off
+    services.nginx.enable = lib.mkForce false;
   };
 }
