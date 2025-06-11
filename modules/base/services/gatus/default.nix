@@ -5,20 +5,19 @@ let
   mkGroups =
     groups:
     lib.concatLists (
-      lib.map (group: lib.map (item: item // { group = group.name; }) group.endpoints) groups
+      lib.mapAttrsToList (group: items: lib.map (item: item // { inherit group; }) items) groups
     );
+  mkEndpoints = items: lib.mapAttrsToList (name: item: item // { inherit name; }) items;
 
   # test that host can be pinged
-  mkPing = name: host: {
-    inherit name;
+  mkPing = host: {
     url = "icmp://${host}";
     conditions = [
       "[CONNECTED] == true"
     ];
   };
   # test that nameserver can resolve itself
-  mkNs = name: host: ip: {
-    inherit name;
+  mkDns = host: ip: {
     url = ip;
     dns = {
       query-name = host;
@@ -28,6 +27,9 @@ let
       "[BODY] == ${ip}"
       "[DNS_RCODE] == NOERROR"
     ];
+  };
+  mkUrl = url: conditions: {
+    inherit url conditions;
   };
 in
 {
@@ -50,49 +52,43 @@ in
             maximum-number-of-results = 1000;
             maximum-number-of-events = 500;
           };
-          endpoints = mkGroups [
-            {
-              name = "hosts";
-              endpoints = [
-                (mkPing "oci1" "oci1.girl.pp.ua")
-                (mkPing "oci2" "oci2.girl.pp.ua")
-                (mkPing "cocoa" "cocoa.girl.pp.ua")
-                (mkPing "dell-sv" "dell-sv.intranet.girl.pp.ua")
+          endpoints = mkGroups {
+            hosts = mkEndpoints {
+              oci1 = mkPing "oci1.girl.pp.ua";
+              oci2 = mkPing "oci2.girl.pp.ua";
+              cocoa = mkPing "cocoa.girl.pp.ua";
+              dell-sv = mkPing "dell-sv.intranet.girl.pp.ua";
+            };
+            nameservers = mkEndpoints {
+              ns1 = mkDns "ns1.girl.pp.ua" "132.226.204.218";
+              ns2 = mkDns "ns2.girl.pp.ua" "144.24.178.67";
+            };
+            services = mkEndpoints {
+              nextcloud = mkUrl "https://cloud.girl.pp.ua/status.php" [
+                "[STATUS] == 200"
+                "[BODY].productname == Nextcloud"
+                "[BODY].installed == true"
+                "[BODY].maintenance == false"
+                "[BODY].needsDbUpgrade == false"
               ];
-            }
-            {
-              name = "nameservers";
-              endpoints = [
-                (mkNs "ns1" "ns1.girl.pp.ua" "132.226.204.218")
-                (mkNs "ns2" "ns2.girl.pp.ua" "144.24.178.67")
+              nextcloud-whiteboard-server = mkUrl "https://cloud.girl.pp.ua/whiteboard/" [
+                "[STATUS] == 200"
+                "[BODY] == pat(*Excalidraw collaboration server is up :)*)"
               ];
-            }
-            {
-              name = "services";
-              endpoints = [
-                {
-                  name = "nextcloud";
-                  url = "https://cloud.girl.pp.ua/status.php";
-                  conditions = [
-                    "[STATUS] == 200"
-                    "[BODY].productname == Nextcloud"
-                    "[BODY].installed == true"
-                    "[BODY].maintenance == false"
-                    "[BODY].needsDbUpgrade == false"
-                  ];
-                }
-                {
-                  name = "redlib";
-                  url = "https://redlib.girl.pp.ua/r/test/comments/1l8wdxa";
-                  interval = "6h";
-                  conditions = [
-                    "[STATUS] == 200"
-                    "[BODY] == pat(*xiphoihaej5io8oSheiXie4gu9ixahs0ian5iemo9ohhieBaom4Ideiquoh7ai8e*)"
-                  ];
-                }
+              redlib = mkUrl "https://redlib.girl.pp.ua/r/test/comments/1l8wdxa" [
+                "[STATUS] == 200"
+                "[BODY] == pat(*xiphoihaej5io8oSheiXie4gu9ixahs0ian5iemo9ohhieBaom4Ideiquoh7ai8e*)"
               ];
-            }
-          ];
+              kanidm = mkUrl "https://sso.girl.pp.ua/status" [
+                "[STATUS] == 200"
+                "[BODY] == true"
+              ];
+              ntfy = mkUrl "https://ntfy.girl.pp.ua/v1/health" [
+                "[STATUS] == 200"
+                "[BODY].healthy == true"
+              ];
+            };
+          };
         };
       };
     };
