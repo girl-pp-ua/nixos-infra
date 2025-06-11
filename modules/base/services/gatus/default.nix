@@ -44,6 +44,12 @@ in
       girl-pp-ua = {
         port = 16040;
         settings = {
+          storage = {
+            type = "sqlite";
+            path = "/var/lib/gatus/data-girl-pp-ua.db";
+            maximum-number-of-results = 1000;
+            maximum-number-of-events = 500;
+          };
           endpoints = mkGroups [
             {
               name = "hosts";
@@ -59,6 +65,31 @@ in
               endpoints = [
                 (mkNs "ns1" "ns1.girl.pp.ua" "132.226.204.218")
                 (mkNs "ns2" "ns2.girl.pp.ua" "144.24.178.67")
+              ];
+            }
+            {
+              name = "services";
+              endpoints = [
+                {
+                  name = "nextcloud";
+                  url = "https://cloud.girl.pp.ua/status.php";
+                  conditions = [
+                    "[STATUS] == 200"
+                    "[BODY].productname == Nextcloud"
+                    "[BODY].installed == true"
+                    "[BODY].maintenance == false"
+                    "[BODY].needsDbUpgrade == false"
+                  ];
+                }
+                {
+                  name = "redlib";
+                  url = "https://redlib.girl.pp.ua/r/test/comments/1l8wdxa";
+                  interval = "6h";
+                  conditions = [
+                    "[STATUS] == 200"
+                    "[BODY] == pat(*xiphoihaej5io8oSheiXie4gu9ixahs0ian5iemo9ohhieBaom4Ideiquoh7ai8e*)"
+                  ];
+                }
               ];
             }
           ];
