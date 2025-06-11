@@ -49,8 +49,7 @@ in
             displayName = "grfgh";
             mailAddresses = [ "prasol258@gmail.com" ];
             groups = [
-              "fwauthtest1.access"
-              "uptime-kuma.access"
+              "oauth2-proxy.access"
               "oracle-cloud-infrastructure.access"
               "nextcloud.access"
             ];
@@ -59,16 +58,15 @@ in
             displayName = "niko";
             mailAddresses = [ "nyanbinary@tutamail.com" ];
             groups = [
-              "fwauthtest1.access"
-              "uptime-kuma.access"
+              "oauth2-proxy.access"
               "oracle-cloud-infrastructure.access"
             ];
           };
         };
 
-        # FIXME: currently, enabling ANY of oauth2-proxy groups allows access to ALL services proxied by oauth2-proxy
-        groups."fwauthtest1.access" = { };
-        groups."uptime-kuma.access" = { };
+        # TODO: more granular access control
+        # currently, only gates uptime-kuma access
+        groups."oauth2-proxy.access" = { };
         systems.oauth2."oauth2-proxy" = {
           displayName = "oauth2-proxy";
           preferShortUsername = true;
@@ -94,14 +92,14 @@ in
               ];
             in
             {
-              "fwauthtest1.access" = scope;
-              "uptime-kuma.access" = scope;
+              "oauth2-proxy.access" = scope;
             };
 
           claimMaps.groups = {
             joinType = "array";
-            valuesByGroup."fwauthtest1.access" = [ "fwauthtest1_access" ];
-            valuesByGroup."uptime-kuma.access" = [ "uptime_kuma_access" ];
+            valuesByGroup."oauth2-proxy.access" = [
+              "oauth2_proxy_access"
+            ];
           };
         };
 
