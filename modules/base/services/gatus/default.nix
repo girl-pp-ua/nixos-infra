@@ -32,7 +32,7 @@ let
     inherit url conditions;
   };
 
-  mergeCommon = common: lib.map (value: value // common);
+  mergeCommon = common: lib.map (value: common // value);
 in
 {
   imports = [
