@@ -71,19 +71,15 @@ in
       };
       settings = {
         overwriteprotocol = "https";
-
         trusted_domains = [
           cfg.services.nextcloud.domain
           cfg.services.nextcloud.intraDomain
         ];
-
         trusted_proxies = [
           "45.8.201.26" # cocoa
           "127.0.0.1"
           "::1"
         ];
-
-        "profile.enabled" = true;
 
         enabledPreviewProviders = [
           "OC\\Preview\\BMP"
@@ -99,17 +95,23 @@ in
           "OC\\Preview\\HEIC"
         ];
 
-        allow_user_to_change_display_name = false;
-        lost_password_link = "disabled";
+        updatechecker = false;
+        "profile.enabled" = true;
+        token_auth_enforced = true;  # disable username/password auth in 3rd party apps
+        maintenance_window_start = 2; # 2 AM UTC ~= 3-4 AM Europe/Warsaw
+        default_locale = "en_150"; # English (Europe)
+        "simpleSignUpLink.shown" = false; # disable sign-up ad
 
-        # using only oidc, that already uses webauthn
-        "auth.webauthn.enabled" = false;
+        hide_login_form = true; # use ?direct=1 to bypass/login as root
+        "auth.webauthn.enabled" = false; # using only oidc, that already uses webauthn
+        allow_user_to_change_display_name = false; # does not work with oidc
+        lost_password_link = "disabled";
 
         # oidc
         oidc_login_provider_url = idp.oidc_discovery_prefix;
         oidc_login_client_id = cfg.services.nextcloud.clientID;
         oidc_login_end_session_redirect = false; # no need
-        oidc_login_button_text = "Log in with Girlcock™";
+        oidc_login_button_text = "Log in with ${cfg.services.kanidm.domain}";
         oidc_login_hide_password_form = true;
         oidc_login_attributes = {
           id = "preferred_username";
@@ -128,6 +130,7 @@ in
         # oidc_login_password_authentication = true; # might be required for davx5
         oidc_login_code_challenge_method = "S256";
 
+        # memories
         "memories.readonly" = true;
         "memories.exiftool" = "${exiftool_12_70}/bin/exiftool";
         "memories.vod.disable" = false;
@@ -136,8 +139,6 @@ in
         "memories.vod.ffprobe" = "${pkgs.ffmpeg}/bin/ffprobe";
 
         preview_ffmpeg_path = "${pkgs.ffmpeg}/bin/ffmpeg";
-
-        maintenance_window_start = 2; # 2 AM UTC ~= 3-4 AM Europe/Warsaw
       };
       secretFile = config.sops.secrets."nextcloud/secretFile".path;
       phpOptions = {
