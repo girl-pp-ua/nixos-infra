@@ -92,11 +92,6 @@ in
       }
     '';
 
-    services.caddy.virtualHosts."fwauthtest1.girl.pp.ua".extraConfig = ''
-      import oauth2_proxy
-      respond "OK"
-    '';
-
     sops.secrets."oauth2_proxy/keyFile" = {
       mode = "0400";
       owner = "oauth2-proxy";

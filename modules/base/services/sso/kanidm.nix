@@ -73,13 +73,13 @@ in
 
           basicSecretFile = config.sops.secrets."oauth2_proxy/clientSecret".path;
 
-          originLanding = "https://fwauthtest1.girl.pp.ua/";
+          originLanding = "https://authtest.girl.pp.ua/";
           originUrl =
             let
               mkOriginUrl = domain: "https://${domain}${cfg.services.oauth2_proxy.urlPrefix}/callback";
             in
             [
-              (mkOriginUrl "fwauthtest1.girl.pp.ua")
+              (mkOriginUrl "authtest.girl.pp.ua")
               (mkOriginUrl "uptime.girl.pp.ua")
             ];
 

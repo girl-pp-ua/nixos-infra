@@ -13,6 +13,7 @@ in
     ./endpoints/healthcheck.nix
     ./endpoints/nextcloud-proxy.nix
     ./endpoints/webdav.nix
+    ./endpoints/authtest.nix
   ];
   options = {
     cfg.services.caddy.enable = lib.mkEnableOption "caddy";

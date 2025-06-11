@@ -90,6 +90,7 @@
                 file-server.enable = true;
                 healthcheck.enable = true;
                 webdav.enable = true;
+                authtest.enable = true;
               };
               dns-server.enable = true;
               kanidm.enable = true;
