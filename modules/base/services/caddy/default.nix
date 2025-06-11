@@ -5,7 +5,7 @@
   ...
 }:
 let
-  cfg = config.cfg;
+  inherit (config) cfg;
 in
 {
   imports = [

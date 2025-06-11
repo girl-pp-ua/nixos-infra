@@ -1,6 +1,6 @@
 { config, lib, ... }:
 let
-  cfg = config.cfg;
+  inherit (config) cfg;
 in
 {
   options = {

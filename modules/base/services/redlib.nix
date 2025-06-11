@@ -76,7 +76,7 @@ let
     doCheck = false;
   });
 
-  cfg = config.cfg;
+  inherit (config) cfg;
 in
 {
   options = {

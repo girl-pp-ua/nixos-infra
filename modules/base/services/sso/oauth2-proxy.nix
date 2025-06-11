@@ -5,7 +5,7 @@
   ...
 }:
 let
-  cfg = config.cfg;
+  inherit (config) cfg;
   idp = libx.idp {
     domain = cfg.services.kanidm.domain;
     client_id = cfg.services.oauth2_proxy.clientID;
