@@ -74,7 +74,7 @@ in
         handle ${cfg.services.oauth2_proxy.urlPrefix}/* {
           reverse_proxy http://127.0.0.1:${toString cfg.services.oauth2_proxy.port} {
             header_up X-Real-IP {remote_host}
-			      header_up X-Forwarded-Uri {uri}
+            header_up X-Forwarded-Uri {uri}
           }
         }
         handle {

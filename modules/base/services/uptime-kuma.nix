@@ -24,7 +24,7 @@ in
         type = lib.types.listOf lib.types.str;
         default = [
           "status.nyanbinary.rs"
-          "status.girl.pp.ua"
+          # "status.girl.pp.ua"
         ];
       };
     };

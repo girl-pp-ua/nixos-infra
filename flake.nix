@@ -95,6 +95,7 @@
               dns-server.enable = true;
               kanidm.enable = true;
               uptime-kuma.enable = true;
+              gatus.enable = true;
             };
           }
         ];

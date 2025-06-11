@@ -15,6 +15,7 @@
     # Base services
     ./services/caddy
     ./services/nextcloud
+    ./services/gatus
     ./services/openssh.nix
     ./services/sshguard.nix
     ./services/tailscale.nix
