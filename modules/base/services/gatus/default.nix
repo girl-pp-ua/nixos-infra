@@ -83,6 +83,10 @@ in
                 ns2 = mkDns "ns2.girl.pp.ua" "144.24.178.67";
               };
               services = mkEndpoints {
+                kanidm = mkUrl "https://sso.girl.pp.ua/status" [
+                  "[STATUS] == 200"
+                  "[BODY] == true"
+                ];
                 nextcloud = mkUrl "https://cloud.girl.pp.ua/status.php" [
                   "[STATUS] == 200"
                   "[BODY].productname == Nextcloud"
@@ -94,18 +98,18 @@ in
                   "[STATUS] == 200"
                   "[BODY] == pat(*Excalidraw collaboration server is up :)*)"
                 ];
-                redlib = mkUrl "https://redlib.girl.pp.ua/r/test/comments/1l8wdxa" [
-                  "[STATUS] == 200"
-                  "[BODY] == pat(*xiphoihaej5io8oSheiXie4gu9ixahs0ian5iemo9ohhieBaom4Ideiquoh7ai8e*)"
-                ];
-                kanidm = mkUrl "https://sso.girl.pp.ua/status" [
-                  "[STATUS] == 200"
-                  "[BODY] == true"
-                ];
                 ntfy = mkUrl "https://ntfy.girl.pp.ua/v1/health" [
                   "[STATUS] == 200"
                   "[BODY].healthy == true"
                 ];
+                redlib = {
+                  url = "https://redlib.girl.pp.ua/r/test/comments/1l8wdxa";
+                  conditions = [
+                    "[STATUS] == 200"
+                    "[BODY] == pat(*xiphoihaej5io8oSheiXie4gu9ixahs0ian5iemo9ohhieBaom4Ideiquoh7ai8e*)"
+                  ];
+                  interval = "1h"; # reddit please don't kill me
+                };
               };
             });
         };
