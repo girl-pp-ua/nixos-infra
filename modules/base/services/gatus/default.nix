@@ -49,8 +49,8 @@ in
           storage = {
             type = "sqlite";
             path = "/var/lib/gatus/data-girl-pp-ua.db";
-            maximum-number-of-results = 1000;
-            maximum-number-of-events = 500;
+            maximum-number-of-results = 1440;
+            maximum-number-of-events = 300;
           };
           endpoints = mkGroups {
             hosts = mkEndpoints {
