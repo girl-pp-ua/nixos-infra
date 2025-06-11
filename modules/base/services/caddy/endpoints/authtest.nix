@@ -16,7 +16,7 @@ in
   config = lib.mkIf cfg.services.caddy.endpoints.authtest.enable {
     cfg.services.oauth2_proxy.enable = true;
     services.caddy.virtualHosts."authtest.girl.pp.ua".extraConfig = ''
-      import oauth2_proxy "authtest.access"
+      import oauth2_proxy "authtest_access"
       respond "OK"
     '';
   };

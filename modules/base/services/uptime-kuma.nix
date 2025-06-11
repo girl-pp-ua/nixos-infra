@@ -68,7 +68,7 @@ in
       {
         ${cfg.services.uptime-kuma.domain} = {
           extraConfig = ''
-            import oauth2_proxy "uptime-kuma.access"
+            import oauth2_proxy "uptime_kuma_access"
             import encode
             reverse_proxy http://127.0.0.1:${toString cfg.services.uptime-kuma.port}
           '';
