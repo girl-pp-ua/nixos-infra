@@ -14,6 +14,7 @@
 
     # Base services
     ./services/caddy
+    ./services/nextcloud
     ./services/openssh.nix
     ./services/sshguard.nix
     ./services/tailscale.nix
@@ -22,7 +23,6 @@
     ./services/ntfy.nix
     ./services/nfs-server.nix
     ./services/uptime-kuma.nix
-    ./services/nextcloud.nix
 
     # SSO
     ./services/sso/kanidm.nix

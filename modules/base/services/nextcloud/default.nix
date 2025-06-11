@@ -26,6 +26,7 @@ in
 {
   imports = [
     "${inputs.nextcloud-testumgebung}/nextcloud-extras.nix"
+    ./apps/whiteboard-server.nix
   ];
 
   options = {
@@ -159,22 +160,23 @@ in
       extraApps = {
         inherit (config.services.nextcloud.package.packages.apps)
           app_api
-          contacts
           calendar
           tasks
+          contacts
           notes
-          memories
+          deck
           recognize
+          memories
           # onlyoffice
-          # whiteboard
           oidc_login
           ;
       };
       extraAppsEnable = true;
     };
 
-    services.caddy.virtualHosts.${cfg.services.nextcloud.domain} = {
+    services.caddy.virtualHosts."http://${cfg.services.nextcloud.domain}" = {
       serverAliases = [
+        cfg.services.nextcloud.domain
         cfg.services.nextcloud.intraDomain
       ];
       extraConfig = ''
