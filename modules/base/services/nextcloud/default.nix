@@ -208,9 +208,14 @@ in
           contacts
           notes
           deck
+          forms
+          news
+          maps
+          music
           recognize
           memories
           # onlyoffice
+          # richdocuments
           oidc_login
           previewgenerator
           ;
