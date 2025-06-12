@@ -83,17 +83,46 @@ in
         ];
 
         enabledPreviewProviders = [
-          "OC\\Preview\\BMP"
-          "OC\\Preview\\GIF"
+          # https://help.nextcloud.com/t/preview-settings-not-described-well/197952/9
+
+          # No External Dependencies
+          "OC\\Preview\\PNG"
           "OC\\Preview\\JPEG"
-          "OC\\Preview\\Krita"
+          "OC\\Preview\\GIF"
+          "OC\\Preview\\BMP"
+          "OC\\Preview\\XBitmap"
           "OC\\Preview\\MarkDown"
           "OC\\Preview\\MP3"
-          "OC\\Preview\\OpenDocument"
-          "OC\\Preview\\PNG"
           "OC\\Preview\\TXT"
-          "OC\\Preview\\XBitmap"
+          "OC\\Preview\\Krita"
+
+          # ImageMagick Dependency
+          "OC\\Preview\\SVG"
+          "OC\\Preview\\TIFF"
+          "OC\\Preview\\PDF"
+          "OC\\Preview\\Illustrator"
+          "OC\\Preview\\Photoshop"
+          "OC\\Preview\\Postscript"
+          "OC\\Preview\\Font"
           "OC\\Preview\\HEIC"
+          "OC\\Preview\\TGA"
+          "OC\\Preview\\SGI"
+
+          # Office Dependency (preview_libreoffice_path)
+          # (not needed with onlyoffice DocumentServer;
+          # TODO remove this and preview_libreoffice_path once that is deployed)
+          "OC\\Preview\\MSOfficeDoc"
+          "OC\\Preview\\MSOffice2003"
+          "OC\\Preview\\MSOffice2007"
+          "OC\\Preview\\OpenDocument"
+          "OC\\Preview\\StarOffice"
+          "OC\\Preview\\EMF"
+
+          # AVConf/FFmpeg Dependency
+          "OC\\Preview\\Movie"
+
+          # Additional Providers
+          "OC\\Preview\\WebP" # Requires PHP support for WebP images (php-gd)
         ];
 
         updatechecker = false;
@@ -140,11 +169,9 @@ in
         "memories.vod.ffprobe" = "${pkgs.ffmpeg}/bin/ffprobe";
 
         preview_ffmpeg_path = "${pkgs.ffmpeg}/bin/ffmpeg";
+        preview_libreoffice_path = "${pkgs.libreoffice}/bin/libreoffice";
       };
       secretFile = config.sops.secrets."nextcloud/secretFile".path;
-      phpOptions = {
-        "opcache.interned_strings_buffer" = "24";
-      };
       extraOCCCommands =
         let
           occ = "${config.services.nextcloud.occ}/bin/nextcloud-occ";
@@ -155,6 +182,15 @@ in
           ${occ} theming:config primary_color "#F5C2E7"
           ${occ} theming:config background "${root}/assets/x.jpg"
         '';
+
+      # php stuff
+      phpOptions = {
+        "opcache.interned_strings_buffer" = "24";
+      };
+      phpExtraExtensions = all: with all; [
+        imagick
+        gd
+      ];
 
       # apps
       extraApps = {
