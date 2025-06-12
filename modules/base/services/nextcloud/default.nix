@@ -82,7 +82,11 @@ in
           "::1"
         ];
 
+        enable_previews = true;
         enabledPreviewProviders = [
+          # Misc
+          "OC\\Preview\\RIFF"
+
           # https://help.nextcloud.com/t/preview-settings-not-described-well/197952/9
 
           # No External Dependencies
@@ -109,14 +113,13 @@ in
           "OC\\Preview\\SGI"
 
           # Office Dependency (preview_libreoffice_path)
-          # (not needed with onlyoffice DocumentServer;
-          # TODO remove this and preview_libreoffice_path once that is deployed)
-          "OC\\Preview\\MSOfficeDoc"
-          "OC\\Preview\\MSOffice2003"
-          "OC\\Preview\\MSOffice2007"
-          "OC\\Preview\\OpenDocument"
-          "OC\\Preview\\StarOffice"
-          "OC\\Preview\\EMF"
+          # (not needed with onlyoffice DocumentServer)
+          # "OC\\Preview\\MSOfficeDoc"
+          # "OC\\Preview\\MSOffice2003"
+          # "OC\\Preview\\MSOffice2007"
+          # "OC\\Preview\\OpenDocument"
+          # "OC\\Preview\\StarOffice"
+          # "OC\\Preview\\EMF"
 
           # AVConf/FFmpeg Dependency
           "OC\\Preview\\Movie"
@@ -163,13 +166,17 @@ in
         # memories
         "memories.readonly" = true;
         "memories.exiftool" = "${exiftool_12_70}/bin/exiftool";
-        "memories.vod.disable" = false;
+        # transcoding doesn't seem to work :<
+        # probably needs go-vod
+        "memories.vod.disable" = true;
+        # "memories.vod.disable" = false;
         "memories.vod.vaapi" = config.hardware.graphics.enable;
         "memories.vod.ffmpeg" = "${pkgs.ffmpeg}/bin/ffmpeg";
         "memories.vod.ffprobe" = "${pkgs.ffmpeg}/bin/ffprobe";
 
         preview_ffmpeg_path = "${pkgs.ffmpeg}/bin/ffmpeg";
-        preview_libreoffice_path = "${pkgs.libreoffice}/bin/libreoffice";
+        # broken: cannot create directory '/run/user/989': Permission denied
+        # preview_libreoffice_path = "${pkgs.libreoffice}/bin/libreoffice";
       };
       secretFile = config.sops.secrets."nextcloud/secretFile".path;
       extraOCCCommands =
@@ -205,6 +212,7 @@ in
           memories
           # onlyoffice
           oidc_login
+          previewgenerator
           ;
       };
       extraAppsEnable = true;
