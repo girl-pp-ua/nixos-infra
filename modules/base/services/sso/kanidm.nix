@@ -3,6 +3,7 @@
   config,
   pkgs,
   lib,
+  root,
   ...
 }:
 let
@@ -70,11 +71,10 @@ in
         groups."uptime-kuma.access" = { };
         systems.oauth2."oauth2-proxy" = {
           displayName = "oauth2-proxy";
-          preferShortUsername = true;
+          imageFile = "${root}/assets/sso-images/oauth2-proxy.svg";
+          originLanding = "https://authtest.girl.pp.ua/";
 
           basicSecretFile = config.sops.secrets."oauth2_proxy/clientSecret".path;
-
-          originLanding = "https://authtest.girl.pp.ua/";
           originUrl =
             let
               mkOriginUrl = domain: "https://${domain}${cfg.services.oauth2_proxy.urlPrefix}/callback";
@@ -84,6 +84,7 @@ in
               (mkOriginUrl "uptime.girl.pp.ua")
             ];
 
+          preferShortUsername = true;
           scopeMaps =
             let
               scope = [
@@ -97,7 +98,6 @@ in
               "authtest.access" = scope;
               "uptime-kuma.access" = scope;
             };
-
           claimMaps.groups = {
             joinType = "array";
             valuesByGroup = {
@@ -110,25 +110,22 @@ in
         groups."oracle-cloud-infrastructure.access" = { };
         systems.oauth2."oracle-cloud-infrastructure" = {
           displayName = "Oracle Cloud Infrastructure";
-          preferShortUsername = true;
-
-          # Oracle Cloud does not support PKCE
-          allowInsecureClientDisablePkce = true;
+          imageFile = "${root}/assets/sso-images/oracle-cloud-infrastructure.svg";
+          originLanding = "https://cloud.oracle.com/?tenant=${cfg.secrets.ociTenancy.tenancyName}&region=${cfg.secrets.ociTenancy.tenancyRegion}";
 
           basicSecretFile = config.sops.secrets."ociTenancy/clientSecret".path;
-
-          originLanding = "https://cloud.oracle.com/?tenant=${cfg.secrets.ociTenancy.tenancyName}&region=${cfg.secrets.ociTenancy.tenancyRegion}";
+          allowInsecureClientDisablePkce = true; # Oracle Cloud does not support PKCE
           originUrl = [
             "https://${cfg.secrets.ociTenancy.identityDomain}/oauth2/v1/social/callback"
             "https://${cfg.secrets.ociTenancy.identityDomain}:443/oauth2/v1/social/callback"
           ];
 
+          preferShortUsername = true;
           scopeMaps."oracle-cloud-infrastructure.access" = [
             "openid"
             "email"
             "profile"
           ];
-
           claimMaps.groups = {
             joinType = "array";
             valuesByGroup."oracle-cloud-infrastructure.access" = [
@@ -140,31 +137,24 @@ in
         groups."nextcloud.access" = { };
         systems.oauth2."nextcloud" = {
           displayName = "Nextcloud";
-          preferShortUsername = true;
+          imageFile = "${root}/assets/sso-images/nextcloud.svg";
+          originLanding = "http://${cfg.services.nextcloud.domain}/";
 
           basicSecretFile = config.sops.secrets."nextcloud/clientSecret".path;
-
-          # Nextcloud does not support ES256
-          enableLegacyCrypto = true;
-
-          originLanding = "http://${cfg.services.nextcloud.domain}/";
+          enableLegacyCrypto = true; # Nextcloud does not support ES256
           originUrl = [
             "https://${cfg.services.nextcloud.domain}/apps/oidc_login/oidc"
             "https://${cfg.services.nextcloud.intraDomain}/apps/oidc_login/oidc"
             # "http://${cfg.services.nextcloud.domain}/apps/oidc_login/oidc"
           ];
 
+          preferShortUsername = true;
           scopeMaps."nextcloud.access" = [
             "profile"
             "email"
             "groups"
             "openid"
           ];
-
-          # supplementaryScopeMaps."nextcloud.admin" = [
-          #   "nextcloudadmin"
-          # ];
-
           claimMaps.groups = {
             joinType = "array";
             valuesByGroup."nextcloud.access" = [
@@ -178,6 +168,7 @@ in
     services.caddy.virtualHosts = {
       ${cfg.services.kanidm.domain} = {
         extraConfig = ''
+          import encode
           reverse_proxy https://127.0.0.1:${toString cfg.services.kanidm.port} {
             transport http {
               tls_trust_pool file ${config.sops.secrets."kanidm_caddy_tls_chain".path}
