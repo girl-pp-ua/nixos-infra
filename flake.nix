@@ -106,6 +106,7 @@
               caddy = {
                 enable = true;
                 endpoints.healthcheck.enable = true;
+                endpoints.nextcloud-proxy.enable = true;  # rip cocoa
               };
               dns-server.enable = true;
               redlib.enable = true;
@@ -122,15 +123,15 @@
             };
           }
         ];
-        cocoa = mkNixosSystem "cocoa" [
-          {
-            networking.domain = "girl.pp.ua";
-            cfg.services = {
-              caddy.enable = true;
-              caddy.endpoints.nextcloud-proxy.enable = true;
-            };
-          }
-        ];
+        # cocoa = mkNixosSystem "cocoa" [
+        #   {
+        #     networking.domain = "girl.pp.ua";
+        #     cfg.services = {
+        #       caddy.enable = true;
+        #       caddy.endpoints.nextcloud-proxy.enable = true;
+        #     };
+        #   }
+        # ];
       };
 
       # deploy-rs configuration
@@ -138,7 +139,7 @@
         oci1 = mkDeployProfile "oci1.girl.pp.ua" "oci1";
         oci2 = mkDeployProfile "oci2.girl.pp.ua" "oci2";
         dell-sv = mkDeployProfile "dell-sv.saga-mirzam.ts.net" "dell-sv";
-        cocoa = mkDeployProfile "cocoa.girl.pp.ua" "cocoa";
+        # cocoa = mkDeployProfile "cocoa.girl.pp.ua" "cocoa";
       };
 
       checks = builtins.mapAttrs (system: deployLib: deployLib.deployChecks self.deploy) deploy-rs.lib;

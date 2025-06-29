@@ -75,7 +75,7 @@ in
               hosts = mkEndpoints {
                 oci1 = mkPing "oci1.girl.pp.ua";
                 oci2 = mkPing "oci2.girl.pp.ua";
-                cocoa = mkPing "cocoa.girl.pp.ua";
+                # cocoa = mkPing "cocoa.girl.pp.ua";
                 dell-sv = mkPing "dell-sv.intranet.girl.pp.ua";
               };
               nameservers = mkEndpoints {

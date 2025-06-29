@@ -2,7 +2,7 @@
 with dns.lib.combinators;
 let
   zone = "girl.pp.ua.";
-  serial = 2025061103; # YYYYMMDDNN
+  serial = 2025062901; # YYYYMMDDNN
 
   /**
     Creates a CNAME record
@@ -57,10 +57,10 @@ let
     };
 
     # cocoa: "Cocoa" host - AMD (testing only)
-    cocoa = {
-      ipv4 = "45.8.201.26";
-      ipv6 = null; # no ipv6 :<
-    };
+    # cocoa = {
+    #   ipv4 = "45.8.201.26";
+    #   ipv6 = null; # no ipv6 :<
+    # };
   };
 in
 {
@@ -107,7 +107,7 @@ in
     oci1 = mkDualstackHost hosts.oci1;
     oci2 = mkDualstackHost hosts.oci2;
     oci-loadbalancer = mkDualstackHost hosts.oci-loadbalancer;
-    cocoa = mkDualstackHost hosts.cocoa;
+    # cocoa = mkDualstackHost hosts.cocoa;
 
     # nameservers:
     ns1 = with hosts; host oci1.ipv4 oci1.ipv6;
@@ -126,7 +126,7 @@ in
     ntfy = mkCname "oci2.${zone}";
     uptime = mkCname "oci1.${zone}";
     status = mkCname "oci1.${zone}";
-    cloud = mkCname "cocoa.${zone}"; # (proxy -> dell-sv)
+    cloud = mkCname "oci2.${zone}"; # (proxy -> dell-sv)
 
     # testing:
     authtest = mkCname "oci1.${zone}";
