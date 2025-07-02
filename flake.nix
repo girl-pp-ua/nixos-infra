@@ -25,10 +25,7 @@
       url = "github:redlib-org/redlib";
       flake = false; # (using as source for pkgs.redlib)
     };
-    uptime-kuma = {
-      url = "github:louislam/uptime-kuma/2.0.0-beta.3";
-      flake = false;
-    };
+
     secrets = {
       url = "git+file:./secrets";
       flake = false;
@@ -41,6 +38,7 @@
       deploy-rs,
       dns,
       sops-nix,
+      secrets,
       ...
     }:
     let
@@ -49,6 +47,7 @@
       specialArgs = {
         root = ./.;
         libx = import ./lib { };
+        secrets = import "${secrets}/plaintext.nix";
         inherit
           self
           inputs
@@ -66,9 +65,8 @@
           modules = [
             { networking.hostName = host; }
             ./hosts/${host}/configuration.nix
-            ./secrets-old/schema.nix
-            ./secrets-old/credentials.nix
             ./modules/base
+            ./modules/services
             sops-nix.nixosModules.sops
           ] ++ extraModules;
         });
@@ -94,7 +92,6 @@
               };
               dns-server.enable = true;
               kanidm.enable = true;
-              uptime-kuma.enable = true;
               gatus.enable = true;
             };
           }
@@ -103,10 +100,10 @@
           {
             networking.domain = "girl.pp.ua";
             cfg.services = {
-              caddy = {
-                enable = true;
-                endpoints.healthcheck.enable = true;
-                endpoints.nextcloud-proxy.enable = true;  # rip cocoa
+              caddy.enable = true;
+              caddy.endpoints = {
+                healthcheck.enable = true;
+                nextcloud-proxy.enable = true; # rip cocoa
               };
               dns-server.enable = true;
               redlib.enable = true;
@@ -123,15 +120,6 @@
             };
           }
         ];
-        # cocoa = mkNixosSystem "cocoa" [
-        #   {
-        #     networking.domain = "girl.pp.ua";
-        #     cfg.services = {
-        #       caddy.enable = true;
-        #       caddy.endpoints.nextcloud-proxy.enable = true;
-        #     };
-        #   }
-        # ];
       };
 
       # deploy-rs configuration
@@ -139,7 +127,6 @@
         oci1 = mkDeployProfile "oci1.girl.pp.ua" "oci1";
         oci2 = mkDeployProfile "oci2.girl.pp.ua" "oci2";
         dell-sv = mkDeployProfile "dell-sv.saga-mirzam.ts.net" "dell-sv";
-        # cocoa = mkDeployProfile "cocoa.girl.pp.ua" "cocoa";
       };
 
       checks = builtins.mapAttrs (system: deployLib: deployLib.deployChecks self.deploy) deploy-rs.lib;

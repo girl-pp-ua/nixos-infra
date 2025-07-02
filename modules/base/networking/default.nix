@@ -1,7 +1,7 @@
 { ... }:
 {
   imports = [
-    ./networking/firewall.nix
+    ./firewall.nix
   ];
   networking = {
     useNetworkd = true;

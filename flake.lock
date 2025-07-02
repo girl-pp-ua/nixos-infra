@@ -131,18 +131,17 @@
         "nixpkgs": "nixpkgs",
         "redlib": "redlib",
         "secrets": "secrets",
-        "sops-nix": "sops-nix",
-        "uptime-kuma": "uptime-kuma"
+        "sops-nix": "sops-nix"
       }
     },
     "secrets": {
       "flake": false,
       "locked": {
-        "lastModified": 1749634713,
-        "narHash": "sha256-LUplFBRv2kKloR6Fc9HDN2GvT993eY3GwxXYrmYueow=",
+        "lastModified": 1751460675,
+        "narHash": "sha256-JdnzapDrL0cGmB1xQiheVY5//cCVFS3dRHpGdFWIfC8=",
         "ref": "refs/heads/master",
-        "rev": "bcb002c0860b0fa266a2a00ba019f339947feeaa",
-        "revCount": 17,
+        "rev": "a9bb711c6803c500adb2ec5fe6d53dd94a6b7131",
+        "revCount": 18,
         "type": "git",
         "url": "file:./secrets"
       },
@@ -183,23 +182,6 @@
       "original": {
         "owner": "nix-systems",
         "repo": "default",
-        "type": "github"
-      }
-    },
-    "uptime-kuma": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1749007863,
-        "narHash": "sha256-uE1SLt901NfXQ9cpmvJI8e2mniJ1gnhZ2WKXevw4jHY=",
-        "owner": "louislam",
-        "repo": "uptime-kuma",
-        "rev": "63c5ebe62426a5bf25e5e9248ca5bfae281dcc0e",
-        "type": "github"
-      },
-      "original": {
-        "owner": "louislam",
-        "ref": "2.0.0-beta.3",
-        "repo": "uptime-kuma",
         "type": "github"
       }
     },

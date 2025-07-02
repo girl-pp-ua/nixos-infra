@@ -2,6 +2,7 @@
   config,
   lib,
   dns,
+  root,
   ...
 }:
 let
@@ -44,7 +45,7 @@ in
           mkZone = domain: {
             name = domain;
             value = {
-              data = dns.lib.toString domain (import ./../../../dns-zones/${domain}.nix { inherit dns; });
+              data = dns.lib.toString domain (import ./dns-zones/${domain}.nix { inherit dns; });
             };
           };
         in

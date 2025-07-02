@@ -1,4 +1,4 @@
-{ lib, config, ... }:
+{ lib, config, secrets, ... }:
 let
   inherit (config) cfg;
 in
@@ -17,7 +17,7 @@ in
         extraConfig = ''
           route {
             basic_auth {
-              ${cfg.secrets.webdav.username} ${cfg.secrets.webdav.hashed_password}
+              ${secrets.webdav.username} ${secrets.webdav.hashed_password}
             }
             root * /data/files
             @get method GET

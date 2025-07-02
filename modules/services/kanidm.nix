@@ -4,6 +4,7 @@
   pkgs,
   lib,
   root,
+  secrets,
   ...
 }:
 let
@@ -111,13 +112,13 @@ in
         systems.oauth2."oracle-cloud-infrastructure" = {
           displayName = "Oracle Cloud Infrastructure";
           imageFile = "${root}/assets/sso-images/oracle-cloud-infrastructure.svg";
-          originLanding = "https://cloud.oracle.com/?tenant=${cfg.secrets.ociTenancy.tenancyName}&region=${cfg.secrets.ociTenancy.tenancyRegion}";
+          originLanding = "https://cloud.oracle.com/?tenant=${secrets.ociTenancy.tenancyName}&region=${secrets.ociTenancy.tenancyRegion}";
 
           basicSecretFile = config.sops.secrets."ociTenancy/clientSecret".path;
           allowInsecureClientDisablePkce = true; # Oracle Cloud does not support PKCE
           originUrl = [
-            "https://${cfg.secrets.ociTenancy.identityDomain}/oauth2/v1/social/callback"
-            "https://${cfg.secrets.ociTenancy.identityDomain}:443/oauth2/v1/social/callback"
+            "https://${secrets.ociTenancy.identityDomain}/oauth2/v1/social/callback"
+            "https://${secrets.ociTenancy.identityDomain}:443/oauth2/v1/social/callback"
           ];
 
           preferShortUsername = true;

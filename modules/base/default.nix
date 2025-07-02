@@ -4,30 +4,13 @@
     ./sops.nix
 
     # Base configuration
+    ./networking
     ./boot.nix
     ./system.nix
-    ./networking.nix
     ./nix.nix
     ./users.nix
     ./sudo.nix
     ./environment.nix
-
-    # Base services
-    ./services/caddy
-    ./services/nextcloud
-    ./services/gatus
-    ./services/openssh.nix
-    ./services/sshguard.nix
-    ./services/tailscale.nix
-    ./services/dns-server.nix
-    ./services/redlib.nix
-    ./services/ntfy.nix
-    ./services/nfs-server.nix
-    ./services/uptime-kuma.nix
-
-    # SSO
-    ./services/sso/kanidm.nix
-    ./services/sso/oauth2-proxy.nix
   ];
 
   i18n.defaultLocale = "en_US.UTF-8";

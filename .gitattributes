@@ -1,4 +1,0 @@
-/secrets-old/** filter=git-crypt diff=git-crypt
-/secrets-old/schema.nix !filter !diff
-/secrets-old/certs/openssl.cnf !filter !diff
-.gitattributes !filter !diff
