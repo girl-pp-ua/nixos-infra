@@ -77,9 +77,10 @@ in
           cfg.services.nextcloud.intraDomain
         ];
         trusted_proxies = [
-          "45.8.201.26" # cocoa
           "127.0.0.1"
           "::1"
+          "2603:c020:800c:9c7f:0:fe:fe:2" # oci2
+          "144.24.178.67" # oci2
         ];
 
         enable_previews = true;
@@ -194,10 +195,11 @@ in
       phpOptions = {
         "opcache.interned_strings_buffer" = "24";
       };
-      phpExtraExtensions = all: with all; [
-        imagick
-        gd
-      ];
+      phpExtraExtensions =
+        all: with all; [
+          imagick
+          gd
+        ];
 
       # apps
       extraApps = {
