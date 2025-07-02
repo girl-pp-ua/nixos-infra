@@ -108,7 +108,7 @@ in
               ];
               nextcloud-whiteboard-server = mkUrl' "https://cloud.girl.pp.ua/whiteboard/" [
                 "[STATUS] == 200"
-                "[BODY] == pat(*Excalidraw collaboration server is up :)*)"
+                "[BODY] == pat(*Nextcloud Whiteboard Collaboration Server*)"
               ];
               ntfy = mkUrl' "https://ntfy.girl.pp.ua/v1/health" [
                 "[STATUS] == 200"
