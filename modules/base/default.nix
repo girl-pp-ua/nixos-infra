@@ -6,7 +6,6 @@
     # Base configuration
     ./networking
     ./boot.nix
-    ./system.nix
     ./nix.nix
     ./users.nix
     ./sudo.nix

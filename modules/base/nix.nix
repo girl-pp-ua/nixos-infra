@@ -7,21 +7,16 @@
         # 2024-11-17
         # https://git.lix.systems/lix-project/lix/src/branch/main/src/libutil/experimental-features
         "auto-allocate-uids"
-        "ca-derivations"
         "cgroups"
         "daemon-trust-override"
-        "dynamic-derivations"
         "fetch-closure"
         "flakes"
-        "impure-derivations"
         "nix-command"
         "no-url-literals"
         "parse-toml-timestamps"
         "pipe-operator"
         "read-only-local-store"
-        # "recursive-nix"
         "repl-automation"
-        # "repl-flake.md"
       ];
       system-features = [
         "uid-range"
