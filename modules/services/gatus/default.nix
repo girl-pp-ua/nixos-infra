@@ -80,7 +80,7 @@ in
             maximum-number-of-events = 300;
           };
           alerting.ntfy = {
-            topic = "gatus-girl-pp-ua";
+            topic = secrets.ntfy-topics.gatus-girl-pp-ua;
             url = "https://${cfg.services.ntfy.domain}";
             click = "https://status.girl.pp.ua/";
           };
