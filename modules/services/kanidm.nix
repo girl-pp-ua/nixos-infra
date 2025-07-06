@@ -82,7 +82,7 @@ in
             in
             [
               (mkOriginUrl "authtest.girl.pp.ua")
-              (mkOriginUrl "uptime.girl.pp.ua")
+              # (mkOriginUrl "uptime.girl.pp.ua")
             ];
 
           preferShortUsername = true;
@@ -97,13 +97,13 @@ in
             in
             {
               "authtest.access" = scope;
-              "uptime-kuma.access" = scope;
+              # "uptime-kuma.access" = scope;
             };
           claimMaps.groups = {
             joinType = "array";
             valuesByGroup = {
               "authtest.access" = [ "authtest_access" ];
-              "uptime-kuma.access" = [ "uptime_kuma_access" ];
+              # "uptime-kuma.access" = [ "uptime_kuma_access" ];
             };
           };
         };
