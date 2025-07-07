@@ -115,6 +115,7 @@
           {
             networking.domain = "intranet.girl.pp.ua";
             cfg.services = {
+              tailscale.isTsDeploy = true;
               caddy.enable = true;
               nextcloud.enable = true;
             };
