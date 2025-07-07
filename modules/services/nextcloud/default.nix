@@ -193,7 +193,7 @@ in
 
       # php stuff
       phpOptions = {
-        "opcache.interned_strings_buffer" = "24";
+        "opcache.interned_strings_buffer" = "48";
       };
       phpExtraExtensions =
         all: with all; [
