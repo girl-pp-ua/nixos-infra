@@ -188,7 +188,7 @@ in
           ${occ} theming:config name "Girlcloud"
           ${occ} theming:config color "#F5C2E7"
           ${occ} theming:config primary_color "#F5C2E7"
-          ${occ} theming:config background "${root}/assets/wallpapers/subtle1.jpg"
+          ${occ} theming:config background "${root}/assets/wallpapers/yuri3.jpg"
         '';
 
       # php stuff
