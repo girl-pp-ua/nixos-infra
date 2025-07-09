@@ -1,4 +1,9 @@
-{ lib, config, secrets, ... }:
+{
+  lib,
+  config,
+  secrets,
+  ...
+}:
 let
   inherit (config) cfg;
 in
