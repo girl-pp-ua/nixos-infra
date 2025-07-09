@@ -2,7 +2,7 @@
 with dns.lib.combinators;
 let
   zone = "girl.pp.ua.";
-  serial = 2025062901; # YYYYMMDDNN
+  serial = 2025070901; # YYYYMMDDNN
 
   /**
     Creates a CNAME record
@@ -13,6 +13,14 @@ let
     Shorthand for { subdomains = ...; }
   */
   withSubdomains = subdomains: { inherit subdomains; };
+
+  /**
+    Creates A + AAAA records for a host
+  */
+  mkHost =
+    hostAddr:
+    with hostAddr;
+    host ipv4 ipv6;
 
   /**
     Creates A + AAAA records and ipv4.@ and ipv6.@ subdomains
@@ -110,26 +118,25 @@ in
     # cocoa = mkDualstackHost hosts.cocoa;
 
     # nameservers:
-    ns1 = with hosts; host oci1.ipv4 oci1.ipv6;
-    ns2 = with hosts; host oci2.ipv4 oci2.ipv6;
+    ns1 = mkHost hosts.oci1;
+    ns2 = mkHost hosts.oci2;
 
     # services:
+    # --- oci1 ---
     files = mkCname "oci1.${zone}";
     webdav =
       mkCname "oci1.${zone}"
       // withSubdomains {
-        # (workaround: Dolphin trying to connect over IPv6 on IPv4-only hosts)
+        # (workaround: Dolphin trying to connect over IPv6 on IPv4-only network)
         legacy = mkCname "ipv4.oci1.${zone}";
       };
     sso = mkCname "oci1.${zone}";
+    status = mkCname "oci1.${zone}";
+    authtest = mkCname "oci1.${zone}"; # testing
+    # --- oci2 ---
     redlib = mkCname "oci2.${zone}";
     ntfy = mkCname "oci2.${zone}";
-    uptime = mkCname "oci1.${zone}";
-    status = mkCname "oci1.${zone}";
     cloud = mkCname "oci2.${zone}"; # (proxy -> dell-sv)
-
-    # testing:
-    authtest = mkCname "oci1.${zone}";
 
     # cdn:
     files-cdn =
