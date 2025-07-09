@@ -140,8 +140,12 @@ in
             maximum-number-of-results = 1440;
             maximum-number-of-events = 300;
           };
-
-          endpoints = mkGroups {
+          alerting.ntfy = {
+            topic = secrets.ntfy-topics.gatus-nyanbinary-rs;
+            url = "https://${cfg.services.ntfy.domain}";
+            click = "https://status.nyanbinary.rs/";
+          };
+          endpoints = mergeAll withAlertsNtfy (mkGroups {
             hosts = mkEndpoints {
               ex44 = mkPing secrets.nyanbinary.upstream.ipv4 // withHidden;
             };
@@ -163,7 +167,7 @@ in
                   minecraft-vanilla = mkUrl "tcp://${secrets.nyanbinary.upstream.ipv4}:25565";
                   vintage-story = mkUrl "tcp://${secrets.nyanbinary.upstream.ipv4}:42420";
                 });
-          };
+          });
         };
       };
     };

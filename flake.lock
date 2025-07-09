@@ -137,11 +137,11 @@
     "secrets": {
       "flake": false,
       "locked": {
-        "lastModified": 1751466392,
-        "narHash": "sha256-ksjZvWiVS75/l5J/87klAsu83846wKPSN6sSLKdwt/4=",
+        "lastModified": 1752094001,
+        "narHash": "sha256-6GNPH1ouOzKb79lcRCcJVWLW/cybngof+xs0gmMew2Q=",
         "ref": "refs/heads/master",
-        "rev": "892b08ec27183fad218c3d3c05019fd23242fe35",
-        "revCount": 20,
+        "rev": "a75b8a6c70926e6b251c58d36b5ead27c0b8a413",
+        "revCount": 21,
         "type": "git",
         "url": "file:./secrets"
       },
