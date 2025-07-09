@@ -47,6 +47,11 @@ let
       # hide-port = true;
     };
   };
+  withIsConnected = {
+    conditions = [
+      "[CONNECTED] == true"
+    ];
+  };
   withAlertsNtfy = {
     alerts = [
       { type = "ntfy"; }
@@ -151,14 +156,13 @@ in
               ];
             };
 
-            services-game-servers = mergeAll { interval = "5m"; } (mkEndpoints {
-              minecraft-prominence =
-                mkUrl' "tcp://${secrets.nyanbinary.upstream.ipv4}:25565" [ "[CONNECTED] == true" ] // withHidden;
-              minecraft-vanilla =
-                mkUrl' "tcp://${secrets.nyanbinary.upstream.ipv4}:25565" [ "[CONNECTED] == true" ] // withHidden;
-              vintagestory =
-                mkUrl' "tcp://${secrets.nyanbinary.upstream.ipv4}:42420" [ "[CONNECTED] == true" ] // withHidden;
-            });
+            services-game-servers =
+              mergeAll (withIsConnected // withHidden // { interval = "5m"; })
+                (mkEndpoints {
+                  minecraft-prominence = mkUrl "tcp://${secrets.nyanbinary.upstream.ipv4}:25565";
+                  minecraft-vanilla = mkUrl "tcp://${secrets.nyanbinary.upstream.ipv4}:25565";
+                  vintage-story = mkUrl "tcp://${secrets.nyanbinary.upstream.ipv4}:42420";
+                });
           };
         };
       };
