@@ -59,4 +59,9 @@
     lidSwitchDocked = "ignore";
     lidSwitchExternalPower = "ignore";
   };
+
+  # limit journald log size
+  services.journald.extraConfig = ''
+    SystemMaxUse=1G
+  '';
 }
