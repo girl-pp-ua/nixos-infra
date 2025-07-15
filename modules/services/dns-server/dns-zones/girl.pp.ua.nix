@@ -17,10 +17,7 @@ let
   /**
     Creates A + AAAA records for a host
   */
-  mkHost =
-    hostAddr:
-    with hostAddr;
-    host ipv4 ipv6;
+  mkHost = hostAddr: with hostAddr; host ipv4 ipv6;
 
   /**
     Creates A + AAAA records and ipv4.@ and ipv6.@ subdomains

@@ -42,23 +42,23 @@
       ...
     }:
     let
-      system = "x86_64-linux";
-      pkgs = nixpkgs.legacyPackages.${system};
+      hostSystem = "x86_64-linux";
+      pkgs = nixpkgs.legacyPackages.${hostSystem};
       specialArgs = {
         root = ./.;
         libx = import ./lib { };
         secrets = import "${secrets}/plaintext.nix";
+        system = hostSystem;
         inherit
           self
           inputs
-          system
           dns
           ;
       };
       mkNixosSystem =
-        host: extraModules:
+        host: targetSystem: extraModules:
         (nixpkgs.lib.nixosSystem {
-          inherit system;
+          system = targetSystem;
           specialArgs = specialArgs // {
             inherit host;
           };
@@ -70,16 +70,16 @@
             sops-nix.nixosModules.sops
           ] ++ extraModules;
         });
-      mkDeployProfile = hostname: host: {
+      mkDeployProfile = hostname: configuration: {
         inherit hostname;
         sshUser = "nixos";
         user = "root";
-        profiles.system.path = deploy-rs.lib.${system}.activate.nixos self.nixosConfigurations.${host};
+        profiles.system.path = deploy-rs.lib.${hostSystem}.activate.nixos configuration;
       };
     in
     {
       nixosConfigurations = {
-        oci1 = mkNixosSystem "oci1" [
+        oci1 = mkNixosSystem "oci1" "x86_64-linux" [
           {
             networking.domain = "girl.pp.ua";
             cfg.services = {
@@ -96,7 +96,7 @@
             };
           }
         ];
-        oci2 = mkNixosSystem "oci2" [
+        oci2 = mkNixosSystem "oci2" "x86_64-linux" [
           {
             networking.domain = "girl.pp.ua";
             cfg.services = {
@@ -111,7 +111,7 @@
             };
           }
         ];
-        dell-sv = mkNixosSystem "dell-sv" [
+        dell-sv = mkNixosSystem "dell-sv" "x86_64-linux" [
           {
             networking.domain = "intranet.girl.pp.ua";
             cfg.services = {
@@ -124,19 +124,23 @@
       };
 
       # deploy-rs configuration
-      deploy.nodes = {
-        oci1 = mkDeployProfile "oci1.girl.pp.ua" "oci1";
-        oci2 = mkDeployProfile "oci2.girl.pp.ua" "oci2";
-        dell-sv = mkDeployProfile "dell-sv.saga-mirzam.ts.net" "dell-sv";
-      };
+      deploy.nodes =
+        let
+          inherit (self) nixosConfigurations;
+        in
+        {
+          oci1 = mkDeployProfile "oci1.girl.pp.ua" nixosConfigurations.oci1;
+          oci2 = mkDeployProfile "oci2.girl.pp.ua" nixosConfigurations.oci2;
+          dell-sv = mkDeployProfile "dell-sv.saga-mirzam.ts.net" nixosConfigurations.dell-sv;
+        };
 
       checks = builtins.mapAttrs (system: deployLib: deployLib.deployChecks self.deploy) deploy-rs.lib;
 
       # dev shells
-      devShells.${system}.default = pkgs.mkShell {
+      devShells.${hostSystem}.default = pkgs.mkShell {
         packages =
           [
-            deploy-rs.outputs.packages.${system}.deploy-rs
+            deploy-rs.outputs.packages.${hostSystem}.deploy-rs
           ]
           ++ (with pkgs; [
             nil
@@ -152,6 +156,6 @@
         '';
       };
 
-      formatter.${system} = nixpkgs.legacyPackages.${system}.nixfmt-tree;
+      formatter.${hostSystem} = nixpkgs.legacyPackages.${hostSystem}.nixfmt-tree;
     };
 }
