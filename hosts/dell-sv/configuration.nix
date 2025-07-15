@@ -9,14 +9,20 @@ in
 
   system.stateVersion = "24.11";
 
-  # this system has a gpu :3
-  hardware.graphics.enable = true;
-
   # kernel param
   boot.kernelParams = [
-    "nohibernate" # HACK: disable hibernation
+    "nohibernate"
     "amd_pstate=active"
+    "usbcore.autosuspend=-1" # disable usb autosuspend
   ];
+
+  services.udev.extraRules = ''
+    # disable usb autosuspend
+    ACTION=="add", SUBSYSTEM=="usb", TEST=="power/control", ATTR{power/control}="on"
+  '';
+
+  # this system has a gpu :3
+  hardware.graphics.enable = true;
 
   # opencl
   # i'm overriding the default opencl option to use rocm 5 instead:
