@@ -52,7 +52,6 @@ in
             mailAddresses = [ "prasol258@gmail.com" ];
             groups = [
               "authtest.access"
-              "uptime-kuma.access"
               "oracle-cloud-infrastructure.access"
               "nextcloud.access"
             ];
@@ -62,14 +61,11 @@ in
             mailAddresses = [ "nyanbinary@tutamail.com" ];
             groups = [
               "authtest.access"
-              "uptime-kuma.access"
-              "oracle-cloud-infrastructure.access"
             ];
           };
         };
 
         groups."authtest.access" = { };
-        groups."uptime-kuma.access" = { };
         systems.oauth2."oauth2-proxy" = {
           displayName = "oauth2-proxy";
           imageFile = "${root}/assets/sso-images/oauth2-proxy.svg";
