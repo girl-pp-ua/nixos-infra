@@ -48,7 +48,7 @@ in
 
         persons = {
           grfgh = {
-            displayName = "grfgh";
+            displayName = "Luna";
             mailAddresses = [ "prasol258@gmail.com" ];
             groups = [
               "authtest.access"
@@ -57,10 +57,18 @@ in
             ];
           };
           niko = {
-            displayName = "niko";
+            displayName = "Niko";
             mailAddresses = [ "nyanbinary@tutamail.com" ];
             groups = [
               "authtest.access"
+            ];
+          };
+          lucy = {
+            displayName = "Lucy";
+            mailAddresses = [ secrets.lucy.email ];
+            groups = [
+              "authtest.access"
+              "nextcloud.access"
             ];
           };
         };
