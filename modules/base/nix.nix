@@ -1,7 +1,8 @@
 { pkgs, ... }:
 {
   nix = {
-    package = pkgs.lixPackageSets.latest.lix;
+    package = pkgs.lixPackageSets.git.lix;
+    # package = pkgs.lix;
     settings = {
       experimental-features = [
         # 2024-11-17

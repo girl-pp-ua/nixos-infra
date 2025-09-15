@@ -27,7 +27,7 @@ in
   config = lib.mkIf cfg.services.kanidm.enable {
     services.kanidm = {
       enableServer = true;
-      package = pkgs.kanidm.withSecretProvisioning;
+      package = pkgs.kanidm_1_7.withSecretProvisioning;
       serverSettings = {
         inherit (cfg.services.kanidm) domain;
         tls_key = config.sops.secrets."kanidm_tls_key".path;
