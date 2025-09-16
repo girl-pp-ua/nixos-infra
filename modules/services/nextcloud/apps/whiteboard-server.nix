@@ -23,7 +23,7 @@ in
         NEXTCLOUD_URL = "https://${cfg.services.nextcloud.domain}";
       };
       secrets = [
-        config.sops.secrets."nextcloud/whiteboard/secretFile".path
+        config.sops.templates."nextcloud_whiteboard_secretFile".path
       ];
     };
 
@@ -51,7 +51,9 @@ in
       '';
     };
 
-    sops.secrets."nextcloud/whiteboard/secretFile" = { };
     sops.secrets."nextcloud/whiteboard/jwt_secret_key" = { };
+    sops.templates."nextcloud_whiteboard_secretFile" = {
+      content = "JWT_SECRET_KEY = ${config.sops.placeholder."nextcloud/whiteboard/jwt_secret_key"}";
+    };
   };
 }

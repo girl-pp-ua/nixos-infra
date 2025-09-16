@@ -28,11 +28,11 @@ in
       aws = {
         region = "garage";
         endpointUrl = "http://localhost:9000";
-        accessKeyIdFile = config.sops.secrets."garage/keys/devlootbox/id".path;
+        accessKeyIdFile = config.sops.secrets."garage/keys/devlootbox/key_id".path;
         secretAccessKeyFile = config.sops.secrets."garage/keys/devlootbox/secret".path;
       };
       discord = {
-        tokenFile = config.sops.secrets."devlootbox/discord_token/production".path;
+        tokenFile = config.sops.secrets."discord/devlootbox/production".path;
       };
 
       svc-updater.enable = true;
@@ -47,10 +47,10 @@ in
     };
 
     sops.secrets = {
-      "garage/keys/devlootbox/id" = { };
+      "garage/keys/devlootbox/key_id" = { };
       "garage/keys/devlootbox/secret" = { };
-      "devlootbox/discord_token/production" = { };
-      "devlootbox/discord_token/development" = { };
+      "discord/devlootbox/production" = { };
+      "discord/devlootbox/development" = { };
     };
   };
 }

@@ -179,7 +179,7 @@ in
         # broken: cannot create directory '/run/user/989': Permission denied
         # preview_libreoffice_path = "${pkgs.libreoffice}/bin/libreoffice";
       };
-      secretFile = config.sops.secrets."nextcloud/secretFile".path;
+      secretFile = config.sops.templates."nextcloud_secretFile".path;
       extraOCCCommands =
         let
           occ = "${config.services.nextcloud.occ}/bin/nextcloud-occ";
@@ -242,7 +242,7 @@ in
       ];
     };
 
-    sops.secrets =
+    sops =
       let
         nextcloudSecret = {
           mode = "0400";
@@ -251,8 +251,11 @@ in
         };
       in
       {
-        "nextcloud/adminpass" = nextcloudSecret;
-        "nextcloud/secretFile" = nextcloudSecret;
+        secrets."nextcloud/adminpass" = nextcloudSecret;
+        secrets."nextcloud/clientSecret" = { };
+        templates."nextcloud_secretFile" = nextcloudSecret // {
+          content = ''{ "oidc_login_client_secret": "${config.sops.placeholder."nextcloud/clientSecret"}" }'';
+        };
       };
   };
 }

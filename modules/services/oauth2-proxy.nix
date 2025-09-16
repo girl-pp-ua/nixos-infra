@@ -34,7 +34,7 @@ in
     services.oauth2-proxy = {
       enable = true;
 
-      keyFile = config.sops.secrets."oauth2_proxy/keyFile".path;
+      keyFile = config.sops.templates."oauth2_proxy.keyFile".path;
 
       httpAddress = "http://127.0.0.1:${toString cfg.services.oauth2_proxy.port}";
       proxyPrefix = cfg.services.oauth2_proxy.urlPrefix;
@@ -90,10 +90,23 @@ in
       }
     '';
 
-    sops.secrets."oauth2_proxy/keyFile" = {
-      mode = "0400";
-      owner = "oauth2-proxy";
-      group = "oauth2-proxy";
-    };
+    sops =
+      let
+        perms = {
+          mode = "0400";
+          owner = "oauth2-proxy";
+          group = "oauth2-proxy";
+        };
+      in
+      {
+        secrets."oauth2_proxy/clientSecret" = { };
+        secrets."oauth2_proxy/cookieSecret" = { };
+        templates."oauth2_proxy.keyFile" = perms // {
+          content = ''
+            OAUTH2_PROXY_CLIENT_SECRET=${config.sops.placeholder."oauth2_proxy/clientSecret"}
+            OAUTH2_PROXY_COOKIE_SECRET=${config.sops.placeholder."oauth2_proxy/cookieSecret"}
+          '';
+        };
+      };
   };
 }

@@ -79,7 +79,7 @@ in
           imageFile = "${root}/assets/sso-images/oauth2-proxy.svg";
           originLanding = "https://authtest.girl.pp.ua/";
 
-          basicSecretFile = config.sops.secrets."oauth2_proxy/clientSecret".path;
+          basicSecretFile = config.sops.secrets."kanidm.oauth2_proxy/clientSecret".path;
           originUrl =
             let
               mkOriginUrl = domain: "https://${domain}${cfg.services.oauth2_proxy.urlPrefix}/callback";
@@ -145,7 +145,7 @@ in
           imageFile = "${root}/assets/sso-images/nextcloud.svg";
           originLanding = "http://${cfg.services.nextcloud.domain}/";
 
-          basicSecretFile = config.sops.secrets."nextcloud/clientSecret".path;
+          basicSecretFile = config.sops.secrets."kanidm.nextcloud/clientSecret".path;
           enableLegacyCrypto = true; # Nextcloud does not support ES256
           originUrl = [
             "https://${cfg.services.nextcloud.domain}/apps/oidc_login/oidc"
@@ -193,8 +193,12 @@ in
       in
       {
         "ociTenancy/clientSecret" = kanidmSecret;
-        "oauth2_proxy/clientSecret" = kanidmSecret;
-        "nextcloud/clientSecret" = kanidmSecret;
+        "kanidm.oauth2_proxy/clientSecret" = kanidmSecret // {
+          key = "oauth2_proxy/clientSecret";
+        };
+        "kanidm.nextcloud/clientSecret" = kanidmSecret // {
+          key = "nextcloud/clientSecret";
+        };
         "kanidm_tls_key" = kanidmSecret // {
           sopsFile = "${inputs.secrets}/certs/tls_key.sops.pem";
           format = "binary";
