@@ -32,7 +32,7 @@
     };
     devlootbox = {
       url = "git+file:./submodules/devlootbox";
-      inputs.nixpkgs.follows = "nixpkgs";
+      # inputs.nixpkgs.follows = "nixpkgs";
     };
   };
   outputs =

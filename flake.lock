@@ -42,20 +42,18 @@
       "inputs": {
         "crane": "crane",
         "flake-parts": "flake-parts",
-        "nixpkgs": [
-          "nixpkgs"
-        ],
+        "nixpkgs": "nixpkgs",
         "process-compose-flake": "process-compose-flake",
         "rust-overlay": "rust-overlay",
         "services-flake": "services-flake",
         "systems": "systems_2"
       },
       "locked": {
-        "lastModified": 1758044774,
-        "narHash": "sha256-5JeoPl62QEi7/eBMeGMZ7IPRyq+JShZqPycW3uTCilM=",
+        "lastModified": 1758055705,
+        "narHash": "sha256-whsm/TG40x5KlLYW1nwCOW5wXBudwIMYwmHY+4k8IUU=",
         "ref": "refs/heads/master",
-        "rev": "49877f1df73e31d051bb187c86ed0db1ca81b11f",
-        "revCount": 74,
+        "rev": "d9e99e9bca9e34afdb427c0ac68932264c383f6c",
+        "revCount": 77,
         "type": "git",
         "url": "file:./submodules/devlootbox"
       },
@@ -152,16 +150,16 @@
     },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1757745802,
-        "narHash": "sha256-hLEO2TPj55KcUFUU1vgtHE9UEIOjRcH/4QbmfHNF820=",
+        "lastModified": 1757873102,
+        "narHash": "sha256-kYhNxLlYyJcUouNRazBufVfBInMWMyF+44xG/xar2yE=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "c23193b943c6c689d70ee98ce3128239ed9e32d1",
+        "rev": "88cef159e47c0dc56f151593e044453a39a6e547",
         "type": "github"
       },
       "original": {
         "owner": "NixOS",
-        "ref": "nixos-unstable",
+        "ref": "nixpkgs-unstable",
         "repo": "nixpkgs",
         "type": "github"
       }
@@ -178,6 +176,22 @@
       "original": {
         "owner": "nix-community",
         "repo": "nixpkgs.lib",
+        "type": "github"
+      }
+    },
+    "nixpkgs_2": {
+      "locked": {
+        "lastModified": 1757745802,
+        "narHash": "sha256-hLEO2TPj55KcUFUU1vgtHE9UEIOjRcH/4QbmfHNF820=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "c23193b943c6c689d70ee98ce3128239ed9e32d1",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "ref": "nixos-unstable",
+        "repo": "nixpkgs",
         "type": "github"
       }
     },
@@ -218,7 +232,7 @@
         "devlootbox": "devlootbox",
         "dns": "dns",
         "nextcloud-testumgebung": "nextcloud-testumgebung",
-        "nixpkgs": "nixpkgs",
+        "nixpkgs": "nixpkgs_2",
         "redlib": "redlib",
         "secrets": "secrets",
         "sops-nix": "sops-nix"
