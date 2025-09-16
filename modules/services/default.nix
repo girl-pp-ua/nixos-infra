@@ -6,6 +6,7 @@
     ./dns-server
     ./nextcloud
     ./gatus
+    ./projects
     ./openssh.nix
     ./sshguard.nix
     ./tailscale.nix

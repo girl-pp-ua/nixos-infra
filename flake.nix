@@ -27,8 +27,12 @@
     };
 
     secrets = {
-      url = "git+file:./secrets";
+      url = "git+file:./submodules/secrets";
       flake = false;
+    };
+    devlootbox = {
+      url = "git+file:./submodules/devlootbox";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
   };
   outputs =
@@ -68,7 +72,8 @@
             ./modules/base
             ./modules/services
             sops-nix.nixosModules.sops
-          ] ++ extraModules;
+          ]
+          ++ extraModules;
         });
       mkDeployProfile = hostname: configuration: {
         inherit hostname;
@@ -108,6 +113,9 @@
               dns-server.enable = true;
               redlib.enable = true;
               ntfy.enable = true;
+              projects = {
+                devlootbox.enable = true;
+              };
             };
           }
         ];
@@ -138,19 +146,18 @@
 
       # dev shells
       devShells.${hostSystem}.default = pkgs.mkShell {
-        packages =
-          [
-            deploy-rs.outputs.packages.${hostSystem}.deploy-rs
-          ]
-          ++ (with pkgs; [
-            nil
-            nixd
-            nixfmt-rfc-style
-            nixfmt-tree
-            sops
-            age
-            ssh-to-age
-          ]);
+        packages = [
+          deploy-rs.outputs.packages.${hostSystem}.deploy-rs
+        ]
+        ++ (with pkgs; [
+          nil
+          nixd
+          nixfmt-rfc-style
+          nixfmt-tree
+          sops
+          age
+          ssh-to-age
+        ]);
         shellHook = ''
           export SOPS_AGE_KEY=$(ssh-to-age -i ~/.ssh/id_ed25519 -private-key)
         '';

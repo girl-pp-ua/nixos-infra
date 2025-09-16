@@ -1,12 +1,12 @@
 keys:
   - &nixos_infra age1gzpwvl0x7qxqpkcxss5yjcyusl57vqghkn6plfn7ycutxrmfec5qz6jevp
   - &fw13 age1qhf2km5853hu8fa7rjdc4gc4l8vhjsrel2m4sghz3ykva984s3rse55keq
-  - &fw13_host age15kn3s3suctv8u438d3x29k89nn0zq5j9w33uz3ev6gafcencppzqmvsgs4
+  - &fw13_host age1jhwj7qqmeg6s5rppw0ggdneec3cu7gkgm6qnkqqmtwgxrslxtscsq5cy86
   - &dell_host age133qkn62g07yaw533pwh3dfa752jsgtarv7k3jfcu98la2ngcddlqd505s4
   - &oci1_host age1nxwl2wqpj9r6n7x7y5ef3r4cg2wlld5f8ak08tzqq4t8nlu9m5zqw24any
   - &oci2_host age1vxwrs2jqstnr6p74n29tlts6ld67h9cxh85ful5w0ygw6ummfa9s7fky52
-  - &cocoa_host age176v23zju3lhf48mvpmh36hf374a5dm6fmr8nqq0c67zh6qmsra6q8kgdlt
 creation_rules:
   - path_regex: secrets/.*
     key_groups:
-      - age: [*nixos_infra, *fw13, *fw13_host, *dell_host, *oci1_host, *oci2_host, *cocoa_host]
+      - age:
+          [*nixos_infra, *fw13, *fw13_host, *dell_host, *oci1_host, *oci2_host]
