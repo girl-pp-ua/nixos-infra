@@ -98,6 +98,7 @@
               dns-server.enable = true;
               kanidm.enable = true;
               gatus.enable = true;
+              garage.enable = true;
             };
           }
         ];
