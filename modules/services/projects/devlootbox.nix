@@ -27,7 +27,7 @@ in
 
       aws = {
         region = "garage";
-        endpointUrl = "http://localhost:9000";
+        endpointUrl = "http://localhost:3900";
         accessKeyIdFile = config.sops.secrets."garage/keys/devlootbox/key_id".path;
         secretAccessKeyFile = config.sops.secrets."garage/keys/devlootbox/secret".path;
       };

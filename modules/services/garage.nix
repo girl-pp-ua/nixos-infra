@@ -86,5 +86,14 @@ in
         "garage/admin_token" = usr;
         "garage/metrics_token" = usr;
       };
+
+    # TODO move this to gateway node on oci2
+    services.caddy.virtualHosts."cdn.devlootbox.com" = {
+      extraConfig = ''
+        reverse_proxy localhost:3902 {
+          header_up Host "svc-media.web.garage"
+        }
+      '';
+    };
   };
 }
