@@ -42,7 +42,7 @@ in
       };
       svc-discord = {
         enable = true;
-        settings.media_cdn_url = "https://cdn.devlootbox.com/";
+        settings.media_cdn_url = "https://media-cdn.devlootbox.com/";
       };
     };
 
