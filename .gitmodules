@@ -1,6 +1,7 @@
-[submodule "submodules/devlootbox"]
-	path = submodules/devlootbox
-	url = https://github.com/ProjectLootBox/DevLootBox-bot
 [submodule "submodules/secrets"]
 	path = submodules/secrets
 	url = https://github.com/girl-pp-ua/secrets
+[submodule "submodules/devlootbox"]
+	path = submodules/devlootbox
+	url = https://github.com/ProjectLootBox/DevLootBox-bot
+	branch = production
