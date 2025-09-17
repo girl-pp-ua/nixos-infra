@@ -115,7 +115,7 @@
               redlib.enable = true;
               ntfy.enable = true;
               projects = {
-                # devlootbox.enable = true;
+                devlootbox.enable = true;
               };
             };
           }
