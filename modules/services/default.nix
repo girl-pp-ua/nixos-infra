@@ -15,6 +15,5 @@
     ./kanidm.nix
     ./oauth2-proxy.nix
     ./garage.nix
-    ./hydroxide
   ];
 }
