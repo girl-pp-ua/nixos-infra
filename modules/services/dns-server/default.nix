@@ -16,6 +16,7 @@ in
         type = lib.types.listOf lib.types.str;
         default = [
           "girl.pp.ua"
+          "nix-infra"
         ];
       };
     };
@@ -28,6 +29,7 @@ in
     services.nsd = rec {
       enable = true;
       interfaces = [
+        "lo"
         "eth0"
         "tailscale0"
       ];

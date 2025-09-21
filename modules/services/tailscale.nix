@@ -8,9 +8,9 @@ in
       enable = lib.mkEnableOption "tailscale" // {
         default = true;
       };
-      isTsDeploy = lib.mkEnableOption "tailscale is host intranet" // {
-        description = "If true, the tailscaled is required for ssh connection and won't be restarted";
-      };
+      # isTsDeploy = lib.mkEnableOption "tailscale is host intranet" // {
+      #   description = "If true, the tailscaled is required for ssh connection and won't be restarted";
+      # };
     };
   };
   config = lib.mkIf cfg.services.tailscale.enable {
@@ -32,9 +32,8 @@ in
         authKeyFile = config.sops.secrets."tailscale/authKey".path;
       };
 
-    systemd.services.tailscaled = {
-      restartIfChanged = !cfg.services.tailscale.isTsDeploy;
-    };
+    systemd.services.tailscaled.restartIfChanged = false; # just don't.
+    # restartIfChanged = !cfg.services.tailscale.isTsDeploy;
 
     networking.firewall = {
       trustedInterfaces = [ "tailscale0" ];
