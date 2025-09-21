@@ -127,6 +127,7 @@
               tailscale.isTsDeploy = true;
               caddy.enable = true;
               nextcloud.enable = true;
+              hydroxide.enable = true;
             };
           }
         ];
