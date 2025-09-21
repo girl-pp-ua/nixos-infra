@@ -93,7 +93,7 @@ in
             hosts = mkEndpoints {
               oci1 = mkPing "oci1.girl.pp.ua";
               oci2 = mkPing "oci2.girl.pp.ua";
-              dell-sv = mkPing "dell-sv.ts.nix-infra";
+              dell-sv = mkPing "dell-sv.intranet.girl.pp.ua";
             };
             nameservers = mkEndpoints {
               ns1 = mkDns "ns1.girl.pp.ua" "132.226.204.218";

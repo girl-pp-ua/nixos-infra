@@ -2,7 +2,7 @@
 with dns.lib.combinators;
 let
   zone = "girl.pp.ua.";
-  serial = 2025092101; # YYYYMMDDNN
+  serial = 2025070901; # YYYYMMDDNN
 
   /**
     Creates a CNAME record
@@ -156,9 +156,9 @@ in
     _mythic-beasts-challenge.TXT = [ "deLHF0cTTKZyR/l41XoMJcDVKGwpOXj+gpyO6o1sLdQ" ];
 
     # internal services (tailscale/vpn)
-    # XXX: this is deprecated and about to be removed
     intranet.subdomains = {
       dell-sv = mkDualstackHost hosts.dell-sv;
+      nextcloud = mkCname "dell-sv.intranet.${zone}";
     };
   };
 }

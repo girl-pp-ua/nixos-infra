@@ -38,7 +38,7 @@ in
       };
       intraDomain = lib.mkOption {
         type = lib.types.str;
-        default = "nextcloud.nix-infra";
+        default = "nextcloud.intranet.girl.pp.ua";
       };
       clientID = lib.mkOption {
         type = lib.types.str;
@@ -79,14 +79,8 @@ in
         trusted_proxies = [
           "127.0.0.1"
           "::1"
-          # dell-sv
-          "fd7a:115c:a1e0::2901:2214"
-          "100.64.0.2"
-          # oci2
-          "2603:c020:800c:9c7f:0:fe:fe:2"
-          "144.24.178.67"
-          "fd7a:115c:a1e0::2501:5a59"
-          "100.64.0.102"
+          "2603:c020:800c:9c7f:0:fe:fe:2" # oci2
+          "144.24.178.67" # oci2
         ];
 
         enable_previews = true;
