@@ -141,7 +141,7 @@
         {
           oci1 = mkDeployProfile "oci1.girl.pp.ua" nixosConfigurations.oci1;
           oci2 = mkDeployProfile "oci2.girl.pp.ua" nixosConfigurations.oci2;
-          dell-sv = mkDeployProfile "dell-sv.saga-mirzam.ts.net" nixosConfigurations.dell-sv;
+          dell-sv = mkDeployProfile "dell-sv.intranet.girl.pp.ua" nixosConfigurations.dell-sv;
         };
 
       checks = builtins.mapAttrs (system: deployLib: deployLib.deployChecks self.deploy) deploy-rs.lib;
