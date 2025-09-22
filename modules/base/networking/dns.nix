@@ -27,7 +27,7 @@
       DHCP = "no";
     };
     addresses = [
-      { addressConfig.Address = "192.0.2.0/24"; }
+      { Address = "192.0.2.0/24"; }
     ];
   };
 }
