@@ -2,6 +2,7 @@
 {
   imports = [
     ./firewall.nix
+    ./dns.nix
   ];
   networking = {
     useNetworkd = true;

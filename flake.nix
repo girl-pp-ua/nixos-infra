@@ -114,18 +114,19 @@
               dns-server.enable = true;
               redlib.enable = true;
               ntfy.enable = true;
-              projects = {
-                devlootbox.enable = true;
-              };
+              projects.devlootbox.enable = true;
             };
           }
         ];
         dell-sv = mkNixosSystem "dell-sv" "x86_64-linux" [
           {
-            networking.domain = "intranet.girl.pp.ua";
+            networking.domain = "ts.nix-infra";
             cfg.services = {
-              tailscale.isTsDeploy = true;
               caddy.enable = true;
+              dns-server = {
+                enable = true;
+                zones = [ "nix-infra" ];
+              };
               nextcloud.enable = true;
             };
           }
