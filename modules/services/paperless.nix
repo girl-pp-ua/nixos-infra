@@ -37,79 +37,92 @@ in
 
       inherit (cfg.services.paperless) domain port;
 
+      database.createLocally = true;
+      configureTika = true;
+
       passwordFile = config.sops.secrets."paperless/password".path;
       environmentFile = config.sops.templates."paperless.env".path;
 
-      database.createLocally = true;
-      configureTika = true;
+      settings = {
+        PAPERLESS_COOKIE_PREFIX = "paperless0";
+        PAPERLESS_ALLOWED_HOSTS = [
+          config.cfg.services.paperless.domain
+          config.cfg.services.paperless.intraDomain
+        ];
+        PAPERLESS_CSRF_TRUSTED_ORIGINS = [
+          config.cfg.services.paperless.domain
+          config.cfg.services.paperless.intraDomain
+        ];
+        PAPERLESS_CORS_ALLOWED_HOSTS = [
+          "https://${config.cfg.services.paperless.domain}"
+          "https://${config.cfg.services.paperless.intraDomain}"
+          "http://${config.cfg.services.paperless.intraDomain}"
+        ];
+        PAPERLESS_TRUSTED_PROXIES = [
+          "127.0.0.1"
+          "::1"
+          # dell-sv
+          "fd7a:115c:a1e0::2901:2214"
+          "100.64.0.2"
+          # oci2
+          "2603:c020:800c:9c7f:0:fe:fe:2"
+          "144.24.178.67"
+          "fd7a:115c:a1e0::2501:5a59"
+          "100.64.0.102"
+        ];
+
+        # PAPERLESS_APPS = [
+        #   "allauth.socialaccount.providers.openid_connect"
+        # ];
+
+        PAPERLESS_SOCIALACCOUNT_ALLOW_SIGNUPS = true;
+        PAPERLESS_SOCIAL_AUTO_SIGNUP = true;
+        PAPERLESS_DISABLE_REGULAR_LOGIN = true;
+        PAPERLESS_REDIRECT_LOGIN_TO_SSO = true;
+        PAPERLESS_ACCOUNT_SESSION_REMEMBER = false;
+      };
     };
 
-    sops = {
-      secrets."paperless/secretKey" = { };
-      secrets."paperless/password" = { };
-      secrets."paperless/clientSecret" = { };
-      templates."paperless.env".content =
-        let
-          trusted = lib.concatStringsSep "," [
-            "https://${config.cfg.services.paperless.domain}"
-            "https://${config.cfg.services.paperless.intraDomain}"
-            "http://${config.cfg.services.paperless.intraDomain}"
-          ];
-        in
-        ''
-          PAPERLESS_SECRET_KEY=${config.sops.placeholder."paperless/secretKey"}
+    sops =
+      let
+        owned = {
+          owner = "paperless";
+          group = "paperless";
+          mode = "0440";
+        };
+      in
+      {
+        secrets."paperless/password" = owned;
 
-          PAPERLESS_COOKIE_PREFIX=paperless0
-
-          PAPERLESS_ALLOWED_HOSTS=${trusted}
-          PAPERLESS_CORS_ALLOWED_HOSTS=${trusted}
-          PAPERLESS_CSRF_TRUSTED_ORIGINS=${trusted}
-
-          PAPERLESS_TRUSTED_PROXIES=${
-            lib.concatStringsSep "," [
-              "127.0.0.1"
-              "::1"
-              # dell-sv
-              "fd7a:115c:a1e0::2901:2214"
-              "100.64.0.2"
-              # oci2
-              "2603:c020:800c:9c7f:0:fe:fe:2"
-              "144.24.178.67"
-              "fd7a:115c:a1e0::2501:5a59"
-              "100.64.0.102"
-            ]
-          }
-
-          PAPERLESS_APPS=allauth.socialaccount.providers.openid_connect
-          PAPERLESS_SOCIALACCOUNT_PROVIDERS=${
-            builtins.toJSON {
-              openid_connect = {
-                OAUTH_PKCE_ENABLED = true;
-                APPS = [
-                  {
-                    provider_id = "kanidm";
-                    name = "Girlcock";
-                    client_id = "paperless";
-                    secret = config.sops.placeholder."paperless/clientSecret";
-                    settings = {
-                      server_url = idp.oidc_discovery;
-                      fetch_userinfo = true;
-                      oauth_pkce_enabled = true;
-                      token_auth_method = "client_secret_basic";
-                    };
-                  }
-                ];
-              };
+        secrets."paperless/secretKey" = { };
+        secrets."paperless/clientSecret" = { };
+        templates."paperless.env" = owned // {
+          content = ''
+            PAPERLESS_SECRET_KEY=${config.sops.placeholder."paperless/secretKey"}
+            PAPERLESS_SOCIALACCOUNT_PROVIDERS=${
+              builtins.toJSON {
+                openid_connect = {
+                  OAUTH_PKCE_ENABLED = true;
+                  APPS = [
+                    {
+                      provider_id = "kanidm";
+                      name = "Girlcock";
+                      client_id = "paperless";
+                      secret = config.sops.placeholder."paperless/clientSecret";
+                      settings = {
+                        server_url = idp.oidc_discovery;
+                        fetch_userinfo = true;
+                        oauth_pkce_enabled = true;
+                        token_auth_method = "client_secret_basic";
+                      };
+                    }
+                  ];
+                };
+              }
             }
-          }
-
-          PAPERLESS_SOCIALACCOUNT_ALLOW_SIGNUPS=true
-          PAPERLESS_SOCIAL_AUTO_SIGNUP=true
-          PAPERLESS_DISABLE_REGULAR_LOGIN=true
-          PAPERLESS_REDIRECT_LOGIN_TO_SSO=true
-          PAPERLESS_ACCOUNT_SESSION_REMEMBER=false
-        '';
-    };
+          '';
+        };
+      };
 
     services.caddy.virtualHosts."http://${cfg.services.paperless.intraDomain}" = {
       extraConfig = ''
@@ -129,7 +142,9 @@ in
           file_server
         }
 
-        reverse_proxy http://127.0.0.1:${toString config.services.paperless.port}
+        reverse_proxy http://localhost:${toString config.services.paperless.port} {
+          header_up Host {host}
+        }
       '';
     };
   };
