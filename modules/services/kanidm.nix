@@ -55,6 +55,7 @@ in
               "oracle-cloud-infrastructure.access"
               "nextcloud.access"
               "paperless.access"
+              # "paperless.admin"
             ];
           };
           niko = {
@@ -170,6 +171,7 @@ in
         };
 
         groups."paperless.access" = { };
+        # groups."paperless.admin" = { };
         systems.oauth2."paperless" = {
           displayName = "Paperless-ngx";
           imageFile = "${root}/assets/sso-images/paperless-ngx.svg";
@@ -193,6 +195,9 @@ in
             valuesByGroup."paperless.access" = [
               "paperless_access"
             ];
+            # valuesByGroup."paperless.admin" = [
+            #   "paperless_admin"
+            # ];
           };
         };
 

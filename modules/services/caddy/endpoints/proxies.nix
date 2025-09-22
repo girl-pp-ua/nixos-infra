@@ -16,9 +16,7 @@ in
       '';
       ${cfg.services.paperless.domain}.extraConfig = ''
         import encode
-        reverse_proxy http://${cfg.services.paperless.intraDomain} {
-            header_up Host {host}
-        }
+        reverse_proxy http://${cfg.services.paperless.intraDomain}
       '';
     };
   };

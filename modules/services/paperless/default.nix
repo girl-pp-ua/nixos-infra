@@ -1,5 +1,6 @@
 {
   config,
+  pkgs,
   lib,
   libx,
   ...
@@ -34,6 +35,15 @@ in
   config = lib.mkIf cfg.services.paperless.enable {
     services.paperless = {
       enable = true;
+      # package = pkgs.paperless-ngx.overrideAttrs (old: {
+      #   doInstallCheck = false;
+      #   patches = (old.patches or [ ]) ++ [
+      #     # oidc is mostly unusable without this feature
+      #     # https://github.com/paperless-ngx/paperless-ngx/discussions/7307#discussion-6972082
+      #     # https://github.com/paperless-ngx/paperless-ngx/pull/7655
+      #     ./paperless-oidc.patch
+      #   ];
+      # });
 
       inherit (cfg.services.paperless) domain port;
 
@@ -44,20 +54,8 @@ in
       environmentFile = config.sops.templates."paperless.env".path;
 
       settings = {
-        PAPERLESS_COOKIE_PREFIX = "paperless0";
-        PAPERLESS_ALLOWED_HOSTS = [
-          config.cfg.services.paperless.domain
-          config.cfg.services.paperless.intraDomain
-        ];
-        PAPERLESS_CSRF_TRUSTED_ORIGINS = [
-          config.cfg.services.paperless.domain
-          config.cfg.services.paperless.intraDomain
-        ];
-        PAPERLESS_CORS_ALLOWED_HOSTS = [
-          "https://${config.cfg.services.paperless.domain}"
-          "https://${config.cfg.services.paperless.intraDomain}"
-          "http://${config.cfg.services.paperless.intraDomain}"
-        ];
+        PAPERLESS_URL = "https://${config.cfg.services.paperless.domain}";
+
         PAPERLESS_TRUSTED_PROXIES = [
           "127.0.0.1"
           "::1"
@@ -71,15 +69,16 @@ in
           "100.64.0.102"
         ];
 
-        # PAPERLESS_APPS = [
-        #   "allauth.socialaccount.providers.openid_connect"
-        # ];
+        PAPERLESS_APPS = "allauth.socialaccount.providers.openid_connect";
 
         PAPERLESS_SOCIALACCOUNT_ALLOW_SIGNUPS = true;
         PAPERLESS_SOCIAL_AUTO_SIGNUP = true;
         PAPERLESS_DISABLE_REGULAR_LOGIN = true;
         PAPERLESS_REDIRECT_LOGIN_TO_SSO = true;
         PAPERLESS_ACCOUNT_SESSION_REMEMBER = false;
+
+        # PAPERLESS_SOCIALACCOUNT_DEFAULT_PERMISSIONS = "view_uisettings";
+        # PAPERLESS_SOCIALACCOUNT_ADMIN_GROUPS = "paperless_admin";
       };
     };
 
@@ -103,6 +102,12 @@ in
               builtins.toJSON {
                 openid_connect = {
                   OAUTH_PKCE_ENABLED = true;
+                  SCOPE = [
+                    "profile"
+                    "email"
+                    "groups"
+                    "openid"
+                  ];
                   APPS = [
                     {
                       provider_id = "kanidm";
@@ -125,6 +130,9 @@ in
       };
 
     services.caddy.virtualHosts."http://${cfg.services.paperless.intraDomain}" = {
+      serverAliases = [
+        "http://${cfg.services.paperless.domain}"
+      ];
       extraConfig = ''
         import encode
 
@@ -132,19 +140,17 @@ in
           X-Robots-Tag "noindex, nofollow"
         }
 
-        @forbidden {
-          path /admin
-        }
-        error @forbidden 404
+        # @forbidden {
+        #   path /admin
+        # }
+        # error @forbidden 404
 
-        handle_path /static/* {
-          root * ${config.services.paperless.package}/lib/paperless-ngx/static
-          file_server
-        }
+        # handle_path /static/* {
+        #   root * ${config.services.paperless.package}/lib/paperless-ngx/static
+        #   file_server
+        # }
 
-        reverse_proxy http://localhost:${toString config.services.paperless.port} {
-          header_up Host {host}
-        }
+        reverse_proxy http://127.0.0.1:${toString config.services.paperless.port}
       '';
     };
   };

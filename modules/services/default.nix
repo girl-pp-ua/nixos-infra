@@ -5,6 +5,7 @@
     ./caddy
     ./dns-server
     ./nextcloud
+    ./paperless
     ./gatus
     ./projects
     ./openssh.nix
@@ -15,6 +16,5 @@
     ./kanidm.nix
     ./oauth2-proxy.nix
     ./garage.nix
-    ./paperless.nix
   ];
 }
