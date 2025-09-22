@@ -54,6 +54,7 @@ in
               "authtest.access"
               "oracle-cloud-infrastructure.access"
               "nextcloud.access"
+              "paperless.access"
             ];
           };
           niko = {
@@ -143,7 +144,7 @@ in
         systems.oauth2."nextcloud" = {
           displayName = "Nextcloud";
           imageFile = "${root}/assets/sso-images/nextcloud.svg";
-          originLanding = "http://${cfg.services.nextcloud.domain}/";
+          originLanding = "https://${cfg.services.nextcloud.domain}/";
 
           basicSecretFile = config.sops.secrets."kanidm.nextcloud/clientSecret".path;
           enableLegacyCrypto = true; # Nextcloud does not support ES256
@@ -167,6 +168,34 @@ in
             ];
           };
         };
+
+        groups."paperless.access" = { };
+        systems.oauth2."paperless" = {
+          displayName = "Paperless-ngx";
+          imageFile = "${root}/assets/sso-images/paperless-ngx.svg";
+          originLanding = "https://${cfg.services.paperless.domain}/";
+
+          basicSecretFile = config.sops.secrets."kanidm.paperless/clientSecret".path;
+          originUrl = [
+            "https://${cfg.services.paperless.domain}/accounts/oidc/kanidm/login/callback/"
+            "https://${cfg.services.paperless.intraDomain}/accounts/oidc/kanidm/login/callback/"
+          ];
+
+          preferShortUsername = true;
+          scopeMaps."paperless.access" = [
+            "profile"
+            "email"
+            "groups"
+            "openid"
+          ];
+          claimMaps.groups = {
+            joinType = "array";
+            valuesByGroup."paperless.access" = [
+              "paperless_access"
+            ];
+          };
+        };
+
       };
     };
 
@@ -198,6 +227,9 @@ in
         };
         "kanidm.nextcloud/clientSecret" = kanidmSecret // {
           key = "nextcloud/clientSecret";
+        };
+        "kanidm.paperless/clientSecret" = kanidmSecret // {
+          key = "paperless/clientSecret";
         };
         "kanidm_tls_key" = kanidmSecret // {
           sopsFile = "${inputs.secrets}/certs/tls_key.sops.pem";

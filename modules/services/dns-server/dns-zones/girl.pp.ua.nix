@@ -2,7 +2,7 @@
 with dns.lib.combinators;
 let
   zone = "girl.pp.ua.";
-  serial = 2025092101; # YYYYMMDDNN
+  serial = 2025092201; # YYYYMMDDNN
 
   /**
     Creates a CNAME record
@@ -134,6 +134,7 @@ in
     redlib = mkCname "oci2.${zone}";
     ntfy = mkCname "oci2.${zone}";
     cloud = mkCname "oci2.${zone}"; # (proxy -> dell-sv)
+    paperless = mkCname "oci2.${zone}"; # (proxy -> dell-sv)
 
     # cdn:
     files-cdn =

@@ -109,7 +109,7 @@
               caddy.enable = true;
               caddy.endpoints = {
                 healthcheck.enable = true;
-                nextcloud-proxy.enable = true; # rip cocoa
+                proxies.enable = true; # rip cocoa
               };
               dns-server.enable = true;
               redlib.enable = true;
@@ -128,6 +128,7 @@
                 zones = [ "nix-infra" ];
               };
               nextcloud.enable = true;
+              paperless.enable = true;
             };
           }
         ];

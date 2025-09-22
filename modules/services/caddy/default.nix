@@ -11,7 +11,7 @@ in
   imports = [
     ./endpoints/file-server.nix
     ./endpoints/healthcheck.nix
-    ./endpoints/nextcloud-proxy.nix
+    ./endpoints/proxies.nix
     ./endpoints/webdav.nix
     ./endpoints/authtest.nix
   ];
