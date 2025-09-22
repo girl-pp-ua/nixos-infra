@@ -55,7 +55,7 @@ in
               "oracle-cloud-infrastructure.access"
               "nextcloud.access"
               "paperless.access"
-              # "paperless.admin"
+              "paperless.admin"
             ];
           };
           niko = {
@@ -164,14 +164,12 @@ in
           ];
           claimMaps.groups = {
             joinType = "array";
-            valuesByGroup."nextcloud.access" = [
-              "nextcloud_access"
-            ];
+            valuesByGroup."nextcloud.access" = [ "nextcloud_access" ];
           };
         };
 
         groups."paperless.access" = { };
-        # groups."paperless.admin" = { };
+        groups."paperless.admin" = { };
         systems.oauth2."paperless" = {
           displayName = "Paperless-ngx";
           imageFile = "${root}/assets/sso-images/paperless-ngx.svg";
@@ -192,12 +190,8 @@ in
           ];
           claimMaps.groups = {
             joinType = "array";
-            valuesByGroup."paperless.access" = [
-              "paperless_access"
-            ];
-            # valuesByGroup."paperless.admin" = [
-            #   "paperless_admin"
-            # ];
+            valuesByGroup."paperless.access" = [ "paperless_access" ];
+            valuesByGroup."paperless.admin" = [ "paperless_admin" ];
           };
         };
 

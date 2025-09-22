@@ -35,15 +35,15 @@ in
   config = lib.mkIf cfg.services.paperless.enable {
     services.paperless = {
       enable = true;
-      # package = pkgs.paperless-ngx.overrideAttrs (old: {
-      #   doInstallCheck = false;
-      #   patches = (old.patches or [ ]) ++ [
-      #     # oidc is mostly unusable without this feature
-      #     # https://github.com/paperless-ngx/paperless-ngx/discussions/7307#discussion-6972082
-      #     # https://github.com/paperless-ngx/paperless-ngx/pull/7655
-      #     ./paperless-oidc.patch
-      #   ];
-      # });
+      package = pkgs.paperless-ngx.overrideAttrs (old: {
+        doInstallCheck = false;
+        patches = (old.patches or [ ]) ++ [
+          # oidc is mostly unusable without this feature
+          # https://github.com/paperless-ngx/paperless-ngx/discussions/7307#discussion-6972082
+          # https://github.com/paperless-ngx/paperless-ngx/pull/7655
+          ./paperless-oidc.patch
+        ];
+      });
 
       inherit (cfg.services.paperless) domain port;
 
@@ -77,8 +77,8 @@ in
         PAPERLESS_REDIRECT_LOGIN_TO_SSO = true;
         PAPERLESS_ACCOUNT_SESSION_REMEMBER = false;
 
-        # PAPERLESS_SOCIALACCOUNT_DEFAULT_PERMISSIONS = "view_uisettings";
-        # PAPERLESS_SOCIALACCOUNT_ADMIN_GROUPS = "paperless_admin";
+        PAPERLESS_SOCIALACCOUNT_DEFAULT_PERMISSIONS = "view_uisettings";
+        PAPERLESS_SOCIALACCOUNT_ADMIN_GROUPS = "paperless.admin@${cfg.services.kanidm.domain}";
       };
     };
 
