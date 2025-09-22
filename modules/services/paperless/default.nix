@@ -56,6 +56,9 @@ in
       settings = {
         PAPERLESS_URL = "https://${config.cfg.services.paperless.domain}";
 
+        PAPERLESS_OCR_LANGUAGE = "eng+ukr+pol";
+        PAPERLESS_OCR_LANGUAGES = "ukr pol";
+
         PAPERLESS_TRUSTED_PROXIES = [
           "127.0.0.1"
           "::1"
