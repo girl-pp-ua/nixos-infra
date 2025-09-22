@@ -91,8 +91,8 @@ in
           };
           endpoints = mergeAll withAlertsNtfy (mkGroups {
             hosts = mkEndpoints {
-              oci1 = mkPing "oci1.girl.pp.ua";
-              oci2 = mkPing "oci2.girl.pp.ua";
+              oci1 = mkPing "oci1.ts.nix-infra";
+              oci2 = mkPing "oci2.ts.nix-infra";
               dell-sv = mkPing "dell-sv.ts.nix-infra";
             };
             nameservers = mkEndpoints {
