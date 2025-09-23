@@ -61,16 +61,21 @@ in
           niko = {
             displayName = "Niko";
             mailAddresses = [ "nyanbinary@tutamail.com" ];
-            groups = [
-              "authtest.access"
-            ];
+            groups = [ ];
           };
           lucy = {
             displayName = "Lucy";
             mailAddresses = [ secrets.lucy.email ];
             groups = [
-              "authtest.access"
               "nextcloud.access"
+            ];
+          };
+          svitlana = {
+            displayName = "Svitlana";
+            mailAddresses = [ secrets.svitlana.email ];
+            groups = [
+              "nextcloud.access"
+              "paperless.access"
             ];
           };
         };
