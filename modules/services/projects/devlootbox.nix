@@ -34,6 +34,7 @@ in
       discord = {
         tokenFile = config.sops.secrets."discord/devlootbox/production".path;
       };
+      scrapeDoTokenFile = config.sops.secrets."scrape_do_token".path;
 
       svc-updater.enable = true;
       svc-media = {
@@ -51,6 +52,7 @@ in
       "garage/keys/devlootbox/secret" = { };
       "discord/devlootbox/production" = { };
       "discord/devlootbox/development" = { };
+      "scrape_do_token" = { };
     };
   };
 }

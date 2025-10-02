@@ -14,7 +14,7 @@
         "flakes"
         "nix-command"
         "no-url-literals"
-        "parse-toml-timestamps"
+        # "parse-toml-timestamps"
         "pipe-operator"
         "read-only-local-store"
         "repl-automation"
