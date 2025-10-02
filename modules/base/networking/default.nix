@@ -15,6 +15,5 @@
   systemd.services = {
     NetworkManager-wait-online.enable = false;
     systemd-networkd.stopIfChanged = false;
-    systemd-resolved.stopIfChanged = false;
   };
 }

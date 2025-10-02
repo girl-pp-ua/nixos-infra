@@ -28,7 +28,7 @@ in
     services.nsd = rec {
       enable = true;
       interfaces = [
-        "lo"
+        "127.0.17.53"
         "eth0"
         "tailscale0"
       ];

@@ -16,6 +16,7 @@
       wget
       hyfetch
       httpie
+      dig
     ];
     variables = {
       EDITOR = "nano";
