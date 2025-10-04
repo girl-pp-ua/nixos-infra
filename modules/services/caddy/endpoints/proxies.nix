@@ -18,6 +18,10 @@ in
         import encode
         reverse_proxy http://${cfg.services.paperless.intraDomain}
       '';
+      ${cfg.services.immich.domain}.extraConfig = ''
+        import encode
+        reverse_proxy http://${cfg.services.immich.intraDomain}
+      '';
     };
   };
 }

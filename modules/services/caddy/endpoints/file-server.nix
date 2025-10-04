@@ -22,9 +22,7 @@ in
         extraConfig = ''
           import cors *
           import encode
-          header {
-            X-Robots-Tag "noindex, nofollow"
-          }
+          import norobot
           root * ${cfg.services.caddy.endpoints.file-server.path}
           file_server browse
         '';

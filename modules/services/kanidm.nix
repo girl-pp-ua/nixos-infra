@@ -56,6 +56,8 @@ in
               "nextcloud.access"
               "paperless.access"
               "paperless.admin"
+              "immich.access"
+              "immich.role.admin"
             ];
           };
           niko = {
@@ -68,6 +70,8 @@ in
             mailAddresses = [ secrets.lucy.email ];
             groups = [
               "nextcloud.access"
+              "immich.access"
+              "immich.role.user"
             ];
           };
           svitlana = {
@@ -76,6 +80,8 @@ in
             groups = [
               "nextcloud.access"
               "paperless.access"
+              "immich.access"
+              "immich.role.user"
             ];
           };
         };
@@ -200,6 +206,45 @@ in
           };
         };
 
+        groups."immich.access" = { };
+        groups."immich.role.user" = { };
+        groups."immich.role.admin" = { };
+        systems.oauth2."immich" = {
+          displayName = "Immich";
+          imageFile = "${root}/assets/sso-images/immich.svg";
+          originLanding = "https://${cfg.services.immich.domain}/";
+
+          basicSecretFile = config.sops.secrets."kanidm.immich/clientSecret".path;
+          originUrl = [
+            "https://${cfg.services.immich.domain}/auth/login"
+            "https://${cfg.services.immich.domain}/user-settings"
+            "https://${cfg.services.immich.domain}/api/oauth/mobile-redirect"
+            "https://${cfg.services.immich.intraDomain}/auth/login"
+            "https://${cfg.services.immich.intraDomain}/user-settings"
+            "https://${cfg.services.immich.intraDomain}/api/oauth/mobile-redirect"
+            "app.immich:///oauth-callback"
+          ];
+
+          preferShortUsername = true;
+          scopeMaps."immich.access" = [
+            "openid"
+            "email"
+            "profile"
+          ];
+          claimMaps = {
+            groups = {
+              joinType = "array";
+              valuesByGroup."immich.access" = [ "immich_access" ];
+            };
+            immich_role = {
+              joinType = "array";
+              valuesByGroup."immich.role.user" = [ "user" ];
+              valuesByGroup."immich.role.admin" = [ "admin" ];
+            };
+          };
+
+          # TODO: support quota
+        };
       };
     };
 
@@ -234,6 +279,9 @@ in
         };
         "kanidm.paperless/clientSecret" = kanidmSecret // {
           key = "paperless/clientSecret";
+        };
+        "kanidm.immich/clientSecret" = kanidmSecret // {
+          key = "immich/clientSecret";
         };
         "kanidm_tls_key" = kanidmSecret // {
           sopsFile = "${inputs.secrets}/certs/tls_key.sops.pem";

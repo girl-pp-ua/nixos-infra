@@ -45,6 +45,11 @@ in
         (encode) {
           encode zstd gzip
         }
+        (norobot) {
+          header {
+            X-Robots-Tag "noindex, nofollow"
+          }
+        }
       '';
     };
     networking.firewall = {

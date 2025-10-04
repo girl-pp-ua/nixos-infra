@@ -135,6 +135,7 @@ in
     ntfy = mkCname "oci2.${zone}";
     cloud = mkCname "oci2.${zone}"; # (proxy -> dell-sv)
     paperless = mkCname "oci2.${zone}"; # (proxy -> dell-sv)
+    photos = mkCname "oci2.${zone}"; # (proxy -> dell-sv)
 
     # cdn:
     files-cdn =

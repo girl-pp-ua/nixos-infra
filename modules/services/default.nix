@@ -16,5 +16,6 @@
     ./kanidm.nix
     ./oauth2-proxy.nix
     ./garage.nix
+    ./immich.nix
   ];
 }
