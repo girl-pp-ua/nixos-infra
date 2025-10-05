@@ -7,10 +7,11 @@ in
   SOA = {
     nameServer = "localhost";
     adminEmail = "nobody@localhost";
-    serial = 2025092201; # YYYYMMDDNN
+    serial = 2025100501; # YYYYMMDDNN
   };
 
   subdomains = {
+    garage.CNAME = [ "oci1.ts.${zone}" ];
     nextcloud.CNAME = [ "dell-sv.ts.${zone}" ];
     paperless.CNAME = [ "dell-sv.ts.${zone}" ];
     immich.CNAME = [ "dell-sv.ts.${zone}" ];

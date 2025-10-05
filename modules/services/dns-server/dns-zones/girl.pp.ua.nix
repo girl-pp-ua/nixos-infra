@@ -2,7 +2,7 @@
 with dns.lib.combinators;
 let
   zone = "girl.pp.ua.";
-  serial = 2025092201; # YYYYMMDDNN
+  serial = 2025100501; # YYYYMMDDNN
 
   /**
     Creates a CNAME record

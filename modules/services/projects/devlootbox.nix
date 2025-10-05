@@ -27,7 +27,7 @@ in
 
       aws = {
         region = "garage";
-        endpointUrl = "http://100.64.0.101:3900"; # oci1.saga-mirzam.ts.net, todo dont hardcode this
+        endpointUrl = "http://garage.nix-infra:3900";
         accessKeyIdFile = config.sops.secrets."garage/keys/devlootbox/key_id".path;
         secretAccessKeyFile = config.sops.secrets."garage/keys/devlootbox/secret".path;
       };

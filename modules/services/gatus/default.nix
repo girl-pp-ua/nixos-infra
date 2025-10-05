@@ -124,8 +124,25 @@ in
                   "[STATUS] == 200"
                   "[BODY] == pat(*xiphoihaej5io8oSheiXie4gu9ixahs0ian5iemo9ohhieBaom4Ideiquoh7ai8e*)"
                 ];
-                interval = "1h"; # reddit please don't kill me
+                interval = "2h"; # reddit please don't kill me
               };
+              garage-s3 = mkUrl' "http://garage.nix-infra:3900/" [
+                # idk what else to check fo here
+                "[STATUS] == 403"
+                "[BODY] == pat(*<Region>garage</Region>*)"
+              ];
+              garage-web = mkUrl' "https://media-cdn.devlootbox.com/" [
+                # idk what else to check fo here
+                "[STATUS] == 404"
+                "[BODY] == pat(*NoSuchKey*)"
+              ];
+              paperless = mkUrl' "https://paperless.girl.pp.ua/" [
+                "[STATUS] == 200"
+              ];
+              immich = mkUrl' "https://photos.girl.pp.ua/api/server/ping" [
+                "[STATUS] == 200"
+                "[BODY].res == pong"
+              ];
             };
           });
         };
