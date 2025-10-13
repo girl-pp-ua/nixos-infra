@@ -58,6 +58,11 @@ in
 
         PAPERLESS_OCR_LANGUAGE = "eng+ukr+pol";
         PAPERLESS_OCR_LANGUAGES = "ukr pol";
+        PAPERLESS_OCR_DESKEW = "false"; # fucks up some documents
+        PAPERLESS_OCR_USER_ARGS = builtins.toJSON {
+          # this is okay since Paperless saves the original documents
+          invalidate_digital_signatures = true;
+        };
 
         PAPERLESS_TRUSTED_PROXIES = [
           "127.0.0.1"
