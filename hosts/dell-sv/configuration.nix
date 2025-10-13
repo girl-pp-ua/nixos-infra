@@ -1,6 +1,7 @@
-{ pkgs, ... }:
+{ pkgs, pkgs-stable, ... }:
 let
-  cur_rocmPackages = pkgs.rocmPackages;
+  # workaround rocm build failure
+  cur_rocmPackages = pkgs-stable.rocmPackages;
 in
 {
   imports = [
@@ -25,7 +26,6 @@ in
   hardware.graphics.enable = true;
 
   # opencl
-  # i'm overriding the default opencl option to use rocm 5 instead:
   hardware.amdgpu.opencl.enable = false;
   hardware.graphics.extraPackages = [
     cur_rocmPackages.clr
