@@ -161,17 +161,18 @@ in
           basicSecretFile = config.sops.secrets."kanidm.nextcloud/clientSecret".path;
           enableLegacyCrypto = true; # Nextcloud does not support ES256
           originUrl = [
-            "https://${cfg.services.nextcloud.domain}/apps/oidc_login/oidc"
-            "https://${cfg.services.nextcloud.intraDomain}/apps/oidc_login/oidc"
-            # "http://${cfg.services.nextcloud.domain}/apps/oidc_login/oidc"
+            "https://${cfg.services.nextcloud.domain}/apps/user_oidc/code"
+            "https://${cfg.services.nextcloud.intraDomain}/apps/user_oidc/code"
+            # "https://${cfg.services.nextcloud.domain}/apps/oidc_login/oidc"
+            # "https://${cfg.services.nextcloud.intraDomain}/apps/oidc_login/oidc"
           ];
 
           preferShortUsername = true;
           scopeMaps."nextcloud.access" = [
-            "profile"
-            "email"
-            "groups"
             "openid"
+            "email"
+            "profile"
+            "groups"
           ];
           claimMaps.groups = {
             joinType = "array";

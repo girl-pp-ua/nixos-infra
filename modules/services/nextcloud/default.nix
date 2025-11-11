@@ -50,7 +50,7 @@ in
   config = lib.mkIf cfg.services.nextcloud.enable {
     services.nextcloud = {
       enable = true;
-      package = pkgs.nextcloud31;
+      package = pkgs.nextcloud32;
 
       # web server
       webserver = "caddy";
@@ -148,27 +148,36 @@ in
         lost_password_link = "disabled";
 
         # oidc
-        oidc_login_provider_url = idp.oidc_discovery_prefix;
-        oidc_login_client_id = cfg.services.nextcloud.clientID;
-        oidc_login_end_session_redirect = false; # no need
-        oidc_login_button_text = "Log in with ${cfg.services.kanidm.domain}";
-        oidc_login_hide_password_form = true;
-        oidc_login_attributes = {
-          id = "preferred_username";
-          name = "name";
-          mail = "email";
-          # groups = "groups";
-          # is_admin = "nextcloudadmin";
+        user_oidc = {
+          login_label = "Log in with ${cfg.services.kanidm.domain}";
+          enrich_login_id_token_with_userinfo = true;
+          userinfo_bearer_validation = true;
+          auto_provision = true;
+          soft_auto_provision = true; # allow login into existing accounts
+          allow_multiple_user_backends = false;
         };
-        oidc_login_use_id_token = true;
-        oidc_login_scope = "openid profile email groups";
-        oidc_login_default_group = "oidc";
-        oidc_create_groups = true;
-        # oidc_login_update_avatar = true; # kanidm doesnt provide those
-        oidc_login_disable_registration = false; # automatically create user accountss
-        oidc_login_proxy_ldap = false;
-        # oidc_login_password_authentication = true; # might be required for davx5
-        oidc_login_code_challenge_method = "S256";
+
+        # oidc_login_provider_url = idp.oidc_discovery_prefix;
+        # oidc_login_client_id = cfg.services.nextcloud.clientID;
+        # oidc_login_end_session_redirect = false; # no need
+        # oidc_login_button_text = "Log in with ${cfg.services.kanidm.domain}";
+        # oidc_login_hide_password_form = true;
+        # oidc_login_attributes = {
+        #   id = "preferred_username";
+        #   name = "name";
+        #   mail = "email";
+        #   # groups = "groups";
+        #   # is_admin = "nextcloudadmin";
+        # };
+        # oidc_login_use_id_token = true;
+        # oidc_login_scope = "openid profile email groups";
+        # oidc_login_default_group = "oidc";
+        # oidc_create_groups = true;
+        # # oidc_login_update_avatar = true; # kanidm doesnt provide those
+        # oidc_login_disable_registration = false; # automatically create user accountss
+        # oidc_login_proxy_ldap = false;
+        # # oidc_login_password_authentication = true; # might be required for davx5
+        # oidc_login_code_challenge_method = "S256";
 
         # memories
         "memories.readonly" = true;
@@ -185,7 +194,7 @@ in
         # broken: cannot create directory '/run/user/989': Permission denied
         # preview_libreoffice_path = "${pkgs.libreoffice}/bin/libreoffice";
       };
-      secretFile = config.sops.templates."nextcloud_secretFile".path;
+      # secretFile = config.sops.templates."nextcloud_secretFile".path;
       extraOCCCommands =
         let
           occ = "${config.services.nextcloud.occ}/bin/nextcloud-occ";
@@ -195,11 +204,22 @@ in
           ${occ} theming:config color "#F5C2E7"
           ${occ} theming:config primary_color "#F5C2E7"
           ${occ} theming:config background "${root}/assets/wallpapers/yuri3.jpg"
+
+          ${occ} user_oidc:provider girlcock \
+            --discoveryuri="${idp.oidc_discovery}" \
+            --clientid="${cfg.services.nextcloud.clientID}" \
+            --clientsecret=$(cat "${config.sops.secrets."nextcloud/clientSecret".path}") \
+            --scope "profile email groups openid" \
+            --unique-uid 0 \
+            --group-provisioning 1 \
+            --group-whitelist-regex "nextcloud\..*" \
+            --group-restrict-login-to-whitelist 1 \
+            --mapping-uid "preferred_username";
         '';
 
       # php stuff
       phpOptions = {
-        "opcache.interned_strings_buffer" = "48";
+        "opcache.interned_strings_buffer" = "64";
       };
       phpExtraExtensions =
         all: with all; [
@@ -210,7 +230,6 @@ in
       # apps
       extraApps = {
         inherit (config.services.nextcloud.package.packages.apps)
-          app_api
           calendar
           tasks
           contacts
@@ -218,14 +237,12 @@ in
           deck
           forms
           news
-          maps
           music
           recognize
           memories
-          # onlyoffice
-          # richdocuments
-          oidc_login
+          user_oidc
           previewgenerator
+          impersonate
           ;
       };
       extraAppsEnable = true;
@@ -259,9 +276,6 @@ in
       {
         secrets."nextcloud/adminpass" = nextcloudSecret;
         secrets."nextcloud/clientSecret" = { };
-        templates."nextcloud_secretFile" = nextcloudSecret // {
-          content = ''{ "oidc_login_client_secret": "${config.sops.placeholder."nextcloud/clientSecret"}" }'';
-        };
       };
   };
 }
