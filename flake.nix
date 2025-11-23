@@ -121,7 +121,7 @@
               dns-server.enable = true;
               redlib.enable = true;
               ntfy.enable = true;
-              projects.devlootbox.enable = true;
+              # projects.devlootbox.enable = true;
             };
           }
         ];
