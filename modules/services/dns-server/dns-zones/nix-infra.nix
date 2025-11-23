@@ -7,7 +7,7 @@ in
   SOA = {
     nameServer = "localhost";
     adminEmail = "nobody@localhost";
-    serial = 2025100501; # YYYYMMDDNN
+    serial = 2025112301; # YYYYMMDDNN
   };
 
   subdomains = {
@@ -15,6 +15,7 @@ in
     nextcloud.CNAME = [ "dell-sv.ts.${zone}" ];
     paperless.CNAME = [ "dell-sv.ts.${zone}" ];
     immich.CNAME = [ "dell-sv.ts.${zone}" ];
+    cockpit.CNAME = [ "dell-sv.ts.${zone}" ];
 
     ts.subdomains = {
       oci1 = {
