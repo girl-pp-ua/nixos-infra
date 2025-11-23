@@ -70,6 +70,7 @@
         (nixpkgs.lib.nixosSystem {
           system = targetSystem;
           specialArgs = specialArgs // {
+            system = targetSystem;
             inherit host;
           };
           modules = [
