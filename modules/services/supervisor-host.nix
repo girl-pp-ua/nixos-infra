@@ -58,11 +58,22 @@ in
     # ];
 
     # Add your user to necessary groups
-    users.users.nixos.extraGroups = [
-      "libvirtd"
-      "kvm"
-      "qemu-libvirtd"
-    ];
+    # users.users.nixos.extraGroups = [
+    #   "libvirtd"
+    #   "kvm"
+    #   "qemu-libvirtd"
+    # ];
+
+    users.groups.cockpit-user = { };
+    users.users.cockpit-user = {
+      isNormalUser = true;
+      group = "cockpit-user";
+      # only accessible over VPN so hardcoded hash is more than okay
+      initialHashedPassword = "$y$j9T$FSYo1uCvFfrqUUPkpe37h0$UW6BIjCJ2nBtMLZbC7IpKlGX/y8I7Okl0Gq.y89RyS3";
+      extraGroups = [
+        "wheel"
+      ];
+    };
 
     # Enable nested virtualization (optional but recommended)
     boot.extraModprobeConfig = ''

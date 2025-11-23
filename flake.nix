@@ -137,10 +137,11 @@
               nextcloud.enable = true;
               paperless.enable = true;
               immich.enable = true;
-              supervisor-host = {
-                enable = true;
-                gpuPassthrough = true;
-              };
+              # TODO: fix
+              # supervisor-host = {
+              #   enable = true;
+              #   gpuPassthrough = true;
+              # };
             };
           }
         ];
