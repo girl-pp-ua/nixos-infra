@@ -5,7 +5,7 @@
       url = "github:NixOS/nixpkgs/nixos-unstable";
     };
     nixpkgs-stable = {
-      url = "github:NixOS/nixpkgs/nixos-25.05";
+      url = "github:NixOS/nixpkgs/nixos-25.11";
     };
 
     sops-nix = {

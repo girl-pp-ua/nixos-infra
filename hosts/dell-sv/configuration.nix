@@ -1,7 +1,7 @@
-{ pkgs, pkgs-stable, ... }:
+{ pkgs, ... }:
 let
   # workaround rocm build failure
-  cur_rocmPackages = pkgs-stable.rocmPackages;
+  cur_rocmPackages = pkgs.rocmPackages;
 in
 {
   imports = [
@@ -26,7 +26,7 @@ in
   hardware.graphics.enable = true;
 
   # opencl
-  hardware.amdgpu.opencl.enable = false;
+  hardware.amdgpu.opencl.enable = true; # disable if cur_rocmPackages != pkgs.rocmPackages
   hardware.graphics.extraPackages = [
     cur_rocmPackages.clr
     cur_rocmPackages.clr.icd
@@ -68,7 +68,7 @@ in
   # services
   services.fstrim.enable = true;
   # services.thermald.enable = true;
-  services.fwupd.enable = true;
+  # services.fwupd.enable = true;
 
   # cpu
   hardware.cpu.amd.updateMicrocode = true;
