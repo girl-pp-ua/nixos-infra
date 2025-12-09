@@ -6,16 +6,17 @@
   ...
 }:
 let
-  cfg = config.cfg;
+  cfg = config.nix-infra.svc.paperless;
+  cfg-svc = config.nix-infra.svc;
   idp = libx.idp {
-    domain = cfg.services.kanidm.domain;
-    client_id = cfg.services.paperless.clientId;
+    inherit (cfg-svc.kanidm) domain;
+    inherit (cfg) client_id;
   };
 in
 {
-  options.cfg.services.paperless = {
+  options.nix-infra.svc.paperless = {
     enable = lib.mkEnableOption "paperless-ng service";
-    clientId = lib.mkOption {
+    client_id = lib.mkOption {
       type = lib.types.str;
       default = "paperless";
     };
@@ -32,7 +33,8 @@ in
       default = 16008;
     };
   };
-  config = lib.mkIf cfg.services.paperless.enable {
+
+  config = lib.mkIf cfg.enable {
     services.paperless = {
       enable = true;
       package = pkgs.paperless-ngx.overrideAttrs (old: {
@@ -45,7 +47,7 @@ in
         ];
       });
 
-      inherit (cfg.services.paperless) domain port;
+      inherit (cfg) domain port;
 
       database.createLocally = true;
       configureTika = true;
@@ -54,7 +56,7 @@ in
       environmentFile = config.sops.templates."paperless.env".path;
 
       settings = {
-        PAPERLESS_URL = "https://${config.cfg.services.paperless.domain}";
+        PAPERLESS_URL = "https://${cfg.domain}";
 
         PAPERLESS_OCR_LANGUAGE = "eng+ukr+pol";
         PAPERLESS_OCR_LANGUAGES = "ukr pol";
@@ -86,7 +88,7 @@ in
         PAPERLESS_ACCOUNT_SESSION_REMEMBER = false;
 
         PAPERLESS_SOCIALACCOUNT_DEFAULT_PERMISSIONS = "view_uisettings";
-        PAPERLESS_SOCIALACCOUNT_ADMIN_GROUPS = "paperless.admin@${cfg.services.kanidm.domain}";
+        PAPERLESS_SOCIALACCOUNT_ADMIN_GROUPS = "paperless.admin@${cfg-svc.kanidm.domain}";
       };
     };
 
@@ -137,28 +139,14 @@ in
         };
       };
 
-    services.caddy.virtualHosts."http://${cfg.services.paperless.intraDomain}" = {
+    services.caddy.virtualHosts."http://${cfg.intraDomain}" = {
       serverAliases = [
-        "http://${cfg.services.paperless.domain}"
+        "http://${cfg.domain}"
       ];
       extraConfig = ''
         import encode
-
-        header {
-          X-Robots-Tag "noindex, nofollow"
-        }
-
-        # @forbidden {
-        #   path /admin
-        # }
-        # error @forbidden 404
-
-        # handle_path /static/* {
-        #   root * ${config.services.paperless.package}/lib/paperless-ngx/static
-        #   file_server
-        # }
-
-        reverse_proxy http://127.0.0.1:${toString config.services.paperless.port}
+        import norobot
+        reverse_proxy http://127.0.0.1:${toString cfg.port}
       '';
     };
   };

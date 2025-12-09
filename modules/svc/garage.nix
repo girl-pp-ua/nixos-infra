@@ -5,16 +5,21 @@
   ...
 }:
 let
+  cfg = config.nix-infra.svc.garage;
   root_dir = "/data/garage";
   data_dir = "${root_dir}/data";
   metadata_dir = "${root_dir}/metadata";
   metadata_snapshots_dir = "${root_dir}/snapshots";
 in
 {
-  options.cfg.services.garage = {
+  options.nix-infra.svc.garage = {
     enable = lib.mkEnableOption "garage object storage server";
+    intraDomain = lib.mkOption {
+      type = lib.types.str;
+      default = "garage.nix-infra";
+    };
   };
-  config = lib.mkIf config.cfg.services.garage.enable {
+  config = lib.mkIf cfg.enable {
     services.garage = {
       enable = true;
       package = pkgs.garage_2;

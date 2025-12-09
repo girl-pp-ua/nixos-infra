@@ -5,22 +5,21 @@
   ...
 }:
 let
-  inherit (config) cfg;
+  cfg = config.nix-infra.svc.dns-server;
 in
 {
-  options = {
-    cfg.services.dns-server = {
-      enable = lib.mkEnableOption "dns-server";
-      zones = lib.mkOption {
-        type = lib.types.listOf lib.types.str;
-        default = [
-          "girl.pp.ua"
-          "nix-infra"
-        ];
-      };
+  options.nix-infra.svc.dns-server = {
+    enable = lib.mkEnableOption "dns-server";
+    zones = lib.mkOption {
+      type = lib.types.listOf lib.types.str;
+      default = [
+        "girl.pp.ua"
+        "nix-infra"
+      ];
     };
   };
-  config = lib.mkIf cfg.services.dns-server.enable {
+
+  config = lib.mkIf cfg.enable {
     # TODO switch to coredns
     # services.coredns = {
     #   enable = true;
@@ -50,7 +49,7 @@ in
             };
           };
         in
-        lib.listToAttrs (lib.map mkZone cfg.services.dns-server.zones);
+        lib.listToAttrs (lib.map mkZone cfg.zones);
     };
     networking.firewall = {
       allowedTCPPorts = [ 53 ];

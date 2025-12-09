@@ -2,9 +2,8 @@
 {
   imports = [
     ./sops.nix
-
-    # Base configuration
     ./networking
+    ./services
     ./boot.nix
     ./nix.nix
     ./users.nix

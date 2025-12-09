@@ -5,16 +5,14 @@
   ...
 }:
 let
-  cfg = config.cfg.services.projects.devlootbox;
+  cfg = config.nix-infra.svc.projects.devlootbox;
 in
 {
   imports = [
     inputs.devlootbox.nixosModules.default
   ];
-  options = {
-    cfg.services.projects.devlootbox = {
-      enable = lib.mkEnableOption "devlootbox";
-    };
+  options.nix-infra.svc.projects.devlootbox = {
+    enable = lib.mkEnableOption "devlootbox";
   };
   config = lib.mkIf cfg.enable {
     services.devlootbox-bot = {

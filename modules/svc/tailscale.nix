@@ -1,19 +1,14 @@
 { config, lib, ... }:
 let
-  inherit (config) cfg;
+  cfg = config.nix-infra.svc.tailscale;
 in
 {
-  options = {
-    cfg.services.tailscale = {
-      enable = lib.mkEnableOption "tailscale" // {
-        default = true;
-      };
-      # isTsDeploy = lib.mkEnableOption "tailscale is host intranet" // {
-      #   description = "If true, the tailscaled is required for ssh connection and won't be restarted";
-      # };
+  options.nix-infra.svc.tailscale = {
+    enable = lib.mkEnableOption "tailscale" // {
+      default = true;
     };
   };
-  config = lib.mkIf cfg.services.tailscale.enable {
+  config = lib.mkIf cfg.enable {
     services.tailscale =
       let
         commonFlags = [
@@ -33,7 +28,7 @@ in
       };
 
     systemd.services.tailscaled.restartIfChanged = false; # just don't.
-    # restartIfChanged = !cfg.services.tailscale.isTsDeploy;
+    # restartIfChanged = !nix-infra.svc.tailscale.isTsDeploy;
 
     networking.firewall = {
       trustedInterfaces = [ "tailscale0" ];

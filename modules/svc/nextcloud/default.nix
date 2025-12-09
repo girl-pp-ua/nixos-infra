@@ -8,11 +8,14 @@
   ...
 }:
 let
-  inherit (config) cfg;
+  cfg = config.nix-infra.svc.nextcloud;
+  cfg-svc = config.nix-infra.svc;
+
   idp = libx.idp {
-    domain = cfg.services.kanidm.domain;
-    client_id = cfg.services.nextcloud.clientID;
+    inherit (cfg-svc.kanidm) domain;
+    inherit (cfg) client_id;
   };
+
   exiftool_12_70 = pkgs.exiftool.overrideAttrs (old: rec {
     version = "12.70";
     src = pkgs.fetchFromGitHub {
@@ -27,34 +30,33 @@ in
   imports = [
     "${inputs.nextcloud-testumgebung}/nextcloud-extras.nix"
     ./apps/whiteboard-server.nix
+    ./apps/notify-push.nix
   ];
 
-  options = {
-    cfg.services.nextcloud = {
-      enable = lib.mkEnableOption "nextcloud";
-      domain = lib.mkOption {
-        type = lib.types.str;
-        default = "cloud.girl.pp.ua";
-      };
-      intraDomain = lib.mkOption {
-        type = lib.types.str;
-        default = "nextcloud.nix-infra";
-      };
-      clientID = lib.mkOption {
-        type = lib.types.str;
-        default = "nextcloud";
-      };
+  options.nix-infra.svc.nextcloud = {
+    enable = lib.mkEnableOption "nextcloud";
+    domain = lib.mkOption {
+      type = lib.types.str;
+      default = "cloud.girl.pp.ua";
+    };
+    intraDomain = lib.mkOption {
+      type = lib.types.str;
+      default = "nextcloud.nix-infra";
+    };
+    client_id = lib.mkOption {
+      type = lib.types.str;
+      default = "nextcloud";
     };
   };
 
-  config = lib.mkIf cfg.services.nextcloud.enable {
+  config = lib.mkIf cfg.enable {
     services.nextcloud = {
       enable = true;
       package = pkgs.nextcloud32;
 
       # web server
       webserver = "caddy";
-      hostName = cfg.services.nextcloud.domain;
+      hostName = cfg.domain;
       https = false;
 
       # enable redis cache
@@ -73,8 +75,8 @@ in
       settings = {
         overwriteprotocol = "https";
         trusted_domains = [
-          cfg.services.nextcloud.domain
-          cfg.services.nextcloud.intraDomain
+          cfg.domain
+          cfg.intraDomain
         ];
         trusted_proxies = [
           "127.0.0.1"
@@ -149,7 +151,7 @@ in
 
         # oidc
         user_oidc = {
-          login_label = "Log in with ${cfg.services.kanidm.domain}";
+          login_label = "Log in with ${cfg-svc.kanidm.domain}";
           enrich_login_id_token_with_userinfo = true;
           userinfo_bearer_validation = true;
           auto_provision = true;
@@ -158,9 +160,9 @@ in
         };
 
         # oidc_login_provider_url = idp.oidc_discovery_prefix;
-        # oidc_login_client_id = cfg.services.nextcloud.clientID;
+        # oidc_login_client_id = nix-infra.svc.nextcloud.clientID;
         # oidc_login_end_session_redirect = false; # no need
-        # oidc_login_button_text = "Log in with ${cfg.services.kanidm.domain}";
+        # oidc_login_button_text = "Log in with ${nix-infra.svc.kanidm.domain}";
         # oidc_login_hide_password_form = true;
         # oidc_login_attributes = {
         #   id = "preferred_username";
@@ -207,7 +209,7 @@ in
 
           ${occ} user_oidc:provider girlcock \
             --discoveryuri="${idp.oidc_discovery}" \
-            --clientid="${cfg.services.nextcloud.clientID}" \
+            --clientid="${cfg.client_id}" \
             --clientsecret=$(cat "${config.sops.secrets."nextcloud/clientSecret".path}") \
             --scope "profile email groups openid" \
             --unique-uid 0 \
@@ -248,10 +250,10 @@ in
       extraAppsEnable = true;
     };
 
-    services.caddy.virtualHosts."http://${cfg.services.nextcloud.domain}" = {
+    services.caddy.virtualHosts."http://${cfg.domain}" = {
       serverAliases = [
-        cfg.services.nextcloud.domain
-        cfg.services.nextcloud.intraDomain
+        cfg.domain
+        cfg.intraDomain
       ];
       extraConfig = ''
         import encode

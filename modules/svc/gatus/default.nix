@@ -5,7 +5,8 @@
   ...
 }:
 let
-  inherit (config) cfg;
+  cfg = config.nix-infra.svc.gatus;
+  cfg-svc = config.nix-infra.svc;
 
   mkGroups =
     groups:
@@ -64,12 +65,14 @@ in
   imports = [
     ./gatus-multi-instance.nix
   ];
+
   options = {
-    cfg.services.gatus = {
+    nix-infra.svc.gatus = {
       enable = lib.mkEnableOption "gatus";
     };
   };
-  config = lib.mkIf cfg.services.gatus.enable {
+
+  config = lib.mkIf cfg.enable {
     services.gatus.instances = {
       girl-pp-ua = {
         port = 16040;
@@ -86,7 +89,7 @@ in
           };
           alerting.ntfy = {
             topic = secrets.ntfy-topics.gatus-girl-pp-ua;
-            url = "https://${cfg.services.ntfy.domain}";
+            url = "https://${cfg-svc.ntfy.domain}";
             click = "https://status.girl.pp.ua/";
           };
           endpoints = mergeAll withAlertsNtfy (mkGroups {
@@ -100,46 +103,45 @@ in
               ns2 = mkDns "ns2.girl.pp.ua" "144.24.178.67";
             };
             services = mkEndpoints {
-              kanidm = mkUrl' "https://sso.girl.pp.ua/status" [
+              kanidm = mkUrl' "https://${cfg-svc.kanidm.domain}/status" [
                 "[STATUS] == 200"
                 "[BODY] == true"
               ];
-              nextcloud = mkUrl' "https://cloud.girl.pp.ua/status.php" [
+              nextcloud = mkUrl' "https://${cfg-svc.nextcloud.domain}/status.php" [
                 "[STATUS] == 200"
                 "[BODY].productname == Nextcloud"
                 "[BODY].installed == true"
                 "[BODY].maintenance == false"
                 "[BODY].needsDbUpgrade == false"
               ];
-              nextcloud-whiteboard-server = mkUrl' "https://cloud.girl.pp.ua/whiteboard/" [
+              nextcloud-whiteboard-server = mkUrl' "https://${cfg-svc.nextcloud.domain}/whiteboard/" [
                 "[STATUS] == 200"
                 "[BODY] == pat(*Nextcloud Whiteboard Collaboration Server*)"
               ];
-              ntfy = mkUrl' "https://ntfy.girl.pp.ua/v1/health" [
+              ntfy = mkUrl' "https://${cfg-svc.ntfy.domain}/v1/health" [
                 "[STATUS] == 200"
                 "[BODY].healthy == true"
               ];
-              redlib = mkUrl "https://redlib.girl.pp.ua/r/test/comments/1l8wdxa" // {
+              redlib = mkUrl "https://${cfg-svc.redlib.domain}/r/test/comments/1l8wdxa" // {
                 conditions = [
                   "[STATUS] == 200"
                   "[BODY] == pat(*xiphoihaej5io8oSheiXie4gu9ixahs0ian5iemo9ohhieBaom4Ideiquoh7ai8e*)"
                 ];
                 interval = "2h"; # reddit please don't kill me
               };
-              garage-s3 = mkUrl' "http://garage.nix-infra:3900/" [
+              garage-s3 = mkUrl' "http://${cfg-svc.garage.intraDomain}:3900/" [
                 # idk what else to check fo here
                 "[STATUS] == 403"
                 "[BODY] == pat(*<Region>garage</Region>*)"
               ];
-              garage-web = mkUrl' "https://media-cdn.devlootbox.com/" [
-                # idk what else to check fo here
+              garage-web-devlootbox = mkUrl' "https://media-cdn.devlootbox.com/" [
                 "[STATUS] == 404"
                 "[BODY] == pat(*NoSuchKey*)"
               ];
-              paperless = mkUrl' "https://paperless.girl.pp.ua/" [
+              paperless = mkUrl' "https://${cfg-svc.paperless.domain}/" [
                 "[STATUS] == 200"
               ];
-              immich = mkUrl' "https://photos.girl.pp.ua/api/server/ping" [
+              immich = mkUrl' "https://${cfg-svc.immich.domain}/api/server/ping" [
                 "[STATUS] == 200"
                 "[BODY].res == pong"
               ];
@@ -159,7 +161,7 @@ in
           };
           alerting.ntfy = {
             topic = secrets.ntfy-topics.gatus-nyanbinary-rs;
-            url = "https://${cfg.services.ntfy.domain}";
+            url = "https://${cfg-svc.ntfy.domain}";
             click = "https://status.nyanbinary.rs/";
           };
           endpoints = mergeAll withAlertsNtfy (mkGroups {

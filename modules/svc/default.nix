@@ -8,8 +8,6 @@
     ./paperless
     ./gatus
     ./projects
-    ./openssh.nix
-    ./sshguard.nix
     ./tailscale.nix
     ./redlib.nix
     ./ntfy.nix

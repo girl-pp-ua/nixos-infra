@@ -77,7 +77,7 @@
             { networking.hostName = host; }
             ./hosts/${host}/configuration.nix
             ./modules/base
-            ./modules/services
+            ./modules/svc
             sops-nix.nixosModules.sops
           ]
           ++ extraModules;
@@ -94,7 +94,7 @@
         oci1 = mkNixosSystem "oci1" "x86_64-linux" [
           {
             networking.domain = "girl.pp.ua";
-            cfg.services = {
+            nix-infra.svc = {
               caddy.enable = true;
               caddy.endpoints = {
                 file-server.enable = true;
@@ -112,7 +112,7 @@
         oci2 = mkNixosSystem "oci2" "x86_64-linux" [
           {
             networking.domain = "girl.pp.ua";
-            cfg.services = {
+            nix-infra.svc = {
               caddy.enable = true;
               caddy.endpoints = {
                 healthcheck.enable = true;
@@ -128,7 +128,7 @@
         dell-sv = mkNixosSystem "dell-sv" "x86_64-linux" [
           {
             networking.domain = "ts.nix-infra";
-            cfg.services = {
+            nix-infra.svc = {
               caddy.enable = true;
               dns-server = {
                 enable = true;

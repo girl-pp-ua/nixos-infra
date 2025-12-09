@@ -5,10 +5,10 @@
   ...
 }:
 let
-  cfg = config.cfg.services.supervisor-host;
+  cfg = config.nix-infra.svc.supervisor-host;
 in
 {
-  options.cfg.services.supervisor-host = {
+  options.nix-infra.svc.supervisor-host = {
     enable = lib.mkEnableOption "supervisor-host";
     gpuPassthrough = lib.mkEnableOption "amd gpuPassthrough";
     cockpit = {

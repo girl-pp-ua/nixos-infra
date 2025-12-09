@@ -5,15 +5,13 @@
   ...
 }:
 let
-  inherit (config) cfg;
+  cfg = config.nix-infra.svc.caddy.endpoints.healthcheck;
 in
 {
-  options = {
-    cfg.services.caddy.endpoints.healthcheck = {
-      enable = lib.mkEnableOption "caddy heathcheck endpoint";
-    };
+  options.nix-infra.svc.caddy.endpoints.healthcheck = {
+    enable = lib.mkEnableOption "caddy heathcheck endpoint";
   };
-  config = lib.mkIf cfg.services.caddy.endpoints.healthcheck.enable {
+  config = lib.mkIf cfg.enable {
     services.caddy.virtualHosts = {
       "${host}.girl.pp.ua" = {
         serverAliases = [

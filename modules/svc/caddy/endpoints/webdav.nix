@@ -5,15 +5,13 @@
   ...
 }:
 let
-  inherit (config) cfg;
+  cfg = config.nix-infra.svc.caddy.endpoints.webdav;
 in
 {
-  options = {
-    cfg.services.caddy.endpoints.webdav = {
-      enable = lib.mkEnableOption "caddy webdav endpoint";
-    };
+  options.nix-infra.svc.caddy.endpoints.webdav = {
+    enable = lib.mkEnableOption "caddy webdav endpoint";
   };
-  config = lib.mkIf cfg.services.caddy.endpoints.webdav.enable {
+  config = lib.mkIf cfg.enable {
     services.caddy.virtualHosts = {
       "webdav.girl.pp.ua" = {
         serverAliases = [

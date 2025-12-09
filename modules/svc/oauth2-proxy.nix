@@ -5,46 +5,44 @@
   ...
 }:
 let
-  inherit (config) cfg;
+  cfg = config.nix-infra.svc.oauth2_proxy;
   idp = libx.idp {
-    domain = cfg.services.kanidm.domain;
-    client_id = cfg.services.oauth2_proxy.clientID;
+    inherit (config.nix-infra.svc.kanidm) domain;
+    inherit (cfg) client_id;
   };
 in
 {
-  options = {
-    cfg.services.oauth2_proxy = {
-      enable = lib.mkEnableOption "oauth2_proxy";
-      port = lib.mkOption {
-        type = lib.types.int;
-        default = 16022;
-      };
-      urlPrefix = lib.mkOption {
-        type = lib.types.str;
-        default = "/_oauth2_proxy";
-      };
-      clientID = lib.mkOption {
-        type = lib.types.str;
-        default = "oauth2-proxy";
-      };
+  options.nix-infra.svc.oauth2_proxy = {
+    enable = lib.mkEnableOption "oauth2_proxy";
+    port = lib.mkOption {
+      type = lib.types.int;
+      default = 16022;
+    };
+    urlPrefix = lib.mkOption {
+      type = lib.types.str;
+      default = "/_oauth2_proxy";
+    };
+    client_id = lib.mkOption {
+      type = lib.types.str;
+      default = "oauth2-proxy";
     };
   };
 
-  config = lib.mkIf cfg.services.oauth2_proxy.enable {
+  config = lib.mkIf cfg.enable {
     services.oauth2-proxy = {
       enable = true;
 
       keyFile = config.sops.templates."oauth2_proxy.keyFile".path;
 
-      httpAddress = "http://127.0.0.1:${toString cfg.services.oauth2_proxy.port}";
-      proxyPrefix = cfg.services.oauth2_proxy.urlPrefix;
+      httpAddress = "http://127.0.0.1:${toString cfg.port}";
+      proxyPrefix = cfg.urlPrefix;
       reverseProxy = true;
       approvalPrompt = "auto";
       setXauthrequest = true;
       # redirectURL = "https://oauth2.girl.pp.ua/oauth2/callback";
 
       provider = "oidc";
-      inherit (cfg.services.oauth2_proxy) clientID;
+      clientID = cfg.client_id;
       oidcIssuerUrl = idp.oidc_issuer_uri;
       loginURL = idp.api_auth; # ui?
       redeemURL = idp.token_endpoint;
@@ -65,25 +63,25 @@ in
       };
     };
 
-    systemd.services.oauth2-proxy.after = lib.optionals cfg.services.kanidm.enable [
+    systemd.services.oauth2-proxy.after = lib.optionals config.nix-infra.svc.kanidm.enable [
       "kanidm.service"
     ];
 
     services.caddy.extraConfig = ''
       (oauth2_proxy) {
-        handle ${cfg.services.oauth2_proxy.urlPrefix}/* {
-          reverse_proxy http://127.0.0.1:${toString cfg.services.oauth2_proxy.port} {
+        handle ${cfg.urlPrefix}/* {
+          reverse_proxy http://127.0.0.1:${toString cfg.port} {
             header_up X-Real-IP {remote_host}
             header_up X-Forwarded-Uri {uri}
           }
         }
         handle {
-          forward_auth http://127.0.0.1:${toString cfg.services.oauth2_proxy.port} {
-            uri ${cfg.services.oauth2_proxy.urlPrefix}/auth?allowed_groups={args[0]}
+          forward_auth http://127.0.0.1:${toString cfg.port} {
+            uri ${cfg.urlPrefix}/auth?allowed_groups={args[0]}
             header_up X-Real-IP {remote_host}
             @error status 401
             handle_response @error {
-              redir * ${cfg.services.oauth2_proxy.urlPrefix}/sign_in?rd={scheme}://{host}{uri}
+              redir * ${cfg.urlPrefix}/sign_in?rd={scheme}://{host}{uri}
             }
           }
         }

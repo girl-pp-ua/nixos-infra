@@ -1,26 +1,25 @@
 { config, lib, ... }:
 let
-  inherit (config) cfg;
+  cfg = config.nix-infra.svc.nextcloud.app.whiteboard;
+  cfg-nextcloud = config.nix-infra.svc.nextcloud;
 in
 {
-  options = {
-    cfg.services.nextcloud.whiteboard-app = {
-      enable = lib.mkEnableOption "nextcloud whiteboard app" // {
-        default = cfg.services.nextcloud.enable;
-      };
-      port = lib.mkOption {
-        type = lib.types.int;
-        default = 16031;
-      };
+  options.nix-infra.svc.nextcloud.app.whiteboard = {
+    enable = lib.mkEnableOption "nextcloud whiteboard app" // {
+      default = cfg-nextcloud.enable;
+    };
+    port = lib.mkOption {
+      type = lib.types.int;
+      default = 16031;
     };
   };
 
-  config = lib.mkIf cfg.services.nextcloud.whiteboard-app.enable {
+  config = lib.mkIf cfg.enable {
     services.nextcloud-whiteboard-server = {
       enable = true;
       settings = {
-        PORT = "${toString cfg.services.nextcloud.whiteboard-app.port}";
-        NEXTCLOUD_URL = "https://${cfg.services.nextcloud.domain}";
+        PORT = "${toString cfg.port}";
+        NEXTCLOUD_URL = "https://${cfg-nextcloud.domain}";
       };
       secrets = [
         config.sops.templates."nextcloud_whiteboard_secretFile".path
@@ -36,17 +35,17 @@ in
           occ = "${config.services.nextcloud.occ}/bin/nextcloud-occ";
         in
         ''
-          ${occ} config:app:set whiteboard collabBackendUrl --value="https://${cfg.services.nextcloud.domain}/whiteboard/"
+          ${occ} config:app:set whiteboard collabBackendUrl --value="https://${cfg-nextcloud.domain}/whiteboard/"
           ${occ} config:app:set whiteboard jwt_secret_key --value="$(cat ${
             config.sops.secrets."nextcloud/whiteboard/jwt_secret_key".path
           })"
         '';
     };
 
-    services.caddy.virtualHosts."http://${cfg.services.nextcloud.domain}" = {
+    services.caddy.virtualHosts."http://${cfg-nextcloud.domain}" = {
       extraConfig = lib.mkBefore ''
         handle_path /whiteboard/* {
-          reverse_proxy http://127.0.0.1:${toString cfg.services.nextcloud.whiteboard-app.port}
+          reverse_proxy http://127.0.0.1:${toString cfg.port}
         }
       '';
     };

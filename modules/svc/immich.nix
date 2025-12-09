@@ -5,14 +5,14 @@
   ...
 }:
 let
-  inherit (config) cfg;
+  cfg = config.nix-infra.svc.immich;
   idp = libx.idp {
-    domain = cfg.services.kanidm.domain;
-    client_id = "immich";
+    domain = config.nix-infra.svc.kanidm.domain;
+    inherit (cfg) client_id;
   };
 in
 {
-  options.cfg.services.immich = {
+  options.nix-infra.svc.immich = {
     enable = lib.mkEnableOption "immich";
     port = lib.mkOption {
       type = lib.types.int;
@@ -22,17 +22,21 @@ in
       type = lib.types.str;
       default = "photos.girl.pp.ua";
     };
+    client_id = lib.mkOption {
+      type = lib.types.str;
+      default = "immich";
+    };
     intraDomain = lib.mkOption {
       type = lib.types.str;
       default = "immich.nix-infra";
     };
   };
 
-  config = lib.mkIf cfg.services.immich.enable {
+  config = lib.mkIf cfg.enable {
     services.immich = {
       enable = true;
       host = "localhost";
-      inherit (cfg.services.immich) port;
+      inherit (cfg) port;
       accelerationDevices = null; # (allow all)
       database = {
         enableVectors = false;
@@ -49,7 +53,7 @@ in
       owner = config.services.immich.user;
       group = config.services.immich.group;
       content = builtins.toJSON {
-        server.externalDomain = "https://${cfg.services.immich.domain}";
+        server.externalDomain = "https://${cfg.domain}";
         newVersionCheck.enabled = false;
         passwordLogin.enabled = false;
         oauth = {
@@ -63,9 +67,9 @@ in
       };
     };
 
-    services.caddy.virtualHosts."http://${cfg.services.immich.intraDomain}" = {
+    services.caddy.virtualHosts."http://${cfg.intraDomain}" = {
       serverAliases = [
-        "http://${cfg.services.immich.domain}"
+        "http://${cfg.domain}"
       ];
       extraConfig = ''
         import encode

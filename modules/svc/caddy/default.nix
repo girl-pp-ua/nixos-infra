@@ -5,7 +5,7 @@
   ...
 }:
 let
-  inherit (config) cfg;
+  cfg = config.nix-infra.svc.caddy;
 in
 {
   imports = [
@@ -15,10 +15,12 @@ in
     ./endpoints/webdav.nix
     ./endpoints/authtest.nix
   ];
-  options = {
-    cfg.services.caddy.enable = lib.mkEnableOption "caddy";
+
+  options.nix-infra.svc.caddy = {
+    enable = lib.mkEnableOption "caddy";
   };
-  config = lib.mkIf cfg.services.caddy.enable {
+
+  config = lib.mkIf cfg.enable {
     services.caddy = {
       enable = true;
       package = pkgs.caddy.withPlugins {

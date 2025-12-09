@@ -6,6 +6,7 @@
   ...
 }:
 let
+  cfg = config.nix-infra.svc.redlib;
   mkEnvRecursive =
     prefix: attr:
     builtins.foldl' (
@@ -32,7 +33,7 @@ let
   environment = mkRedlibEnv {
     robots_disable_indexing = true;
     enable_rss = true;
-    full_url = "https://${cfg.services.redlib.domain}/";
+    full_url = "https://${cfg.domain}/";
     banner = ''
       <img src="/banner.webp" width="498" height="277" alt="mrrp,, :3">
       <div class="jrusbci8">Hosted on <a href="https://infra.beeg.pp.ua/">infra.beeg.pp.ua</a> :3</div>
@@ -66,39 +67,33 @@ let
 
     # Use full-resolution images for embeds
     # (also fixes nsfw post thumbnails)
-    postPatch =
-      prev.postPatch or ""
-      + ''
-        sed -i 's/{{ post\.thumbnail\.url }}/{{ post.media.url }}/g' templates/post.html
-      '';
+    postPatch = prev.postPatch or "" + ''
+      sed -i 's/{{ post\.thumbnail\.url }}/{{ post.media.url }}/g' templates/post.html
+    '';
 
     # Rate-limit check requires internet access (should be fixed upstream)
     doCheck = false;
   });
-
-  inherit (config) cfg;
 in
 {
-  options = {
-    cfg.services.redlib = {
-      enable = lib.mkEnableOption "redlib";
-      port = lib.mkOption {
-        type = lib.types.int;
-        default = 16001;
-      };
-      domain = lib.mkOption {
-        type = lib.types.str;
-        default = "redlib.girl.pp.ua";
-      };
+  options.nix-infra.svc.redlib = {
+    enable = lib.mkEnableOption "redlib";
+    port = lib.mkOption {
+      type = lib.types.int;
+      default = 16001;
+    };
+    domain = lib.mkOption {
+      type = lib.types.str;
+      default = "redlib.girl.pp.ua";
     };
   };
 
-  config = lib.mkIf cfg.services.redlib.enable {
+  config = lib.mkIf cfg.enable {
     services.redlib = {
       enable = true;
       package = redlib';
       address = "127.0.0.1";
-      port = cfg.services.redlib.port;
+      inherit (cfg) port;
     };
 
     systemd.services.redlib = {
@@ -106,7 +101,7 @@ in
     };
 
     services.caddy.virtualHosts = {
-      ${cfg.services.redlib.domain} = {
+      ${cfg.domain} = {
         extraConfig = ''
           import encode
           handle /banner.webp {
@@ -115,7 +110,7 @@ in
               header_up Host {http.reverse_proxy.upstream.host}
             }
           }
-          reverse_proxy localhost:${builtins.toString cfg.services.redlib.port}
+          reverse_proxy localhost:${builtins.toString cfg.port}
         '';
       };
     };

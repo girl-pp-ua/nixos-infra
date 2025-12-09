@@ -8,43 +8,42 @@
   ...
 }:
 let
-  inherit (config) cfg;
+  cfg-svc = config.nix-infra.svc;
+  cfg = cfg-svc.kanidm;
 in
 {
-  options = {
-    cfg.services.kanidm = {
-      enable = lib.mkEnableOption "kanidm";
-      port = lib.mkOption {
-        type = lib.types.int;
-        default = 16021;
-      };
-      domain = lib.mkOption {
-        type = lib.types.str;
-        default = "sso.girl.pp.ua";
-      };
+  options.nix-infra.svc.kanidm = {
+    enable = lib.mkEnableOption "kanidm";
+    port = lib.mkOption {
+      type = lib.types.int;
+      default = 16021;
+    };
+    domain = lib.mkOption {
+      type = lib.types.str;
+      default = "sso.girl.pp.ua";
     };
   };
-  config = lib.mkIf cfg.services.kanidm.enable {
+  config = lib.mkIf cfg.enable {
     services.kanidm = {
       enableServer = true;
       package = pkgs.kanidm_1_8.withSecretProvisioning;
       serverSettings = {
-        inherit (cfg.services.kanidm) domain;
+        inherit (cfg) domain;
         tls_key = config.sops.secrets."kanidm_tls_key".path;
         tls_chain = config.sops.secrets."kanidm_tls_chain".path;
-        origin = "https://${cfg.services.kanidm.domain}";
-        bindaddress = "127.0.0.1:${toString cfg.services.kanidm.port}";
+        origin = "https://${cfg.domain}";
+        bindaddress = "127.0.0.1:${toString cfg.port}";
         trust_x_forward_for = true;
       };
       enableClient = true;
       clientSettings = {
-        uri = "https://127.0.0.1:${toString cfg.services.kanidm.port}";
+        uri = "https://127.0.0.1:${toString cfg.port}";
         ca_path = config.sops.secrets."kanidm_tls_chain".path;
       };
       provision = {
         enable = true;
         autoRemove = true;
-        instanceUrl = "https://localhost:${toString cfg.services.kanidm.port}";
+        instanceUrl = "https://localhost:${toString cfg.port}";
 
         persons = {
           grfgh = {
@@ -87,20 +86,15 @@ in
         };
 
         groups."authtest.access" = { };
-        systems.oauth2."oauth2-proxy" = {
+        systems.oauth2.${cfg-svc.oauth2_proxy.client_id} = {
           displayName = "oauth2-proxy";
           imageFile = "${root}/assets/sso-images/oauth2-proxy.svg";
           originLanding = "https://authtest.girl.pp.ua/";
 
           basicSecretFile = config.sops.secrets."kanidm.oauth2_proxy/clientSecret".path;
-          originUrl =
-            let
-              mkOriginUrl = domain: "https://${domain}${cfg.services.oauth2_proxy.urlPrefix}/callback";
-            in
-            [
-              (mkOriginUrl "authtest.girl.pp.ua")
-              # (mkOriginUrl "uptime.girl.pp.ua")
-            ];
+          originUrl = lib.map (domain: "https://${domain}${cfg-svc.oauth2_proxy.urlPrefix}/callback") [
+            "authtest.girl.pp.ua"
+          ];
 
           preferShortUsername = true;
           scopeMaps =
@@ -114,13 +108,11 @@ in
             in
             {
               "authtest.access" = scope;
-              # "uptime-kuma.access" = scope;
             };
           claimMaps.groups = {
             joinType = "array";
             valuesByGroup = {
               "authtest.access" = [ "authtest_access" ];
-              # "uptime-kuma.access" = [ "uptime_kuma_access" ];
             };
           };
         };
@@ -153,18 +145,16 @@ in
         };
 
         groups."nextcloud.access" = { };
-        systems.oauth2."nextcloud" = {
+        systems.oauth2.${cfg-svc.nextcloud.client_id} = {
           displayName = "Nextcloud";
           imageFile = "${root}/assets/sso-images/nextcloud.svg";
-          originLanding = "https://${cfg.services.nextcloud.domain}/";
+          originLanding = "https://${cfg-svc.nextcloud.domain}/";
 
           basicSecretFile = config.sops.secrets."kanidm.nextcloud/clientSecret".path;
           enableLegacyCrypto = true; # Nextcloud does not support ES256
           originUrl = [
-            "https://${cfg.services.nextcloud.domain}/apps/user_oidc/code"
-            "https://${cfg.services.nextcloud.intraDomain}/apps/user_oidc/code"
-            # "https://${cfg.services.nextcloud.domain}/apps/oidc_login/oidc"
-            # "https://${cfg.services.nextcloud.intraDomain}/apps/oidc_login/oidc"
+            "https://${cfg-svc.nextcloud.domain}/apps/user_oidc/code"
+            "https://${cfg-svc.nextcloud.intraDomain}/apps/user_oidc/code"
           ];
 
           preferShortUsername = true;
@@ -182,15 +172,15 @@ in
 
         groups."paperless.access" = { };
         groups."paperless.admin" = { };
-        systems.oauth2."paperless" = {
+        systems.oauth2.${cfg-svc.paperless.client_id} = {
           displayName = "Paperless-ngx";
           imageFile = "${root}/assets/sso-images/paperless-ngx.svg";
-          originLanding = "https://${cfg.services.paperless.domain}/";
+          originLanding = "https://${cfg-svc.paperless.domain}/";
 
           basicSecretFile = config.sops.secrets."kanidm.paperless/clientSecret".path;
           originUrl = [
-            "https://${cfg.services.paperless.domain}/accounts/oidc/kanidm/login/callback/"
-            "https://${cfg.services.paperless.intraDomain}/accounts/oidc/kanidm/login/callback/"
+            "https://${cfg-svc.paperless.domain}/accounts/oidc/kanidm/login/callback/"
+            "https://${cfg-svc.paperless.intraDomain}/accounts/oidc/kanidm/login/callback/"
           ];
 
           preferShortUsername = true;
@@ -210,19 +200,19 @@ in
         groups."immich.access" = { };
         groups."immich.role.user" = { };
         groups."immich.role.admin" = { };
-        systems.oauth2."immich" = {
+        systems.oauth2.${cfg-svc.immich.client_id} = {
           displayName = "Immich";
           imageFile = "${root}/assets/sso-images/immich.svg";
-          originLanding = "https://${cfg.services.immich.domain}/";
+          originLanding = "https://${cfg-svc.immich.domain}/";
 
           basicSecretFile = config.sops.secrets."kanidm.immich/clientSecret".path;
           originUrl = [
-            "https://${cfg.services.immich.domain}/auth/login"
-            "https://${cfg.services.immich.domain}/user-settings"
-            "https://${cfg.services.immich.domain}/api/oauth/mobile-redirect"
-            "https://${cfg.services.immich.intraDomain}/auth/login"
-            "https://${cfg.services.immich.intraDomain}/user-settings"
-            "https://${cfg.services.immich.intraDomain}/api/oauth/mobile-redirect"
+            "https://${cfg-svc.immich.domain}/auth/login"
+            "https://${cfg-svc.immich.domain}/user-settings"
+            "https://${cfg-svc.immich.domain}/api/oauth/mobile-redirect"
+            "https://${cfg-svc.immich.intraDomain}/auth/login"
+            "https://${cfg-svc.immich.intraDomain}/user-settings"
+            "https://${cfg-svc.immich.intraDomain}/api/oauth/mobile-redirect"
             "app.immich:///oauth-callback"
           ];
 
@@ -250,10 +240,10 @@ in
     };
 
     services.caddy.virtualHosts = {
-      ${cfg.services.kanidm.domain} = {
+      ${cfg.domain} = {
         extraConfig = ''
           import encode
-          reverse_proxy https://127.0.0.1:${toString cfg.services.kanidm.port} {
+          reverse_proxy https://127.0.0.1:${toString cfg.port} {
             transport http {
               tls_trust_pool file ${config.sops.secrets."kanidm_caddy_tls_chain".path}
             }
