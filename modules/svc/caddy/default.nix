@@ -25,9 +25,9 @@ in
       enable = true;
       package = pkgs.caddy.withPlugins {
         plugins = [
-          "github.com/mholt/caddy-webdav@v0.0.0-20250609161527-33ba3cd2088c"
+          "github.com/mholt/caddy-webdav@v0.0.0-20250805175825-7a5c90d8bf90"
         ];
-        hash = "sha256-Q8WZMGUgYwDQJI/ZXRET5jRrsxxGcF4/2sbixgw0Rk4=";
+        hash = "sha256-DHkHbwhTnaK00G38czb4XZ9g9Ttz9Y1Wb3gCCAWZYDI=";
       };
       enableReload = true;
       adapter = "caddyfile";

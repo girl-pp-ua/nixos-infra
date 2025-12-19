@@ -3,34 +3,20 @@
   config,
   pkgs,
   lib,
-  libx,
-  root,
   ...
 }:
 let
   cfg = config.nix-infra.svc.nextcloud;
-  cfg-svc = config.nix-infra.svc;
-
-  idp = libx.idp {
-    inherit (cfg-svc.kanidm) domain;
-    inherit (cfg) client_id;
-  };
-
-  exiftool_12_70 = pkgs.exiftool.overrideAttrs (old: rec {
-    version = "12.70";
-    src = pkgs.fetchFromGitHub {
-      owner = "exiftool";
-      repo = "exiftool";
-      tag = version;
-      hash = "sha256-YMWYPI2SDi3s4KCpSNwovemS5MDj5W9ai0sOkvMa8Zg=";
-    };
-  });
 in
 {
   imports = [
     "${inputs.nextcloud-testumgebung}/nextcloud-extras.nix"
     ./apps/whiteboard-server.nix
     ./apps/notify-push.nix
+    ./apps/memories.nix
+    ./theming.nix
+    ./oidc.nix
+    ./previews.nix
   ];
 
   options.nix-infra.svc.nextcloud = {
@@ -91,133 +77,13 @@ in
           "100.64.0.102"
         ];
 
-        enable_previews = true;
-        enabledPreviewProviders = [
-          # Misc
-          "OC\\Preview\\RIFF"
-
-          # https://help.nextcloud.com/t/preview-settings-not-described-well/197952/9
-
-          # No External Dependencies
-          "OC\\Preview\\PNG"
-          "OC\\Preview\\JPEG"
-          "OC\\Preview\\GIF"
-          "OC\\Preview\\BMP"
-          "OC\\Preview\\XBitmap"
-          "OC\\Preview\\MarkDown"
-          "OC\\Preview\\MP3"
-          "OC\\Preview\\TXT"
-          "OC\\Preview\\Krita"
-
-          # ImageMagick Dependency
-          "OC\\Preview\\SVG"
-          "OC\\Preview\\TIFF"
-          "OC\\Preview\\PDF"
-          "OC\\Preview\\Illustrator"
-          "OC\\Preview\\Photoshop"
-          "OC\\Preview\\Postscript"
-          "OC\\Preview\\Font"
-          "OC\\Preview\\HEIC"
-          "OC\\Preview\\TGA"
-          "OC\\Preview\\SGI"
-
-          # Office Dependency (preview_libreoffice_path)
-          # (not needed with onlyoffice DocumentServer)
-          # "OC\\Preview\\MSOfficeDoc"
-          # "OC\\Preview\\MSOffice2003"
-          # "OC\\Preview\\MSOffice2007"
-          # "OC\\Preview\\OpenDocument"
-          # "OC\\Preview\\StarOffice"
-          # "OC\\Preview\\EMF"
-
-          # AVConf/FFmpeg Dependency
-          "OC\\Preview\\Movie"
-
-          # Additional Providers
-          "OC\\Preview\\WebP" # Requires PHP support for WebP images (php-gd)
-        ];
-
         updatechecker = false;
         "profile.enabled" = true;
         token_auth_enforced = true; # disable username/password auth in 3rd party apps
         maintenance_window_start = 2; # 2 AM UTC ~= 3-4 AM Europe/Warsaw
         default_locale = "en_150"; # English (Europe)
         "simpleSignUpLink.shown" = false; # disable sign-up ad
-
-        hide_login_form = true; # use ?direct=1 to bypass/login as root
-        "auth.webauthn.enabled" = false; # using only oidc, that already uses webauthn
-        allow_user_to_change_display_name = false; # does not work with oidc
-        lost_password_link = "disabled";
-
-        # oidc
-        user_oidc = {
-          login_label = "Log in with ${cfg-svc.kanidm.domain}";
-          enrich_login_id_token_with_userinfo = true;
-          userinfo_bearer_validation = true;
-          auto_provision = true;
-          soft_auto_provision = true; # allow login into existing accounts
-          allow_multiple_user_backends = false;
-        };
-
-        # oidc_login_provider_url = idp.oidc_discovery_prefix;
-        # oidc_login_client_id = nix-infra.svc.nextcloud.clientID;
-        # oidc_login_end_session_redirect = false; # no need
-        # oidc_login_button_text = "Log in with ${nix-infra.svc.kanidm.domain}";
-        # oidc_login_hide_password_form = true;
-        # oidc_login_attributes = {
-        #   id = "preferred_username";
-        #   name = "name";
-        #   mail = "email";
-        #   # groups = "groups";
-        #   # is_admin = "nextcloudadmin";
-        # };
-        # oidc_login_use_id_token = true;
-        # oidc_login_scope = "openid profile email groups";
-        # oidc_login_default_group = "oidc";
-        # oidc_create_groups = true;
-        # # oidc_login_update_avatar = true; # kanidm doesnt provide those
-        # oidc_login_disable_registration = false; # automatically create user accountss
-        # oidc_login_proxy_ldap = false;
-        # # oidc_login_password_authentication = true; # might be required for davx5
-        # oidc_login_code_challenge_method = "S256";
-
-        # memories
-        "memories.readonly" = true;
-        "memories.exiftool" = "${exiftool_12_70}/bin/exiftool";
-        # transcoding doesn't seem to work :<
-        # probably needs go-vod
-        "memories.vod.disable" = true;
-        # "memories.vod.disable" = false;
-        "memories.vod.vaapi" = config.hardware.graphics.enable;
-        "memories.vod.ffmpeg" = "${pkgs.ffmpeg}/bin/ffmpeg";
-        "memories.vod.ffprobe" = "${pkgs.ffmpeg}/bin/ffprobe";
-
-        preview_ffmpeg_path = "${pkgs.ffmpeg}/bin/ffmpeg";
-        # broken: cannot create directory '/run/user/989': Permission denied
-        # preview_libreoffice_path = "${pkgs.libreoffice}/bin/libreoffice";
       };
-      # secretFile = config.sops.templates."nextcloud_secretFile".path;
-      extraOCCCommands =
-        let
-          occ = "${config.services.nextcloud.occ}/bin/nextcloud-occ";
-        in
-        ''
-          ${occ} theming:config name "Girlcloud"
-          ${occ} theming:config color "#F5C2E7"
-          ${occ} theming:config primary_color "#F5C2E7"
-          ${occ} theming:config background "${root}/assets/wallpapers/yuri3.jpg"
-
-          ${occ} user_oidc:provider girlcock \
-            --discoveryuri="${idp.oidc_discovery}" \
-            --clientid="${cfg.client_id}" \
-            --clientsecret=$(cat "${config.sops.secrets."nextcloud/clientSecret".path}") \
-            --scope "profile email groups openid" \
-            --unique-uid 0 \
-            --group-provisioning 1 \
-            --group-whitelist-regex "nextcloud\..*" \
-            --group-restrict-login-to-whitelist 1 \
-            --mapping-uid "preferred_username";
-        '';
 
       # php stuff
       phpOptions = {
@@ -229,7 +95,14 @@ in
           gd
         ];
 
+      extraOCCCommands = lib.mkBefore ''
+        tmpdir=$(mktemp -d)
+        ln -s "${config.services.nextcloud.occ}/bin/nextcloud-occ" "$tmpdir/occ"
+        export PATH="$tmpdir:$PATH"
+      '';
+
       # apps
+      extraAppsEnable = true;
       extraApps = {
         inherit (config.services.nextcloud.package.packages.apps)
           calendar
@@ -241,13 +114,11 @@ in
           news
           music
           recognize
-          memories
-          user_oidc
-          previewgenerator
           impersonate
+          integration_paperless
+          end_to_end_encryption
           ;
       };
-      extraAppsEnable = true;
     };
 
     services.caddy.virtualHosts."http://${cfg.domain}" = {
@@ -264,6 +135,7 @@ in
       extraGroups = [
         "render"
         "video"
+        "audio"
       ];
     };
 

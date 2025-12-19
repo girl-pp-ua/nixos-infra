@@ -132,6 +132,22 @@
         "type": "github"
       }
     },
+    "nextcloud-catpuccin": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1741467103,
+        "narHash": "sha256-SJzajeunB67hyvDsD2VR1IdgTPc9EkbO1/m91E3V3Ng=",
+        "owner": "Frostielocks",
+        "repo": "nextcloud-catppuccin",
+        "rev": "bbcc94ed2d1442c8130b4eccb2c4b1c8c003a4a6",
+        "type": "github"
+      },
+      "original": {
+        "owner": "Frostielocks",
+        "repo": "nextcloud-catppuccin",
+        "type": "github"
+      }
+    },
     "nextcloud-testumgebung": {
       "flake": false,
       "locked": {
@@ -247,6 +263,7 @@
         "deploy-rs": "deploy-rs",
         "devlootbox": "devlootbox",
         "dns": "dns",
+        "nextcloud-catpuccin": "nextcloud-catpuccin",
         "nextcloud-testumgebung": "nextcloud-testumgebung",
         "nixpkgs": "nixpkgs_2",
         "nixpkgs-stable": "nixpkgs-stable",

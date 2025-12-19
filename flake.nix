@@ -20,14 +20,17 @@
       url = "github:nix-community/dns.nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    nextcloud-testumgebung = {
-      url = "github:onny/nixos-nextcloud-testumgebung";
-      flake = false; # (importing single file)
-      # inputs.nixpkgs.follows = "nixpkgs";
-    };
     redlib = {
       url = "github:redlib-org/redlib";
       flake = false; # (using as source for pkgs.redlib)
+    };
+    nextcloud-testumgebung = {
+      url = "github:onny/nixos-nextcloud-testumgebung";
+      flake = false;
+    };
+    nextcloud-catpuccin = {
+      url = "github:Frostielocks/nextcloud-catppuccin";
+      flake = false;
     };
 
     secrets = {
