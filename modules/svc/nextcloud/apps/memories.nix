@@ -5,7 +5,7 @@
   ...
 }:
 let
-  cfg = config.nix-infra.svc.nextcloud.app.notify-push;
+  cfg = config.nix-infra.svc.nextcloud.app.memories;
   exiftool_12_70 = pkgs.exiftool.overrideAttrs (old: rec {
     version = "12.70";
     src = pkgs.fetchFromGitHub {

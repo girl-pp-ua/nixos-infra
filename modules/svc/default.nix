@@ -16,5 +16,6 @@
     ./garage.nix
     ./immich.nix
     ./supervisor-host.nix
+    ./collabora.nix
   ];
 }

@@ -14,6 +14,7 @@ in
     ./apps/whiteboard-server.nix
     ./apps/notify-push.nix
     ./apps/memories.nix
+    ./apps/office.nix
     ./theming.nix
     ./oidc.nix
     ./previews.nix
@@ -125,8 +126,9 @@ in
           music
           recognize
           impersonate
-          integration_paperless
           end_to_end_encryption
+          integration_paperless
+          dav_push
           ;
       };
     };

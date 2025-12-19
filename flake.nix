@@ -28,10 +28,6 @@
       url = "github:onny/nixos-nextcloud-testumgebung";
       flake = false;
     };
-    nextcloud-catpuccin = {
-      url = "github:Frostielocks/nextcloud-catppuccin";
-      flake = false;
-    };
 
     secrets = {
       url = "git+file:./submodules/secrets";
@@ -138,6 +134,7 @@
                 zones = [ "nix-infra" ];
               };
               nextcloud.enable = true;
+              collabora.enable = true;
               paperless.enable = true;
               immich.enable = true;
               # TODO: fix
