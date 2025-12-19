@@ -16,6 +16,7 @@ let
     body {
       --color-primary-element: rgb(var(--color-primary-element-rgb));
       --color-main-background: rgb(var(--color-main-background-rgb));
+      --color-main-background-translucent: rgba(var(--color-main-background-rgb), 0.95);
     }
 
     @media (prefers-color-scheme: dark) {
