@@ -17,10 +17,12 @@ in
       '';
       ${cfg-paperless.domain}.extraConfig = ''
         import encode
+        import norobot
         reverse_proxy http://${cfg-paperless.intraDomain}
       '';
       ${cfg-immich.domain}.extraConfig = ''
         import encode
+        import norobot
         reverse_proxy http://${cfg-immich.intraDomain}
       '';
     };

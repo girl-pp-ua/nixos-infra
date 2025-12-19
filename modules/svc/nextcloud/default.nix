@@ -59,22 +59,32 @@ in
         adminpassFile = config.sops.secrets."nextcloud/adminpass".path;
       };
       settings = {
+        "overwrite.cli.url" = "https://${cfg.domain}";
         overwriteprotocol = "https";
+
         trusted_domains = [
           cfg.domain
           cfg.intraDomain
         ];
         trusted_proxies = [
+          # TODO dont hardcode this
+
+          # localhost
           "127.0.0.1"
           "::1"
-          # dell-sv
-          "fd7a:115c:a1e0::2901:2214"
-          "100.64.0.2"
+
+          # tailscale
+          "fd7a:115c:a1e0::/48"
+          "100.64.0.0/16"
+
+          # oci primary-vcn
+          "2603:c020:800c:9c00::/56"
+          "132.226.204.218" # oci1
+          "144.24.178.67" # oci2
+
           # oci2
-          "2603:c020:800c:9c7f:0:fe:fe:2"
-          "144.24.178.67"
-          "fd7a:115c:a1e0::2501:5a59"
-          "100.64.0.102"
+          "10.0.0.254" # local v4
+          "144.24.178.67" # global v4
         ];
 
         updatechecker = false;
@@ -124,11 +134,20 @@ in
     services.caddy.virtualHosts."http://${cfg.domain}" = {
       serverAliases = [
         cfg.domain
+        "http://${cfg.intraDomain}"
         cfg.intraDomain
       ];
-      extraConfig = ''
+      extraConfig = lib.mkOrder 100 ''
         import encode
       '';
+    };
+
+    # bend nextcloud domain to it's tailscale ip
+    # required for the trusted proxy chain to be valid when reaching ourselves over public domain
+    # which is needded by notify_push
+    networking.hosts = {
+      # TODO dont hardcode this
+      "fd7a:115c:a1e0::2501:5a59" = [ cfg.domain ];
     };
 
     users.users.nextcloud = {
