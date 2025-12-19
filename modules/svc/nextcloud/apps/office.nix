@@ -21,6 +21,7 @@ in
       extraOCCCommands = ''
         occ config:app:set richdocuments wopi_url --value "http://[::1]:${cfg-collabora.port}"
         occ config:app:set richdocuments public_wopi_url --value "https://${cfg-collabora.domain}"
+        occ config:app:set richdocuments doc_format --value ""
         occ config:app:set richdocuments wopi_allowlist --value "${
           lib.concatStringsSep "," [
             "127.0.0.1"
