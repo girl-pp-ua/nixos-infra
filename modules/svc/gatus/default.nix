@@ -118,6 +118,10 @@ in
                 "[STATUS] == 200"
                 "[BODY] == pat(*Nextcloud Whiteboard Collaboration Server*)"
               ];
+              collabora-office = mkUrl' "https://${cfg-svc.collabora.domain}/" [
+                "[STATUS] == 200"
+                "[BODY] == pat(*OK*)"
+              ];
               ntfy = mkUrl' "https://${cfg-svc.ntfy.domain}/v1/health" [
                 "[STATUS] == 200"
                 "[BODY].healthy == true"
