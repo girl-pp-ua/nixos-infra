@@ -134,7 +134,6 @@ in
     redlib = mkCname "oci2.${zone}";
     ntfy = mkCname "oci2.${zone}";
     cloud = mkCname "oci2.${zone}"; # (proxy -> dell-sv)
-    office = mkCname "oci2.${zone}"; # (proxy -> dell-sv)
     paperless = mkCname "oci2.${zone}"; # (proxy -> dell-sv)
     photos = mkCname "oci2.${zone}"; # (proxy -> dell-sv)
 

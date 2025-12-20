@@ -47,7 +47,7 @@ in
             Group = "gatus";
             Type = "simple";
             Restart = "on-failure";
-            ExecStart = lib.getExe pkgs.gatus;
+            ExecStart = lib.getExe config.services.gatus.package;
             StateDirectory = "gatus";
             SyslogIdentifier = "gatus";
             # TODO: upstream this

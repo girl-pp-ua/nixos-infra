@@ -26,11 +26,6 @@ in
         import norobot
         reverse_proxy http://${cfg-immich.intraDomain}
       '';
-      ${cfg-collabora.domain}.extraConfig = ''
-        import encode
-        import norobot
-        reverse_proxy http://${cfg-collabora.intraDomain}
-      '';
     };
   };
 }

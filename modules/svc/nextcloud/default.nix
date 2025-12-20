@@ -14,7 +14,7 @@ in
     ./apps/whiteboard-server.nix
     ./apps/notify-push.nix
     ./apps/memories.nix
-    ./apps/office.nix
+    ./apps/richdocuments.nix
     ./theming.nix
     ./oidc.nix
     ./previews.nix
@@ -135,9 +135,7 @@ in
 
     services.caddy.virtualHosts."http://${cfg.domain}" = {
       serverAliases = [
-        cfg.domain
         "http://${cfg.intraDomain}"
-        cfg.intraDomain
       ];
       extraConfig = lib.mkOrder 100 ''
         import encode

@@ -15,7 +15,6 @@ in
     nextcloud.CNAME = [ "dell-sv.ts.${zone}" ];
     paperless.CNAME = [ "dell-sv.ts.${zone}" ];
     immich.CNAME = [ "dell-sv.ts.${zone}" ];
-    collabora.CNAME = [ "dell-sv.ts.${zone}" ];
 
     ts.subdomains = {
       oci1 = {

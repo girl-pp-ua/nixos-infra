@@ -134,7 +134,6 @@
                 zones = [ "nix-infra" ];
               };
               nextcloud.enable = true;
-              collabora.enable = true;
               paperless.enable = true;
               immich.enable = true;
               # TODO: fix
