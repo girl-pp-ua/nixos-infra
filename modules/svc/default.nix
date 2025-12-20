@@ -7,6 +7,7 @@
     ./nextcloud
     ./gatus
     ./projects
+    ./crowdsec.nix
     ./supervisor-host.nix
     ./tailscale.nix
     ./redlib.nix
