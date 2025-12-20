@@ -122,6 +122,7 @@ in
           notes
           deck
           forms
+          tables
           news
           music
           recognize
@@ -129,6 +130,7 @@ in
           end_to_end_encryption
           integration_paperless
           dav_push
+          qownnotesapi
           ;
       };
     };
