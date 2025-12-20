@@ -10,11 +10,14 @@ in
 {
   config = lib.mkIf cfg-nextcloud.enable {
     services.nextcloud = {
+      imaginary.enable = true;
+
       extraApps = {
         inherit (config.services.nextcloud.package.packages.apps)
           previewgenerator
           ;
       };
+
       settings = {
         enable_previews = true;
 

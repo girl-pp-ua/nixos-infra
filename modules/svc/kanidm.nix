@@ -54,7 +54,6 @@ in
               "oracle-cloud-infrastructure.access"
               "nextcloud.access"
               "paperless.access"
-              "paperless.admin"
               "immich.access"
               "immich.role.admin"
             ];
@@ -171,7 +170,7 @@ in
         };
 
         groups."paperless.access" = { };
-        groups."paperless.admin" = { };
+        # groups."paperless.admin" = { };
         systems.oauth2.${cfg-svc.paperless.client_id} = {
           displayName = "Paperless-ngx";
           imageFile = "${root}/assets/sso-images/paperless-ngx.svg";
@@ -193,7 +192,7 @@ in
           claimMaps.groups = {
             joinType = "array";
             valuesByGroup."paperless.access" = [ "paperless_access" ];
-            valuesByGroup."paperless.admin" = [ "paperless_admin" ];
+            # valuesByGroup."paperless.admin" = [ "paperless_admin" ];
           };
         };
 

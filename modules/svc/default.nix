@@ -5,9 +5,9 @@
     ./caddy
     ./dns-server
     ./nextcloud
-    ./paperless
     ./gatus
     ./projects
+    ./supervisor-host.nix
     ./tailscale.nix
     ./redlib.nix
     ./ntfy.nix
@@ -15,6 +15,6 @@
     ./oauth2-proxy.nix
     ./garage.nix
     ./immich.nix
-    ./supervisor-host.nix
+    ./paperless.nix
   ];
 }
