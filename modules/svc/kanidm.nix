@@ -48,7 +48,10 @@ in
         persons = {
           grfgh = {
             displayName = "Luna";
-            mailAddresses = [ "prasol258@gmail.com" ];
+            mailAddresses = [
+              "luna.prasol@proton.me"
+              "prasol258@gmail.com"
+            ];
             groups = [
               "authtest.access"
               "oracle-cloud-infrastructure.access"
