@@ -45,6 +45,9 @@ in
         autoRemove = true;
         instanceUrl = "https://localhost:${toString cfg.port}";
 
+        groups."idm_people_self_name_write".members = [ ];
+        groups."idm_people_self_mail_write".members = [ ];
+
         persons = {
           grfgh = {
             displayName = "Luna";
