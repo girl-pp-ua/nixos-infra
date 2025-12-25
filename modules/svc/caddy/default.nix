@@ -10,10 +10,10 @@ in
 {
   imports = [
     ./endpoints/file-server.nix
-    ./endpoints/healthcheck.nix
-    ./endpoints/proxies.nix
     ./endpoints/webdav.nix
+    ./endpoints/healthcheck.nix
     ./endpoints/authtest.nix
+    ./endpoints/proxies.nix
   ];
 
   options.nix-infra.svc.caddy = {
@@ -26,8 +26,9 @@ in
       package = pkgs.caddy.withPlugins {
         plugins = [
           "github.com/mholt/caddy-webdav@v0.0.0-20250805175825-7a5c90d8bf90"
+          "github.com/corazawaf/coraza-caddy/v2@v2.1.0"
         ];
-        hash = "sha256-DHkHbwhTnaK00G38czb4XZ9g9Ttz9Y1Wb3gCCAWZYDI=";
+        hash = "sha256-LqkfMpuIJz/o1+zrz2Z0j480fssQaCIm2l+6BB8AW1M=";
       };
       enableReload = true;
       adapter = "caddyfile";
@@ -36,7 +37,10 @@ in
         grace_period 30s
         skip_install_trust
         renew_interval 30m
+
+        order coraza_waf first
         order webdav before file_server
+
         servers {
           trusted_proxies static private_ranges ${
             # TODO dont hardcode this
@@ -68,14 +72,17 @@ in
             X-Robots-Tag "noindex, nofollow"
           }
         }
-        (nextcloud_sec) {
-          header {
-            X-Content-Type-Options nosniff
-            X-Robots-Tag noindex,nofollow
-            X-Frame-Options sameorigin
-            X-Permitted-Cross-Domain-Policies none
-            Referrer-Policy no-referrer
+        (waf) {
+          coraza_waf {
+            load_owasp_crs
+            directives `
+              Include @coraza.conf-recommended
+              Include @crs-setup.conf.example
+              Include @owasp_crs/*.conf
+              SecRuleEngine On
+            `
           }
+          header X-WAF yes
         }
       '';
     };
@@ -89,7 +96,5 @@ in
 
     # force nginx off
     services.nginx.enable = lib.mkForce false;
-    
-    # due to notify_push stuff, we must trust ourselves and we can only guarantee that 
   };
 }

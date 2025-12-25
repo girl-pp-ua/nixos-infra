@@ -161,6 +161,7 @@ in
       extraConfig = ''
         import encode
         import norobot
+        import waf
         reverse_proxy http://127.0.0.1:${toString cfg.port}
       '';
     };

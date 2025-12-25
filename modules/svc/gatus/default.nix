@@ -220,6 +220,8 @@ in
         mkVirtualHost = name: {
           extraConfig = ''
             import encode
+            import norobot
+            import waf
             reverse_proxy http://localhost:${toString config.services.gatus.instances.${name}.port}
           '';
         };

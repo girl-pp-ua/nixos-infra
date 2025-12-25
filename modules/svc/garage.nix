@@ -95,6 +95,9 @@ in
     # TODO move this to gateway node on oci2
     services.caddy.virtualHosts."media-cdn.devlootbox.com" = {
       extraConfig = ''
+        import encode
+        import norobot
+        import waf
         reverse_proxy localhost:3902 {
           header_up Host "svc-media.web.garage"
         }

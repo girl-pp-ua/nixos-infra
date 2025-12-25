@@ -28,15 +28,16 @@ in
       };
     };
 
-    services.caddy.virtualHosts = {
-      ${cfg.domain} = {
-        extraConfig = ''
-          handle_path /docs/* {
-            redir https://docs.ntfy.sh{path} permanent
-          }
-          reverse_proxy localhost:${toString cfg.port}
-        '';
-      };
+    services.caddy.virtualHosts.${cfg.domain} = {
+      extraConfig = ''
+        import encode
+        import norobot
+        import waf
+        handle_path /docs/* {
+          redir https://docs.ntfy.sh{path} permanent
+        }
+        reverse_proxy localhost:${toString cfg.port}
+      '';
     };
   };
 }
