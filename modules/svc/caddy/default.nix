@@ -73,16 +73,25 @@ in
           }
         }
         (waf) {
-          coraza_waf {
+          @not_websocket {
+            not {
+              header Connection *Upgrade*
+              header Upgrade websocket
+            }
+         	}
+
+          coraza_waf @not_websocket {
             load_owasp_crs
             directives `
               Include @coraza.conf-recommended
               Include @crs-setup.conf.example
-              Include @owasp_crs/*.conf
+              # Include @owasp_crs/*.conf
               SecRuleEngine On
             `
           }
-          header X-WAF yes
+          header @not_websocket {
+            X-WAF yes
+          }
         }
       '';
     };

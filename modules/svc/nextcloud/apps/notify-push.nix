@@ -14,7 +14,7 @@ in
   config = lib.mkIf cfg.enable {
     services.nextcloud.notify_push = {
       enable = true;
-      nextcloudUrl = "https://${cfg-nextcloud.domain}/";
+      nextcloudUrl = "https://${cfg-nextcloud.domain}";
     };
 
     services.caddy.virtualHosts."http://${cfg-nextcloud.domain}" = {
