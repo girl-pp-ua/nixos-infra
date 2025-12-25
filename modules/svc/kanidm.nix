@@ -47,6 +47,8 @@ in
 
         groups."idm_people_self_name_write".members = [ ];
         groups."idm_people_self_mail_write".members = [ ];
+        groups."idm_people_admins".overwriteMembers = false;
+        groups."idm_service_account_admins".overwriteMembers = false;
 
         persons = {
           grfgh = {
