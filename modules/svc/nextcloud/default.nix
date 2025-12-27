@@ -140,7 +140,6 @@ in
         "http://${cfg.intraDomain}"
       ];
       extraConfig = lib.mkOrder 100 ''
-        import waf
         import encode
       '';
     };

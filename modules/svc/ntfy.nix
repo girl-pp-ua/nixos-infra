@@ -32,7 +32,6 @@ in
       extraConfig = ''
         import encode
         import norobot
-        import waf
         handle_path /docs/* {
           redir https://docs.ntfy.sh{path} permanent
         }

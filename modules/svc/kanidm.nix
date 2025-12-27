@@ -251,7 +251,6 @@ in
         extraConfig = ''
           import encode
           import norobot
-          import waf
           reverse_proxy https://127.0.0.1:${toString cfg.port} {
             transport http {
               tls_trust_pool file ${config.sops.secrets."kanidm_caddy_tls_chain".path}

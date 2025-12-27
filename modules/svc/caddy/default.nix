@@ -26,9 +26,9 @@ in
       package = pkgs.caddy.withPlugins {
         plugins = [
           "github.com/mholt/caddy-webdav@v0.0.0-20250805175825-7a5c90d8bf90"
-          "github.com/corazawaf/coraza-caddy/v2@v2.1.0"
+          # "github.com/corazawaf/coraza-caddy/v2@v2.1.0"
         ];
-        hash = "sha256-LqkfMpuIJz/o1+zrz2Z0j480fssQaCIm2l+6BB8AW1M=";
+        hash = "sha256-DHkHbwhTnaK00G38czb4XZ9g9Ttz9Y1Wb3gCCAWZYDI=";
       };
       enableReload = true;
       adapter = "caddyfile";
@@ -37,10 +37,7 @@ in
         grace_period 30s
         skip_install_trust
         renew_interval 30m
-
-        order coraza_waf first
         order webdav before file_server
-
         servers {
           trusted_proxies static private_ranges ${
             # TODO dont hardcode this
@@ -70,27 +67,6 @@ in
         (norobot) {
           header {
             X-Robots-Tag "noindex, nofollow"
-          }
-        }
-        (waf) {
-          @not_websocket {
-            not {
-              header Connection *Upgrade*
-              header Upgrade websocket
-            }
-         	}
-
-          coraza_waf @not_websocket {
-            load_owasp_crs
-            directives `
-              Include @coraza.conf-recommended
-              Include @crs-setup.conf.example
-              # Include @owasp_crs/*.conf
-              SecRuleEngine On
-            `
-          }
-          header @not_websocket {
-            X-WAF yes
           }
         }
       '';

@@ -73,7 +73,6 @@ in
       ];
       extraConfig = ''
         import encode
-        import waf
         reverse_proxy http://localhost:${toString config.services.immich.port}
       '';
     };

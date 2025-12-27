@@ -97,7 +97,6 @@ in
       extraConfig = ''
         import encode
         import norobot
-        import waf
         reverse_proxy localhost:3902 {
           header_up Host "svc-media.web.garage"
         }

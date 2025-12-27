@@ -105,7 +105,6 @@ in
         extraConfig = ''
           import encode
           import norobot
-          import waf
           handle /banner.webp {
             rewrite * /tenor.webp
             reverse_proxy https://files.girl.pp.ua {
