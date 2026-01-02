@@ -19,12 +19,12 @@ let
             mkEnvRecursive newKey value
           else if builtins.isList value then
             {
-              ${newKey} = builtins.concatStringsSep "+" (builtins.map (builtins.toString) value);
+              ${newKey} = builtins.concatStringsSep "+" (map toString value);
             }
           else if builtins.isBool value then
             { ${newKey} = if value then "on" else "off"; }
           else
-            { ${newKey} = builtins.toString value; };
+            { ${newKey} = toString value; };
       in
       acc // newAttr
     ) { } (builtins.attrNames attr);
@@ -111,7 +111,7 @@ in
               header_up Host {http.reverse_proxy.upstream.host}
             }
           }
-          reverse_proxy localhost:${builtins.toString cfg.port}
+          reverse_proxy localhost:${toString cfg.port}
         '';
       };
     };

@@ -63,4 +63,6 @@
   services.journald.extraConfig = ''
     SystemMaxUse=1G
   '';
+
+  # services.dbus.implementation = "broker";
 }

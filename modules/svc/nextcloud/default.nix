@@ -101,7 +101,7 @@ in
         "opcache.interned_strings_buffer" = "64";
       };
       phpExtraExtensions =
-        all: with all; [
+        ext: with ext; [
           imagick
           gd
         ];
