@@ -68,10 +68,12 @@
             inherit host;
           };
           modules = [
-            { networking.hostName = host; }
+            {
+              networking.hostName = host;
+              networking.domain = "polaris";
+            }
             ./hosts/${host}/configuration.nix
-            ./modules/base
-            ./modules/svc
+            ./modules
             sops-nix.nixosModules.sops
           ]
           ++ extraModules;
@@ -87,8 +89,7 @@
       nixosConfigurations = {
         oci1 = mkNixosSystem "oci1" "x86_64-linux" [
           {
-            networking.domain = "girl.pp.ua";
-            nix-infra.svc = {
+            polaris.services = {
               caddy.enable = true;
               caddy.endpoints = {
                 file-server.enable = true;
@@ -105,8 +106,7 @@
         ];
         oci2 = mkNixosSystem "oci2" "x86_64-linux" [
           {
-            networking.domain = "girl.pp.ua";
-            nix-infra.svc = {
+            polaris.services = {
               caddy.enable = true;
               caddy.endpoints = {
                 healthcheck.enable = true;
@@ -121,12 +121,11 @@
         ];
         dell-sv = mkNixosSystem "dell-sv" "x86_64-linux" [
           {
-            networking.domain = "ts.nix-infra";
-            nix-infra.svc = {
+            polaris.services = {
               caddy.enable = true;
               dns-server = {
                 enable = true;
-                zones = [ "nix-infra" ];
+                # zones = [ "polaris" ];
               };
               nextcloud.enable = true;
               paperless.enable = true;

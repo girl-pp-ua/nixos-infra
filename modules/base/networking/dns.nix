@@ -1,4 +1,4 @@
-{ ... }:
+{ config, ... }:
 {
   networking.resolvconf.enable = true;
   services.resolved.enable = false;
@@ -9,14 +9,16 @@
     settings = {
       server = {
         so-reuseport = false;
-        domain-insecure = [ "nix-infra" ];
-        private-domain = [ "nix-infra" ];
+        domain-insecure = [ "polaris" ];
+        private-domain = [ "polaris" ];
         do-not-query-localhost = false;
       };
       stub-zone = [
         {
-          name = "nix-infra.";
-          stub-addr = [ "127.0.17.53" ];
+          name = "polaris.";
+          stub-addr = [
+            config.polaris.services.dns-server.loopbackAddress
+          ];
           stub-no-cache = true;
           stub-prime = false;
         }
