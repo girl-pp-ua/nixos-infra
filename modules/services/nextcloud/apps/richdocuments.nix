@@ -36,8 +36,10 @@ in
         };
         storage.wopi = {
           "@allow" = true;
-          # XXX: might be incorrect for multiple hosts
-          host = [ cfg-nextcloud.domain ];
+          host = [ cfg-nextcloud.domain ]; # XXX: might be incorrect for multiple hosts
+        };
+        remote_font_config = {
+          url = "https://${cfg-nextcloud.domain}/apps/richdocuments/settings/fonts.json";
         };
       };
     };
