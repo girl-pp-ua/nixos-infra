@@ -60,15 +60,6 @@ let
   };
 
   mergeAll = common: lib.map (value: common // value);
-
-  # gatus' = pkgs.gatus.overrideAttrs (oldAttrs: {
-  #   patches = (oldAttrs.patches or [ ]) ++ [
-  #     (pkgs.fetchpatch {
-  #       url = "https://patch-diff.githubusercontent.com/raw/TwiN/gatus/pull/1344.patch";
-  #       hash = "sha256-HCbfz/TbvjP/TJyo6lnJNhV9fSXx4TG9c9d4T3dUy80=";
-  #     })
-  #   ];
-  # });
 in
 {
   imports = [
