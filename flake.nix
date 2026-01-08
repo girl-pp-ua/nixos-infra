@@ -113,10 +113,13 @@
                 proxies.enable = true; # rip cocoa
               };
               dns-server.enable = true;
-              redlib.enable = true;
+              # redlib.enable = true;
               ntfy.enable = true;
               # projects.devlootbox.enable = true;
             };
+            services.caddy.virtualHosts."redlib.girl.pp.ua".extraConfig = ''
+              redir https://old.reddit.com{uri} temporary
+            '';
           }
         ];
         dell-sv = mkNixosSystem "dell-sv" "x86_64-linux" [

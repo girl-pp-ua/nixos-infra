@@ -121,13 +121,13 @@ in
                   "[STATUS] == 200"
                   "[BODY].healthy == true"
                 ];
-                redlib = mkUrl "https://${cfg-svc.redlib.domain}/r/test/comments/1l8wdxa" // {
-                  conditions = [
-                    "[STATUS] == 200"
-                    "[BODY] == pat(*xiphoihaej5io8oSheiXie4gu9ixahs0ian5iemo9ohhieBaom4Ideiquoh7ai8e*)"
-                  ];
-                  interval = "2h"; # reddit please don't kill me
-                };
+                # redlib = mkUrl "https://${cfg-svc.redlib.domain}/r/test/comments/1l8wdxa" // {
+                #   conditions = [
+                #     "[STATUS] == 200"
+                #     "[BODY] == pat(*xiphoihaej5io8oSheiXie4gu9ixahs0ian5iemo9ohhieBaom4Ideiquoh7ai8e*)"
+                #   ];
+                #   interval = "2h"; # reddit please don't kill me
+                # };
                 garage-s3 = mkUrl' "http://${cfg-svc.garage.intraDomain}:3900/" [
                   # idk what else to check fo here
                   "[STATUS] == 403"

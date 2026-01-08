@@ -104,7 +104,7 @@ in
       status = mkCname "oci1.${name}.";
       authtest = mkCname "oci1.${name}."; # testing
       # --- oci2 ---
-      redlib = mkCname "oci2.${name}.";
+      redlib = mkCname "oci2.${name}."; # (disabled; redirect -> old.reddit.com)
       ntfy = mkCname "oci2.${name}.";
       cloud = mkCname "oci2.${name}."; # (proxy -> dell-sv)
       paperless = mkCname "oci2.${name}."; # (proxy -> dell-sv)
