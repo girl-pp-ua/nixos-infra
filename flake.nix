@@ -126,6 +126,7 @@
           {
             polaris.services = {
               caddy.enable = true;
+              oauth2_proxy.enable = true;
               dns-server = {
                 enable = true;
                 # zones = [ "polaris" ];

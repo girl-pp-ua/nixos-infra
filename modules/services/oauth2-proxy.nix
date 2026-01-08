@@ -68,13 +68,15 @@ in
     ];
 
     services.caddy.extraConfig = ''
-      (oauth2_proxy) {
+      (oauth2_proxy_handle) {
         handle ${cfg.urlPrefix}/* {
           reverse_proxy http://127.0.0.1:${toString cfg.port} {
             header_up X-Real-IP {remote_host}
             header_up X-Forwarded-Uri {uri}
           }
         }
+      }
+      (oauth2_proxy_secure) {
         handle {
           forward_auth http://127.0.0.1:${toString cfg.port} {
             uri ${cfg.urlPrefix}/auth?allowed_groups={args[0]}

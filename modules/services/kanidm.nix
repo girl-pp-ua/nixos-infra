@@ -62,6 +62,7 @@ in
               "oracle-cloud-infrastructure.access"
               "nextcloud.access"
               "paperless.access"
+              "paperless.django_admin"
               "immich.access"
               "immich.role.admin"
             ];
@@ -101,6 +102,8 @@ in
           basicSecretFile = config.sops.secrets."kanidm.oauth2_proxy/clientSecret".path;
           originUrl = lib.map (domain: "https://${domain}${cfg-svc.oauth2_proxy.urlPrefix}/callback") [
             "authtest.girl.pp.ua"
+            cfg-svc.paperless.domain
+            cfg-svc.paperless.intraDomain
           ];
 
           preferShortUsername = true;
@@ -120,6 +123,7 @@ in
             joinType = "array";
             valuesByGroup = {
               "authtest.access" = [ "authtest_access" ];
+              "paperless.django_admin" = [ "paperless_django_admin" ];
             };
           };
         };
@@ -178,7 +182,7 @@ in
         };
 
         groups."paperless.access" = { };
-        # groups."paperless.admin" = { };
+        groups."paperless.django_admin" = { };
         systems.oauth2.${cfg-svc.paperless.client_id} = {
           displayName = "Paperless-ngx";
           imageFile = "${root}/assets/sso-images/paperless-ngx.svg";
