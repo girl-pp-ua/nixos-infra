@@ -5,6 +5,7 @@
   ...
 }:
 let
+  inherit (config.polaris) hosts;
   cfg = config.polaris.services.gatus;
   cfg-svc = config.polaris.services;
 
@@ -102,8 +103,8 @@ in
                 dell-sv = mkPing "dell-sv.polaris";
               };
               nameservers = mkEndpoints {
-                ns1 = mkDns "ns1.girl.pp.ua" "132.226.204.218";
-                ns2 = mkDns "ns2.girl.pp.ua" "144.24.178.67";
+                ns1 = mkDns "ns1.girl.pp.ua" hosts.oci1.public.ipv4;
+                ns2 = mkDns "ns2.girl.pp.ua" hosts.oci2.public.ipv4;
               };
               services = mkEndpoints {
                 kanidm = mkUrl' "https://${cfg-svc.kanidm.domain}/status" [
