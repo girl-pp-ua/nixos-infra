@@ -130,8 +130,8 @@ in
     # required for the trusted proxy chain to be valid when reaching ourselves over public domain
     # which is needded by notify_push
     networking.hosts = {
-      # TODO dont hardcode this
-      "fd7a:115c:a1e0::2501:5a59" = [ cfg.domain ];
+      #XXX: TODO dont hardcode this
+      ${config.polaris.hosts.oci2.internal.ipv6} = [ cfg.domain ];
     };
 
     users.users.nextcloud = {
