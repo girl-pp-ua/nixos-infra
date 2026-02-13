@@ -25,20 +25,26 @@ in
   };
   config = lib.mkIf cfg.enable {
     services.kanidm = {
-      enableServer = true;
       package = pkgs.kanidm_1_8.withSecretProvisioning;
-      serverSettings = {
-        inherit (cfg) domain;
-        tls_key = config.sops.secrets."kanidm_tls_key".path;
-        tls_chain = config.sops.secrets."kanidm_tls_chain".path;
-        origin = "https://${cfg.domain}";
-        bindaddress = "127.0.0.1:${toString cfg.port}";
-        trust_x_forward_for = true;
+      server = {
+        enable = true;
+        settings = {
+          inherit (cfg) domain;
+          tls_key = config.sops.secrets."kanidm_tls_key".path;
+          tls_chain = config.sops.secrets."kanidm_tls_chain".path;
+          origin = "https://${cfg.domain}";
+          bindaddress = "127.0.0.1:${toString cfg.port}";
+          http_client_address_info = {
+            x-forward-for = config.polaris.trustedNetworks;
+          };
+        };
       };
-      enableClient = true;
-      clientSettings = {
-        uri = "https://127.0.0.1:${toString cfg.port}";
-        ca_path = config.sops.secrets."kanidm_tls_chain".path;
+      client = {
+        enable = true;
+        settings = {
+          uri = "https://127.0.0.1:${toString cfg.port}";
+          ca_path = config.sops.secrets."kanidm_tls_chain".path;
+        };
       };
       provision = {
         enable = true;

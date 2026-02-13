@@ -38,16 +38,18 @@ in
     services.paperless = {
       enable = true;
 
-      package = pkgs.paperless-ngx.overrideAttrs (prev: {
-        # XXX: build failure
-        disabledTests = prev.disabledTests ++ [
-          "test_consume_file"
-          "test_mac_write"
-          "test_slow_write_and_move"
-          "test_slow_write_incomplete"
-          "test_slow_write_pdf"
-        ];
-      });
+      package = pkgs.paperless-ngx;
+
+      # package = pkgs.paperless-ngx.overrideAttrs (prev: {
+      #   # XXX: build failure
+      #   disabledTests = prev.disabledTests ++ [
+      #     "test_consume_file"
+      #     "test_mac_write"
+      #     "test_slow_write_and_move"
+      #     "test_slow_write_incomplete"
+      #     "test_slow_write_pdf"
+      #   ];
+      # });
 
       # TODO: fix patch
       # package = pkgs.paperless-ngx.overrideAttrs (old: {

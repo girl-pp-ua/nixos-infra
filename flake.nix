@@ -165,7 +165,7 @@
         ++ (with pkgs; [
           nil
           nixd
-          nixfmt-rfc-style
+          nixfmt
           nixfmt-tree
           sops
           age

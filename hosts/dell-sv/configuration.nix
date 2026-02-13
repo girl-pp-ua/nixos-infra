@@ -1,6 +1,5 @@
 { pkgs, ... }:
 let
-  # workaround rocm build failure
   cur_rocmPackages = pkgs.rocmPackages;
 in
 {
