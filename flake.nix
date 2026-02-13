@@ -102,6 +102,9 @@
               gatus.enable = true;
               garage.enable = true;
             };
+            services.caddy.virtualHosts."status.girl.pp.ua".extraConfig = ''
+              redir https://status.lunya.cc{uri} permanent
+            '';
           }
         ];
         oci2 = mkNixosSystem "oci2" "x86_64-linux" [

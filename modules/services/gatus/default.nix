@@ -94,7 +94,7 @@ in
             alerting.ntfy = {
               topic = secrets.ntfy-topics.gatus-girl-pp-ua;
               url = "https://${cfg-svc.ntfy.domain}";
-              click = "https://status.girl.pp.ua/";
+              click = "https://status.lunya.cc/";
             };
             endpoints = mergeAll withAlertsNtfy (mkGroups {
               hosts = mkEndpoints {
@@ -217,7 +217,7 @@ in
         };
       in
       {
-        "status.girl.pp.ua" = mkVirtualHost "girl-pp-ua";
+        "status.lunya.cc" = mkVirtualHost "girl-pp-ua";
         "status.nyanbinary.rs" = mkVirtualHost "nyanbinary-rs";
       };
   };
