@@ -45,6 +45,8 @@ in
       # cloud.CNAME = [ "dell-sv-proxy" ];
       # photos.CNAME = [ "dell-sv-proxy" ];
       # docs.CNAME = [ "dell-sv-proxy" ];
+      
+      _atproto.TXT = [ "did=did:plc:wvftnj7awmh4gwf3pt5mlvwq" ];
     };
   };
 }
