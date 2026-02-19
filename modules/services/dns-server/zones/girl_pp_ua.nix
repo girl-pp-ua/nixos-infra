@@ -78,6 +78,7 @@ in
     TXT = [
       "v=spf1 -all"
       "oci-domain-verification=NpKOKeYeCal32nE30tzSHLI9RXw41sPKLASaWVs0JXMpD"
+      "$argon2id$v=19$m=512,t=256,p=1$9qUkhB9I4tK2n5v00pLnvg$yAO8W0NDNMJY/CwJPieSTfWUh8OqCSEFY0xMrunlD6U" # keyoxide
     ];
 
     subdomains = {
