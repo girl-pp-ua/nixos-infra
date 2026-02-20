@@ -153,8 +153,8 @@
           inherit (self) nixosConfigurations;
         in
         {
-          oci1 = mkDeployProfile "oci1.girl.pp.ua" nixosConfigurations.oci1;
-          oci2 = mkDeployProfile "oci2.girl.pp.ua" nixosConfigurations.oci2;
+          oci1 = mkDeployProfile "ipv4.oci1.girl.pp.ua" nixosConfigurations.oci1;
+          oci2 = mkDeployProfile "ipv4.oci2.girl.pp.ua" nixosConfigurations.oci2;
           dell-sv = mkDeployProfile "dell-sv.intranet.girl.pp.ua" nixosConfigurations.dell-sv;
         };
 
