@@ -28,7 +28,7 @@ in
           "github.com/mholt/caddy-webdav@v0.0.0-20250805175825-7a5c90d8bf90"
           # "github.com/corazawaf/coraza-caddy/v2@v2.1.0"
         ];
-        hash = "sha256-RfoWigQXCh1DVHDLlux1BvJwk3ATWgfODNbkdX35354=";
+        hash = "sha256-C97cU/HfigVPuRKjIARwWf4e0NHRznACjSpIseohJn8=";
       };
       enableReload = true;
       adapter = "caddyfile";

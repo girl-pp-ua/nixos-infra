@@ -39,7 +39,7 @@ in
   config = lib.mkIf cfg.enable {
     services.nextcloud = {
       enable = true;
-      package = pkgs.nextcloud32;
+      package = pkgs.nextcloud33;
 
       # web server
       webserver = "caddy";
@@ -105,9 +105,7 @@ in
           forms
           tables
           bookmarks
-          news
-          music
-          recognize
+          # recognize (no support for nextcloud33)
           impersonate
           end_to_end_encryption
           integration_paperless

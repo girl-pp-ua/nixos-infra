@@ -25,7 +25,7 @@ in
   };
   config = lib.mkIf cfg.enable {
     services.kanidm = {
-      package = pkgs.kanidm_1_8.withSecretProvisioning;
+      package = pkgs.kanidm_1_9.withSecretProvisioning;
       server = {
         enable = true;
         settings = {
@@ -34,9 +34,7 @@ in
           tls_chain = config.sops.secrets."kanidm_tls_chain".path;
           origin = "https://${cfg.domain}";
           bindaddress = "127.0.0.1:${toString cfg.port}";
-          http_client_address_info = {
-            x-forward-for = config.polaris.trustedNetworks;
-          };
+          http_client_address_info.x-forward-for = config.polaris.trustedNetworks;
         };
       };
       client = {

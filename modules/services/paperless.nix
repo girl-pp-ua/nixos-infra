@@ -38,7 +38,11 @@ in
     services.paperless = {
       enable = true;
 
-      package = pkgs.paperless-ngx;
+      package = pkgs.paperless-ngx.overrideAttrs (prev: {
+        # (pytest check takes ridiculously long time)
+        dontUsePythonImportsCheck = true;
+        dontUsePytestCheck = true;
+      });
 
       # package = pkgs.paperless-ngx.overrideAttrs (prev: {
       #   # XXX: build failure

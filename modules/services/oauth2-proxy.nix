@@ -61,9 +61,9 @@ in
         skip-jwt-bearer-tokens = true;
         upstream = "static://202";
         # upstream "static://202" has passHostHeader, but is a static upstream, this will have no effect.
-        pass-host-header = false;
+        # pass-host-header = false;
         # upstream "static://202" has proxyWebSockets, but is a static upstream, this will have no effect.
-        proxy-websockets = false;
+        # proxy-websockets = false;
       };
     };
 
