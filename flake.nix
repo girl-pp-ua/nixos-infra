@@ -138,6 +138,8 @@
               paperless.enable = true;
               immich.enable = true;
               # TODO: fix
+              # gayming.enable = true;
+              # TODO: fix
               # supervisor-host = {
               #   enable = true;
               #   gpuPassthrough = true;

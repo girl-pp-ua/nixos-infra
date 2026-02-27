@@ -16,5 +16,7 @@
     ./garage.nix
     ./immich.nix
     ./paperless.nix
+    ./gayming.nix
+    ./docker.nix
   ];
 }
