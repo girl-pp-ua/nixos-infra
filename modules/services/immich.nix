@@ -51,6 +51,11 @@ in
       };
     };
 
+    users.users.${config.services.immich.user}.extraGroups = [
+      "video"
+      "render"
+    ];
+
     sops.secrets."immich/clientSecret" = { };
     sops.templates."immich.json" = {
       mode = "0400";
