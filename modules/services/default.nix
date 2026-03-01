@@ -18,5 +18,6 @@
     ./paperless.nix
     ./gayming.nix
     ./docker.nix
+    ./backup.nix
   ];
 }

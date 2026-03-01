@@ -5,6 +5,7 @@
   imports = [
     ./hardware-configuration.nix
     ../../modules/host_shared/oci-amd-base.nix
+    ./services.nix
   ];
 
   fileSystems = {
@@ -17,13 +18,4 @@
       ];
     };
   };
-
-  # move caddy data to /data/caddy
-  # services.caddy.extraConfig = ''
-  #   {
-  #     storage file_system {
-  #       root /data/caddy
-  #     }
-  #   }
-  # '';
 }

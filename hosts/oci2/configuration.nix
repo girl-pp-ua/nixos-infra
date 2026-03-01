@@ -5,5 +5,6 @@
   imports = [
     ./hardware-configuration.nix
     ../../modules/host_shared/oci-amd-base.nix
+    ./services.nix
   ];
 }

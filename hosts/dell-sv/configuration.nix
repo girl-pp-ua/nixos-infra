@@ -8,17 +8,10 @@
     ./modules/gpu.nix
     ./modules/tpm2.nix
     ./modules/wifi.nix
+    ./services.nix
   ];
 
   system.stateVersion = "24.11";
-
-  # kernel param
-
-  # services
-  # services.thermald.enable = true;
-  # services.fwupd.enable = true;
-
-  # cpu
 
   # reduce swappiness
   boot.kernel.sysctl = {

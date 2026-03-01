@@ -87,66 +87,9 @@
     in
     {
       nixosConfigurations = {
-        oci1 = mkNixosSystem "oci1" "x86_64-linux" [
-          {
-            polaris.services = {
-              caddy.enable = true;
-              caddy.endpoints = {
-                file-server.enable = true;
-                healthcheck.enable = true;
-                webdav.enable = true;
-                authtest.enable = true;
-              };
-              dns-server.enable = true;
-              kanidm.enable = true;
-              gatus.enable = true;
-              garage.enable = true;
-            };
-            services.caddy.virtualHosts."status.girl.pp.ua".extraConfig = ''
-              redir https://status.lunya.cc{uri} permanent
-            '';
-          }
-        ];
-        oci2 = mkNixosSystem "oci2" "x86_64-linux" [
-          {
-            polaris.services = {
-              caddy.enable = true;
-              caddy.endpoints = {
-                healthcheck.enable = true;
-                proxies.enable = true; # rip cocoa
-              };
-              dns-server.enable = true;
-              # redlib.enable = true;
-              ntfy.enable = true;
-              # projects.devlootbox.enable = true;
-            };
-            services.caddy.virtualHosts."redlib.girl.pp.ua".extraConfig = ''
-              redir https://old.reddit.com{uri} temporary
-            '';
-          }
-        ];
-        dell-sv = mkNixosSystem "dell-sv" "x86_64-linux" [
-          {
-            polaris.services = {
-              caddy.enable = true;
-              oauth2_proxy.enable = true;
-              dns-server = {
-                enable = true;
-                # zones = [ "polaris" ];
-              };
-              nextcloud.enable = true;
-              paperless.enable = true;
-              immich.enable = true;
-              # TODO: fix
-              # gayming.enable = true;
-              # TODO: fix
-              # supervisor-host = {
-              #   enable = true;
-              #   gpuPassthrough = true;
-              # };
-            };
-          }
-        ];
+        oci1 = mkNixosSystem "oci1" "x86_64-linux" [ ];
+        oci2 = mkNixosSystem "oci2" "x86_64-linux" [ ];
+        dell-sv = mkNixosSystem "dell-sv" "x86_64-linux" [ ];
       };
 
       # deploy-rs configuration
