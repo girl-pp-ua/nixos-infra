@@ -4,7 +4,7 @@
 
   imports = [
     ./hardware-configuration.nix
-    ../oci-amd-base/configuration.nix
+    ../../modules/host_shared/oci-amd-base.nix
   ];
 
   fileSystems = {

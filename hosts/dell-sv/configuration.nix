@@ -1,88 +1,27 @@
-{ pkgs, ... }:
-let
-  cur_rocmPackages = pkgs.rocmPackages;
-in
+{ ... }:
 {
   imports = [
     ./hardware-configuration.nix
+    ./modules/cpu.nix
+    ./modules/fs_data.nix
+    ./modules/fs_root.nix
+    ./modules/gpu.nix
+    ./modules/tpm2.nix
+    ./modules/wifi.nix
   ];
 
   system.stateVersion = "24.11";
 
   # kernel param
-  boot.kernelParams = [
-    "nohibernate"
-    "amd_pstate=active"
-    "usbcore.autosuspend=-1" # disable usb autosuspend
-  ];
-
-  services.udev.extraRules = ''
-    # disable usb autosuspend
-    ACTION=="add", SUBSYSTEM=="usb", TEST=="power/control", ATTR{power/control}="on"
-  '';
-
-  # this system has a gpu :3
-  hardware.graphics.enable = true;
-
-  # opencl
-  hardware.amdgpu.opencl.enable = true; # disable if cur_rocmPackages != pkgs.rocmPackages
-  hardware.graphics.extraPackages = [
-    cur_rocmPackages.clr
-    cur_rocmPackages.clr.icd
-  ];
-
-  # hip/rocm
-  systemd.tmpfiles.rules =
-    let
-      rocmEnv = pkgs.symlinkJoin {
-        name = "rocm-combined";
-        paths = with cur_rocmPackages; [
-          rocblas
-          hipblas
-          clr
-        ];
-      };
-    in
-    [
-      "L+    /opt/rocm   -    -    -     -    ${rocmEnv}"
-    ];
-
-  # fs
-  fileSystems =
-    let
-      btrfsOptions = [
-        "ssd"
-        "noatime"
-        "nodiscard"
-        "compress=zstd:1"
-      ];
-    in
-    {
-      "/".options = btrfsOptions;
-      "/home".options = btrfsOptions;
-      "/nix".options = btrfsOptions;
-      "/boot".options = [ "noatime" ];
-    };
 
   # services
-  services.fstrim.enable = true;
   # services.thermald.enable = true;
   # services.fwupd.enable = true;
 
   # cpu
-  hardware.cpu.amd.updateMicrocode = true;
 
   # reduce swappiness
   boot.kernel.sysctl = {
     "vm.swappiness" = 10;
   };
-
-  # HACK: wifi
-  networking.networkmanager.wifi.powersave = false;
-  boot.extraModprobeConfig = ''
-    options rtw88_core disable_lps_deep=y
-    options rtw88_pci disable_msi=y disable_aspm=y
-    options rtw_core disable_lps_deep=y
-    options rtw_pci disable_msi=y disable_aspm=y
-  '';
 }

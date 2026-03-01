@@ -9,6 +9,7 @@
     ./users.nix
     ./sudo.nix
     ./environment.nix
+    ./usb.nix
   ];
 
   i18n.defaultLocale = "en_US.UTF-8";
