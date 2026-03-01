@@ -9,6 +9,9 @@
     options = [
       "nofail"
       "x-systemd.requires=dev-mapper-data\\x2dmq5jJku1.device"
+      "noatime"
+      "nodiscard"
+      "compress=zstd:1"
     ];
   };
 }
