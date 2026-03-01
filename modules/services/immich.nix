@@ -37,12 +37,16 @@ in
       enable = true;
       host = "localhost";
       inherit (cfg) port;
-      accelerationDevices = null; # (allow all)
+      accelerationDevices = [
+        "/dev/dri/renderD128"
+        "/dev/dri/card1"
+      ];
       database = {
         enableVectors = false;
         enableVectorChord = true;
       };
       environment = {
+        IMMICH_ALLOW_SETUP = "false";
         IMMICH_CONFIG_FILE = config.sops.templates."immich.json".path;
       };
     };
