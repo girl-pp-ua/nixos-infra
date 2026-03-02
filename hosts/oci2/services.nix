@@ -12,7 +12,12 @@
     # projects.devlootbox.enable = true;
   };
 
-  services.caddy.virtualHosts."redlib.girl.pp.ua".extraConfig = ''
-    redir https://old.reddit.com{uri} temporary
-  '';
+  services.caddy.virtualHosts = {
+    "redlib.girl.pp.ua".extraConfig = ''
+      redir https://old.reddit.com{uri} temporary
+    '';
+    "photos.girl.pp.ua".extraConfig = ''
+      redir https://photos.lunya.cc{uri} permanent
+    '';
+  };
 }

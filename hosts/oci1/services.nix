@@ -14,7 +14,9 @@
     garage.enable = true;
   };
 
-  services.caddy.virtualHosts."status.girl.pp.ua".extraConfig = ''
-    redir https://status.lunya.cc{uri} permanent
-  '';
+  services.caddy.virtualHosts = {
+    "status.girl.pp.ua".extraConfig = ''
+      redir https://status.lunya.cc{uri} permanent
+    '';
+  };
 }

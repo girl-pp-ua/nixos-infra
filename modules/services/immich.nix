@@ -20,7 +20,7 @@ in
     };
     domain = lib.mkOption {
       type = lib.types.str;
-      default = "photos.girl.pp.ua";
+      default = "photos.lunya.cc";
     };
     client_id = lib.mkOption {
       type = lib.types.str;
