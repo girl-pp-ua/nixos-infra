@@ -7,7 +7,6 @@
     ./nextcloud
     ./gatus
     ./projects
-    ./supervisor-host.nix
     ./tailscale.nix
     ./redlib.nix
     ./ntfy.nix
@@ -16,8 +15,9 @@
     ./garage.nix
     ./immich.nix
     ./paperless.nix
-    ./gayming.nix
-    ./docker.nix
     ./backup.nix
+    ./experimental/supervisor-host.nix
+    ./experimental/gayming.nix
+    ./experimental/docker.nix
   ];
 }

@@ -13,10 +13,8 @@
       repo = "/mnt/data/backups";
     };
 
-    # TODO: fix
-    # gayming.enable = true;
-
-    # TODO: fix
+    # experimental stuff:
+    # gayming.enable = false;
     # supervisor-host = {
     #   enable = true;
     #   gpuPassthrough = true;

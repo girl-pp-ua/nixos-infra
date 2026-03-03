@@ -30,29 +30,31 @@ in
   config = lib.mkIf cfg.enable {
     polaris.services.docker.enable = true;
 
-    hardware.uinput.enable = true;
-
     virtualisation.oci-containers.containers.steam-headless = {
       image = "ghcr.io/steam-headless/steam-headless:latest";
       autoStart = true;
       hostname = "steam-headless";
-      ports = [
-        "${toString cfg.novncPort}:8083"
-        "${toString cfg.sunshineBasePort}:47989/tcp"
-        "${toString cfg.sunshineBasePort}:47989/udp"
-        "${toString (cfg.sunshineBasePort + 9)}:47998/udp"
-        "${toString (cfg.sunshineBasePort + 10)}:47999/udp"
-        "${toString (cfg.sunshineBasePort + 11)}:48000/udp"
-        "${toString (cfg.sunshineBasePort + 13)}:48002/udp"
-        "${toString (cfg.sunshineBasePort + 21)}:48010/tcp"
-        "${toString (cfg.sunshineBasePort + 21)}:48010/udp"
+      # ports = [
+      #   "${toString cfg.novncPort}:8083"
+      #   "${toString cfg.sunshineBasePort}:47989/tcp"
+      #   "${toString cfg.sunshineBasePort}:47989/udp"
+      #   "${toString (cfg.sunshineBasePort + 9)}:47998/udp"
+      #   "${toString (cfg.sunshineBasePort + 10)}:47999/udp"
+      #   "${toString (cfg.sunshineBasePort + 11)}:48000/udp"
+      #   "${toString (cfg.sunshineBasePort + 13)}:48002/udp"
+      #   "${toString (cfg.sunshineBasePort + 21)}:48010/tcp"
+      #   "${toString (cfg.sunshineBasePort + 21)}:48010/udp"
+      # ];
+      networks = [
+        "host"
       ];
       devices = [
-        "/dev/dri/card1"
         "/dev/dri/renderD128"
+        "/dev/dri/card1"
         "/dev/fuse"
       ];
       capabilities = {
+        SYS_ADMIN = true;
         SYS_NICE = true;
       };
       volumes = [
@@ -91,6 +93,12 @@ in
         "--memory=8g"
       ];
     };
+
+    hardware.uinput.enable = true;
+    # services.udev.enable = true;
+    # services.udev.extraRules = ''
+    #   KERNEL=="uinput", SUBSYSTEM=="misc", OPTIONS+="static_node=uinput", TAG+="uaccess"
+    # '';
 
     users.users.steam-headless = {
       inherit uid;
