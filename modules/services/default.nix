@@ -16,8 +16,6 @@
     ./immich.nix
     ./paperless.nix
     ./backup.nix
-    ./experimental/supervisor-host.nix
-    ./experimental/gayming.nix
-    ./experimental/docker.nix
+    ./experimental
   ];
 }
