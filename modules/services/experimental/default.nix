@@ -5,5 +5,6 @@
     # ./supervisor-host2.nix
     ./docker.nix
     ./gayming.nix
+    ./gayming-nixos.nix
   ];
 }
