@@ -67,9 +67,14 @@ in
       };
     };
 
-    systemd.services.oauth2-proxy.after = lib.optionals config.polaris.services.kanidm.enable [
-      "kanidm.service"
-    ];
+    systemd.services.oauth2-proxy = {
+      after = lib.optionals config.polaris.services.kanidm.enable [
+        "kanidm.service"
+      ];
+      environment = {
+        GODEBUG = "netdns=cgo";
+      };
+    };
 
     services.caddy.extraConfig = ''
       (oauth2_proxy_handle) {
