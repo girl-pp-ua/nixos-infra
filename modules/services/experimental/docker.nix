@@ -4,10 +4,10 @@
   ...
 }:
 let
-  cfg = config.polaris.services.docker;
+  cfg = config.polaris.services.experimental.docker;
 in
 {
-  options.polaris.services.docker = {
+  options.polaris.services.experimental.docker = {
     enable = lib.mkEnableOption "docker";
   };
   config = lib.mkIf cfg.enable {

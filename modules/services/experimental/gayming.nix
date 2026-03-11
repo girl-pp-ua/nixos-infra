@@ -5,12 +5,12 @@
   ...
 }:
 let
-  cfg = config.polaris.services.gayming;
+  cfg = config.polaris.services.experimental.gayming;
   gid = 600;
   uid = 600;
 in
 {
-  options.polaris.services.gayming = {
+  options.polaris.services.experimental.gayming = {
     enable = lib.mkEnableOption "gayming";
 
     dataPath = lib.mkOption {
@@ -28,7 +28,7 @@ in
     };
   };
   config = lib.mkIf cfg.enable {
-    polaris.services.docker.enable = true;
+    polaris.services.experimental.docker.enable = true;
 
     virtualisation.oci-containers.containers.steam-headless = {
       image = "ghcr.io/steam-headless/steam-headless:latest";

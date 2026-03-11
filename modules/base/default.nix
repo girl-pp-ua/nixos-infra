@@ -48,10 +48,10 @@
   };
 
   # disable suspend and hibernate
-  systemd.sleep.extraConfig = ''
-    AllowSuspend=no
-    AllowHibernation=no
-  '';
+  systemd.sleep.settings.Sleep = {
+    AllowSuspend = "no";
+    AllowHibernation = "no";
+  };
 
   # disable the lid switch (if present)
   services.logind.settings.Login = {
