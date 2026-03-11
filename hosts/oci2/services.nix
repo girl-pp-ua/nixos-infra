@@ -13,11 +13,9 @@
   };
 
   services.caddy.virtualHosts = {
-    "redlib.girl.pp.ua".extraConfig = ''
-      redir https://old.reddit.com{uri} temporary
-    '';
-    "photos.girl.pp.ua".extraConfig = ''
-      redir https://photos.lunya.cc{uri} permanent
-    '';
+    "redlib.girl.pp.ua".extraConfig = "redir https://old.reddit.com{uri} temporary";
+    "photos.girl.pp.ua".extraConfig = "redir https://photos.lunya.cc{uri} permanent";
+    "paperless.girl.pp.ua".extraConfig = "redir https://paperless.lunya.cc{uri} permanent";
+    "cloud.girl.pp.ua".extraConfig = "redir https://cloud.lunya.cc{uri} permanent";
   };
 }

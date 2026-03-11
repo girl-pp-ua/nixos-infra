@@ -22,7 +22,7 @@ in
     };
     domain = lib.mkOption {
       type = lib.types.str;
-      default = "paperless.girl.pp.ua";
+      default = "paperless.lunya.cc";
     };
     intraDomain = lib.mkOption {
       type = lib.types.str;

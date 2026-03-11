@@ -24,7 +24,7 @@ in
     enable = lib.mkEnableOption "nextcloud";
     domain = lib.mkOption {
       type = lib.types.str;
-      default = "cloud.girl.pp.ua";
+      default = "cloud.lunya.cc";
     };
     intraDomain = lib.mkOption {
       type = lib.types.str;

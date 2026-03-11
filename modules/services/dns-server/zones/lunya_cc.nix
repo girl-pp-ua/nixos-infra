@@ -42,8 +42,9 @@ in
 
       status.CNAME = [ "oci1" ];
       photos.CNAME = [ "dell-sv-proxy" ];
+      paperless.CNAME = [ "dell-sv-proxy" ];
+      cloud.CNAME = [ "dell-sv-proxy" ];
       # ntfy.CNAME = [ "oci2" ];
-      # cloud.CNAME = [ "dell-sv-proxy" ];
       # docs.CNAME = [ "dell-sv-proxy" ];
 
       _atproto.TXT = [ "did=did:plc:wvftnj7awmh4gwf3pt5mlvwq" ];
