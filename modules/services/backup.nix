@@ -27,6 +27,7 @@ in
           "/root/.cache"
           "/root/.nix-channels"
           "/nix"
+          "/var/lib/steam-headless"
         ];
         removableDevice = true;
         prune.keep = {
