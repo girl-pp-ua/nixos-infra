@@ -142,6 +142,7 @@ in
           # RDP
           services.xrdp = {
             enable = true;
+            package = pkgs.callPackage ./xrdp-glamor.nix { };
             openFirewall = true;
             defaultWindowManager = "xfce4-session";
           };
