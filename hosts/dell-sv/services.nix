@@ -15,8 +15,9 @@
 
     # experimental stuff:
     experimental = {
+      # gayming.enable = true;
+
       # gayming-nixos.enable = true;
-      # gayming.enable = false;
       # supervisor-host = {
       #   enable = true;
       #   gpuPassthrough = true;

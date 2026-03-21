@@ -34,6 +34,7 @@ in
       image = "ghcr.io/steam-headless/steam-headless:latest";
       autoStart = true;
       hostname = "steam-headless";
+
       # ports = [
       #   "${toString cfg.novncPort}:8083"
       #   "${toString cfg.sunshineBasePort}:47989/tcp"
@@ -45,22 +46,25 @@ in
       #   "${toString (cfg.sunshineBasePort + 21)}:48010/tcp"
       #   "${toString (cfg.sunshineBasePort + 21)}:48010/udp"
       # ];
-      networks = [
-        "host"
-      ];
+
+      networks = [ "host" ];
+
       devices = [
         "/dev/dri/renderD128"
-        "/dev/dri/card1"
+        # "/dev/dri/card1"
         "/dev/fuse"
       ];
+
       capabilities = {
         SYS_ADMIN = true;
         SYS_NICE = true;
       };
+
       volumes = [
         "${cfg.dataPath}/home:/home/default:rw"
         "${cfg.dataPath}/games:/mnt/games:rw"
       ];
+
       environment = {
         NAME = "SteamHeadless";
         TZ = "Europe/Warsaw";
@@ -83,12 +87,17 @@ in
         PGID = toString gid;
         UMASK = "022";
         USER_PASSWORD = secrets.steam-headless.user_password; # TODO avoid plaintext
+
+        FORCE_X11_DUMMY_CONFIG = "true";
       };
+
       extraOptions = [
-        "--ipc=host"
+        # "--ipc=host" # not sure this is needed
+        "--dns=1.1.1.1"
+        "--dns=8.8.8.8"
         "--ulimit=nofile=1024:524288"
-        "--security-opt=seccomp=unconfined"
-        "--security-opt=apparmor=unconfined"
+        # "--security-opt=seccomp=unconfined"
+        # "--security-opt=apparmor=unconfined"
         "--add-host=steam-headless:127.0.0.1"
         "--memory=8g"
       ];
