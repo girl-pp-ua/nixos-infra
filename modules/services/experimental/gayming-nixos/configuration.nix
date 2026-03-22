@@ -9,6 +9,7 @@
     ./modules/networking.nix
     ./modules/nix.nix
     ./modules/security.nix
+    ./modules/sunshine.nix
     ./modules/users.nix
     ./modules/xrdp.nix
     ./modules/xserver.nix

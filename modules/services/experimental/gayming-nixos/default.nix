@@ -29,18 +29,33 @@ in
       localAddress = "192.168.100.11";
       hostAddress6 = "fc00::1";
       localAddress6 = "fc00::2";
-      forwardPorts = [
-        {
-          containerPort = 3389;
-          hostPort = 3389;
-          protocol = "tcp";
-        }
-        {
-          containerPort = 3389;
-          hostPort = 3389;
-          protocol = "udp";
-        }
-      ];
+      # Boot up full system (i.e. invoke init)
+      # extraFlags = [ "--boot" ];
+      forwardPorts =
+        let
+          forward = protocol: port: {
+            containerPort = port;
+            hostPort = port;
+            inherit protocol;
+          };
+          tcp = forward "tcp";
+          udp = forward "udp";
+        in
+        [
+          # RDP
+          (tcp 3389)
+          (udp 3389)
+
+          # Sunshine
+          (tcp 47984)
+          (tcp 47989)
+          (tcp 48010)
+          (udp 47998)
+          (udp 47999)
+          (udp 48000)
+          (udp 48002)
+          (udp 48010)
+        ];
       additionalCapabilities = [
         "CAP_SYS_NICE"
       ];

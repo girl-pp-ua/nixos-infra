@@ -14,6 +14,7 @@
         "uinput"
       ];
       shell = pkgs.bashInteractive;
+      linger = true;
       # packages = with pkgs; [ ];
     };
   };

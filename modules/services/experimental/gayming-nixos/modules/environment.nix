@@ -19,4 +19,6 @@
   };
 
   fonts.enableDefaultPackages = true;
+
+  services.dbus.implementation = "broker";
 }
