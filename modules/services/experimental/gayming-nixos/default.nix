@@ -63,6 +63,19 @@ in
           (udp 48000)
           (udp 48002)
           (udp 48010)
+
+          # steam peer discovery
+          (udp 27036)
+          # steam remote play
+          (tcp 27036)
+          (tcp 27037)
+          (udp 10400)
+          (udp 10401)
+          (udp 27031)
+          (udp 27032)
+          (udp 27033)
+          (udp 27034)
+          (udp 27035)
         ];
       additionalCapabilities = [
         "CAP_SYS_NICE"
@@ -77,10 +90,10 @@ in
           node = "/dev/uinput";
           modifier = "rwm";
         }
-        {
-          node = "/dev/input/*";
-          modifier = "rwm";
-        }
+        # {
+        #   node = "/dev/input/*";
+        #   modifier = "rwm";
+        # }
       ];
       bindMounts = {
         "/dev/dri" = {
@@ -91,10 +104,10 @@ in
           hostPath = "/dev/uinput";
           isReadOnly = false;
         };
-        "/dev/input" = {
-          hostPath = "/dev/input";
-          isReadOnly = false;
-        };
+        # "/dev/input" = {
+        #   hostPath = "/dev/input";
+        #   isReadOnly = false;
+        # };
       };
       specialArgs = {
         inherit secrets;

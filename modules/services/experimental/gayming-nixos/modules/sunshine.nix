@@ -5,7 +5,6 @@
     package = pkgs.sunshine;
     autoStart = true;
     openFirewall = true;
-    # capSysAdmin = true;
   };
 
   environment.etc."xdg/autostart/sunshine.desktop".text = ''
