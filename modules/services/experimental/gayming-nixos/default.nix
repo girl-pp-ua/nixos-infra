@@ -33,6 +33,25 @@ in
       pkgs.sunshine
     ];
 
+    # steam firewall
+    networking.firewall = {
+      allowedTCPPorts = [
+        27036
+        27037
+      ];
+      allowedUDPPorts = [
+        27036 # Peer discovery
+        10400
+        10401
+      ];
+      allowedUDPPortRanges = [
+        {
+          from = 27031;
+          to = 27035;
+        }
+      ];
+    };
+
     containers.gayming = {
       autoStart = true;
       privateNetwork = true;
@@ -61,7 +80,7 @@ in
           (udp 3389)
 
           # Sunshine
-          # 47984-47990/tcp
+          47984-47990/tcp
           (tcp 47984)
           (tcp 47985)
           (tcp 47986)

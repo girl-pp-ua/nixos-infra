@@ -29,6 +29,19 @@
     #       Depth       24
     #   EndSubSection
     # '';
+
+    # inputClassSections = [
+    #   ''
+    #     Identifier "ContainerKeyboards"
+    #     MatchIsKeyboard "on"
+    #     Driver "evdev"
+    #   ''
+    #   ''
+    #     Identifier "ContainerPointers"
+    #     MatchIsPointer "on"
+    #     Driver "evdev"
+    #   ''
+    # ];
   };
 
   services.xserver.desktopManager.xfce = {
