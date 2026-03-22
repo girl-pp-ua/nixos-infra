@@ -19,7 +19,7 @@ in
       enable = true;
       internalInterfaces = [ "ve-*" ];
       externalInterface = "eth0"; # XXX: this might need to be changed
-      # enableIPv6 = true;
+      enableIPv6 = true;
     };
     containers.gayming = {
       autoStart = true;
