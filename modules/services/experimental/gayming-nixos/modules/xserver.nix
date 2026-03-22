@@ -16,38 +16,19 @@
     enableScreensaver = false;
   };
 
-  # systemd.services.xorg-session = {
-  #   wantedBy = [ "multi-user.target" ];
-  #   after = [ "systemd-udev-settle.service" ];
-  #   serviceConfig = {
-  #     Type = "simple";
-  #     Restart = "on-failure";
-  #     RestartSec = 3;
-  #     ExecStart = "${pkgs.xorg-server}/bin/Xorg :0 vt1 -nolisten tcp -auth /home/gamer/.Xauthority";
-  #   };
-  # };
-
-  # systemd.user.services.xfce-session = {
-  #   wantedBy = [ "default.target" ];
-  #   after = [ "xorg-session.service" ];
-  #   environment = {
-  #     DISPLAY = ":0";
-  #     XAUTHORITY = "/home/gamer/.Xauthority";
-  #   };
-  #   serviceConfig = {
-  #     Type = "simple";
-  #     Restart = "on-failure";
-  #     ExecStart = "${pkgs.xfce4-session}/bin/xfce4-session";
-  #   };
-  # };
-
-  # systemd.user.services.sunshine = {
-  #   wantedBy = [ "default.target" ];
-  #   after = [ "xorg-session.service" ];
-  #   environment = {
-  #     DISPLAY = ":0";
-  #     XAUTHORITY = "/home/gamer/.Xauthority";
-  #   };
-  # };
-
+  # HACK: probabaly not the most straight-forward way to start a X11 session... but it works
+  systemd.services.xrdp-session = {
+    wantedBy = [ "multi-user.target" ];
+    after = [
+      "xrdp.service"
+      "xrdp-sesman.service"
+    ];
+    serviceConfig = {
+      Type = "oneshot";
+      User = "gamer";
+      ExecStartPre = "${pkgs.coreutils}/bin/sleep 3";
+      ExecStart = "${pkgs.xrdp}/bin/xrdp-sesrun -g 1920x1080";
+      RemainAfterExit = true;
+    };
+  };
 }

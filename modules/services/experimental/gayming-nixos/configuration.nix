@@ -15,6 +15,4 @@
     ./modules/xserver.nix
   ];
 
-  # hardware
-  hardware.uinput.enable = true;
 }

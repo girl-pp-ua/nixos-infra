@@ -15,12 +15,20 @@ in
   config = lib.mkIf cfg.enable {
     boot.enableContainers = true;
     virtualisation.containers.enable = true;
+
     networking.nat = {
       enable = true;
       internalInterfaces = [ "ve-*" ];
       externalInterface = "eth0"; # XXX: this might need to be changed
       enableIPv6 = true;
     };
+
+    hardware.uinput.enable = true;
+    # not sure this is needed on host:
+    # services.udev.extraRules = ''
+    #   KERNEL=="uinput", MODE="0666"
+    # '';
+
     containers.gayming = {
       autoStart = true;
       privateNetwork = true;
@@ -58,16 +66,33 @@ in
         ];
       additionalCapabilities = [
         "CAP_SYS_NICE"
+        "CAP_IPC_LOCK" # allow mlock etc
       ];
       allowedDevices = [
         {
           node = "/dev/dri/renderD128";
           modifier = "rwm";
         }
+        {
+          node = "/dev/uinput";
+          modifier = "rwm";
+        }
+        {
+          node = "/dev/input/*";
+          modifier = "rwm";
+        }
       ];
       bindMounts = {
         "/dev/dri" = {
           hostPath = "/dev/dri";
+          isReadOnly = false;
+        };
+        "/dev/uinput" = {
+          hostPath = "/dev/uinput";
+          isReadOnly = false;
+        };
+        "/dev/input" = {
+          hostPath = "/dev/input";
           isReadOnly = false;
         };
       };
