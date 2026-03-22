@@ -1,6 +1,7 @@
 # TODO gayming as nixos container
 {
   config,
+  pkgs,
   lib,
   secrets,
   ...
@@ -25,20 +26,25 @@ in
 
     hardware.uinput.enable = true;
     # not sure this is needed on host:
-    # services.udev.extraRules = ''
-    #   KERNEL=="uinput", MODE="0666"
-    # '';
+    services.udev.extraRules = ''
+      KERNEL=="uinput", MODE="0666"
+    '';
+    services.udev.packages = [
+      pkgs.sunshine
+    ];
 
     containers.gayming = {
       autoStart = true;
       privateNetwork = true;
-      privateUsers = "pick";
+      # TODO fix input with privateUsers
+      # privateUsers = "pick";
       hostAddress = "192.168.100.10";
       localAddress = "192.168.100.11";
       hostAddress6 = "fc00::1";
       localAddress6 = "fc00::2";
       # Boot up full system (i.e. invoke init)
       # extraFlags = [ "--boot" ];
+      # extraFlags = [ "--privileged" ];
       forwardPorts =
         let
           forward = protocol: port: {
@@ -55,18 +61,26 @@ in
           (udp 3389)
 
           # Sunshine
+          # 47984-47990/tcp
           (tcp 47984)
+          (tcp 47985)
+          (tcp 47986)
+          (tcp 47987)
+          (tcp 47988)
           (tcp 47989)
+          (tcp 47990)
+          # 48010:48010
           (tcp 48010)
+          (udp 48010)
+          # 47998-48000/udp
           (udp 47998)
           (udp 47999)
           (udp 48000)
-          (udp 48002)
-          (udp 48010)
 
-          # steam peer discovery
+          # Steam
+          # peer discovery
           (udp 27036)
-          # steam remote play
+          # remote play
           (tcp 27036)
           (tcp 27037)
           (udp 10400)
@@ -80,20 +94,34 @@ in
       additionalCapabilities = [
         "CAP_SYS_NICE"
         "CAP_IPC_LOCK" # allow mlock etc
+        "CAP_MKNOD"
+        # "CAP_SYS_ADMIN"
       ];
       allowedDevices = [
         {
           node = "/dev/dri/renderD128";
-          modifier = "rwm";
+          modifier = "rw";
+        }
+        {
+          node = "/dev/dri/card1";
+          modifier = "rw";
         }
         {
           node = "/dev/uinput";
           modifier = "rwm";
         }
-        # {
-        #   node = "/dev/input/*";
-        #   modifier = "rwm";
-        # }
+        {
+          node = "char-input";
+          modifier = "rw";
+        }
+        {
+          node = "char-drm";
+          modifier = "rw";
+        }
+        {
+          node = "/dev/input";
+          modifier = "rw";
+        }
       ];
       bindMounts = {
         "/dev/dri" = {
@@ -104,10 +132,10 @@ in
           hostPath = "/dev/uinput";
           isReadOnly = false;
         };
-        # "/dev/input" = {
-        #   hostPath = "/dev/input";
-        #   isReadOnly = false;
-        # };
+        "/dev/input" = {
+          hostPath = "/dev/input";
+          isReadOnly = false;
+        };
       };
       specialArgs = {
         inherit secrets;
