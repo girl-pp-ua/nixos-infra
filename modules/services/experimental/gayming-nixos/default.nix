@@ -1,7 +1,6 @@
 # TODO gayming as nixos container
 {
   config,
-  pkgs,
   lib,
   secrets,
   ...
@@ -10,6 +9,9 @@ let
   cfg = config.polaris.services.experimental.gayming-nixos;
 in
 {
+  imports = [
+    ./uinput.nix
+  ];
   options.polaris.services.experimental.gayming-nixos = {
     enable = lib.mkEnableOption "gayming-nixos";
   };
@@ -23,15 +25,6 @@ in
       externalInterface = "eth0"; # XXX: this might need to be changed
       enableIPv6 = true;
     };
-
-    hardware.uinput.enable = true;
-    # not sure this is needed on host:
-    services.udev.extraRules = ''
-      KERNEL=="uinput", MODE="0666"
-    '';
-    services.udev.packages = [
-      pkgs.sunshine
-    ];
 
     # steam firewall
     networking.firewall = {
@@ -55,8 +48,8 @@ in
     containers.gayming = {
       autoStart = true;
       privateNetwork = true;
-      # TODO fix input with privateUsers
-      # privateUsers = "pick";
+      # TODO fix input with privateUsers?
+      privateUsers = "pick";
       hostAddress = "192.168.100.10";
       localAddress = "192.168.100.11";
       hostAddress6 = "fc00::1";
@@ -80,7 +73,7 @@ in
           (udp 3389)
 
           # Sunshine
-          47984-47990/tcp
+          # 47984-47990/tcp
           (tcp 47984)
           (tcp 47985)
           (tcp 47986)
@@ -121,24 +114,20 @@ in
           node = "/dev/dri/renderD128";
           modifier = "rw";
         }
+        # {
+        #   node = "/dev/dri/card1";
+        #   modifier = "rw";
+        # }
         {
-          node = "/dev/dri/card1";
+          node = "char-drm";
           modifier = "rw";
-        }
-        {
-          node = "/dev/uinput";
-          modifier = "rwm";
         }
         {
           node = "char-input";
           modifier = "rw";
         }
         {
-          node = "char-drm";
-          modifier = "rw";
-        }
-        {
-          node = "/dev/input";
+          node = "/dev/vuinput";
           modifier = "rw";
         }
       ];
@@ -148,13 +137,13 @@ in
           isReadOnly = false;
         };
         "/dev/uinput" = {
-          hostPath = "/dev/uinput";
+          hostPath = "/dev/vuinput";
           isReadOnly = false;
         };
-        "/dev/input" = {
-          hostPath = "/dev/input";
-          isReadOnly = false;
-        };
+        # "/dev/input" = {
+        #   hostPath = "/dev/input";
+        #   isReadOnly = false;
+        # };
       };
       specialArgs = {
         inherit secrets;

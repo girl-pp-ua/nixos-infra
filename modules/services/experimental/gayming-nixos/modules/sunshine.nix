@@ -1,8 +1,7 @@
-{ config, pkgs, ... }:
+{ ... }:
 {
   services.sunshine = {
     enable = true;
-    package = pkgs.sunshine;
     openFirewall = true;
     # autoStart = true;
     # capSysAdmin = true;
@@ -15,8 +14,4 @@
     Exec=sunshine
     X-GNOME-Autostart-enabled=true
   '';
-
-  # services.udev.extraRules = ''
-  #   KERNEL=="uinput", MODE="0666"
-  # '';
 }
