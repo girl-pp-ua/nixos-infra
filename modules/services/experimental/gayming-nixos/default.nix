@@ -168,7 +168,7 @@ in
         { ... }:
         {
           imports = [
-            ./configuration.nix
+            ./configuration
           ];
         };
     };
