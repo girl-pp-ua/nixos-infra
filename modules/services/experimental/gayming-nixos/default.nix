@@ -9,12 +9,16 @@ let
   cfg = config.polaris.services.experimental.gayming-nixos;
 in
 {
-  imports = [
-    ./uinput.nix
-  ];
   options.polaris.services.experimental.gayming-nixos = {
     enable = lib.mkEnableOption "gayming-nixos";
+    vuinputd.enable = lib.mkEnableOption "vuinputd" // {
+      description = "Use vuinputd for virtual input devices instead of exposing /dev/uinput directly";
+    };
   };
+  imports = [
+    ./uinput-vuinputd.nix
+    ./uinput-base.nix
+  ];
   config = lib.mkIf cfg.enable {
     boot.enableContainers = true;
     virtualisation.containers.enable = true;
@@ -127,7 +131,7 @@ in
           modifier = "rw";
         }
         {
-          node = "/dev/vuinput";
+          node = if cfg.vuinputd.enable then "/dev/vuinput" else "/dev/uinput";
           modifier = "rw";
         }
       ];
@@ -137,7 +141,7 @@ in
           isReadOnly = false;
         };
         "/dev/uinput" = {
-          hostPath = "/dev/vuinput";
+          hostPath = if cfg.vuinputd.enable then "/dev/vuinput" else "/dev/uinput";
           isReadOnly = false;
         };
         # "/dev/input" = {

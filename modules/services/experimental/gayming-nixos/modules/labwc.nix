@@ -6,6 +6,7 @@
     labwc
     labwc-tweaks
     alacritty
+    pcmanfm
   ];
 
   systemd.services.labwc-headless =
@@ -43,6 +44,9 @@
         <menu id="root-menu">
           <item label="Terminal">
             <action name="Execute" command="lab-sensible-terminal" />
+          </item>
+          <item label="File Manager">
+            <action name="Execute" command="pcmanfm" />
           </item>
           <item label="Steam">
             <action name="Execute" command="steam" />

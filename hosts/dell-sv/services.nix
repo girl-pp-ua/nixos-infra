@@ -15,7 +15,10 @@
 
     # experimental stuff:
     experimental = {
-      gayming-nixos.enable = true;
+      gayming-nixos = {
+        enable = true;
+        vuinputd.enable = true;
+      };
     };
   };
 }

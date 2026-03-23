@@ -9,10 +9,8 @@ let
   vuinputd = pkgs.callPackage ./packages/vuinputd.nix { };
 in
 {
-  config = lib.mkIf cfg.enable {
-    hardware.uinput.enable = true;
+  config = lib.mkIf (cfg.enable && cfg.vuinputd.enable) {
     services.udev.packages = [
-      pkgs.sunshine
       vuinputd
     ];
 
