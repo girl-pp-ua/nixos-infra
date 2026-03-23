@@ -108,7 +108,6 @@
         ExecStart = "${pkgs.labwc}/bin/labwc -V --debug -C ${labwc-config}";
         KillMode = "mixed";
         TimeoutStopSec = 15;
-        Nice = -4;
         AmbientCapabilities = "CAP_SYS_NICE";
       };
     };

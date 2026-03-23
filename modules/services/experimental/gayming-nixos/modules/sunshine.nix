@@ -28,8 +28,10 @@
       ExecStart = "${pkgs.sunshine}/bin/sunshine";
       KillMode = "mixed";
       TimeoutStopSec = 15;
-      Nice = -4;
-      AmbientCapabilities = "CAP_SYS_NICE";
+      AmbientCapabilities = [
+        "CAP_SYS_NICE"
+        "CAP_MKNOD"
+      ];
     };
   };
 }
