@@ -1,9 +1,78 @@
-{ pkgs, lib, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
 {
   services.sunshine = {
     enable = true;
     openFirewall = true;
     autoStart = false;
+    settings = {
+      capture = "wlr";
+      gamepad = "xone";
+      origin_web_ui_allowed = "pc";
+      # external_ip = "100.64.0.2";
+      encoder = "amdvce";
+      upnp = "disabled";
+      address_family = "both";
+      system_tray = "disabled";
+    };
+    applications = {
+      env = {
+        PATH = "$(PATH):$(HOME)/.local/bin";
+      };
+      apps =
+        let
+          setRes = {
+            do = ''sh -c "${pkgs.wlr-randr}/bin/wlr-randr --output HEADLESS-1 --custom-mode ''${SUNSHINE_CLIENT_WIDTH}x''${SUNSHINE_CLIENT_HEIGHT}@''${SUNSHINE_CLIENT_FPS}Hz" '';
+            undo = "${pkgs.wlr-randr}/bin/wlr-randr --output HEADLESS-1 --custom-mode 1280x720@60Hz";
+          };
+        in
+        [
+          {
+            name = "Desktop";
+            image-path = "desktop.png";
+            prep-cmd = [
+              setRes
+            ];
+          }
+          {
+            name = "Desktop (720p)";
+            image-path = "desktop.png";
+            prep-cmd = [
+              {
+                do = "${pkgs.wlr-randr}/bin/wlr-randr --output HEADLESS-1 --custom-mode 1280x720@60Hz";
+                undo = "";
+              }
+            ];
+          }
+          {
+            name = "Steam";
+            image-path = "steam.png";
+            prep-cmd = [
+              setRes
+              {
+                do = "";
+                undo = "setsid steam steam://exit";
+              }
+            ];
+            detached = [
+              "setsid steam -bigpicture steam://open/bigpicture"
+            ];
+          }
+          {
+            name = "QLaunch";
+            image-path = "";
+            prep-cmd = [
+              setRes
+            ];
+            cmd = "eden -f -qlaunch";
+          }
+        ];
+
+    };
   };
 
   systemd.services.sunshine = {
@@ -25,7 +94,7 @@
       User = "gamer";
       Type = "simple";
       ExecStartPre = "${pkgs.coreutils}/bin/sleep 5";
-      ExecStart = "${pkgs.sunshine}/bin/sunshine";
+      inherit (config.systemd.user.services.sunshine.serviceConfig) ExecStart;
       KillMode = "mixed";
       TimeoutStopSec = 15;
       LogRateLimitIntervalSec = 30;

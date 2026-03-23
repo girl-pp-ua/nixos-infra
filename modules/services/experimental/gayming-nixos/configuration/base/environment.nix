@@ -10,5 +10,6 @@
     mesa-demos
     vulkan-tools
     dbus
+    wlr-randr
   ];
 }

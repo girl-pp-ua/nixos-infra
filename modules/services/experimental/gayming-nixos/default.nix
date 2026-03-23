@@ -114,7 +114,7 @@ in
       additionalCapabilities = [
         "CAP_SYS_NICE"
         "CAP_IPC_LOCK" # allow mlock etc
-        "CAP_MKNOD"
+        # "CAP_MKNOD"
         # "CAP_SYS_ADMIN"
       ];
       allowedDevices = [
