@@ -13,5 +13,6 @@
     ./modules/security.nix
     ./modules/sunshine.nix
     ./modules/users.nix
+    ./modules/uinput-guest.nix
   ];
 }
