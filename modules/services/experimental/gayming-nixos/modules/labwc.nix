@@ -7,6 +7,7 @@
     labwc-tweaks
     alacritty
     pcmanfm
+    mousepad
   ];
 
   systemd.services.labwc-headless =
@@ -48,14 +49,18 @@
           <item label="File Manager">
             <action name="Execute" command="pcmanfm" />
           </item>
+          <item label="Text Editor">
+            <action name="Execute" command="mousepad" />
+          </item>
+          <item label="Web Browser">
+            <action name="Execute" command="firefox" />
+          </item>
+          <separator />
           <item label="Steam">
             <action name="Execute" command="steam" />
           </item>
           <item label="Steam (Big Picture)">
             <action name="Execute" command="steam -bigpicture steam://open/bigpicture" />
-          </item>
-          <item label="Firefox">
-            <action name="Execute" command="firefox" />
           </item>
           <separator />
           <item label="Reconfigure">
@@ -103,6 +108,8 @@
         ExecStart = "${pkgs.labwc}/bin/labwc -V --debug -C ${labwc-config}";
         KillMode = "mixed";
         TimeoutStopSec = 15;
+        Nice = -4;
+        AmbientCapabilities = "CAP_SYS_NICE";
       };
     };
 

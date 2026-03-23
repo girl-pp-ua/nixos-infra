@@ -31,23 +31,23 @@ in
     };
 
     # steam firewall
-    networking.firewall = {
-      allowedTCPPorts = [
-        27036
-        27037
-      ];
-      allowedUDPPorts = [
-        27036 # Peer discovery
-        10400
-        10401
-      ];
-      allowedUDPPortRanges = [
-        {
-          from = 27031;
-          to = 27035;
-        }
-      ];
-    };
+    # networking.firewall = {
+    #   allowedTCPPorts = [
+    #     27036
+    #     27037
+    #   ];
+    #   allowedUDPPorts = [
+    #     27036 # Peer discovery
+    #     10400
+    #     10401
+    #   ];
+    #   allowedUDPPortRanges = [
+    #     {
+    #       from = 27031;
+    #       to = 27035;
+    #     }
+    #   ];
+    # };
 
     containers.gayming = {
       autoStart = true;
@@ -149,6 +149,10 @@ in
         #   isReadOnly = false;
         # };
       };
+      tmpfs = [
+        "/dev/shm"
+        "/tmp"
+      ];
       specialArgs = {
         inherit secrets;
       };
