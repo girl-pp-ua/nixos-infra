@@ -8,6 +8,7 @@
     alacritty
     pcmanfm
     mousepad
+    pavucontrol
   ];
 
   systemd.services.labwc-headless =
@@ -54,6 +55,9 @@
           </item>
           <item label="Web Browser">
             <action name="Execute" command="firefox" />
+          </item>
+          <item label="Audio Control">
+            <action name="Execute" command="pavucontrol" />
           </item>
 
           <separator />

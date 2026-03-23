@@ -14,5 +14,6 @@
     ./modules/sunshine.nix
     ./modules/users.nix
     ./modules/uinput-guest.nix
+    ./modules/pipewire.nix
   ];
 }

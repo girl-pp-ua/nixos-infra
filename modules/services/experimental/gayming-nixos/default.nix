@@ -156,10 +156,10 @@ in
           hostPath = "/dev/shm";
           isReadOnly = false;
         };
-        # "/dev/input" = {
-        #   hostPath = "/dev/input";
-        #   isReadOnly = false;
-        # };
+        "/dev/input" = {
+          hostPath = "/dev/input";
+          isReadOnly = false;
+        };
       };
       specialArgs = {
         inherit secrets;

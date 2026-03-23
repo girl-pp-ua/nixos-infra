@@ -12,6 +12,7 @@
         "audio"
         "input"
         "uinput"
+        "pipewire"
       ];
       shell = pkgs.bashInteractive;
       linger = true;

@@ -14,8 +14,8 @@ rustPlatform.buildRustPackage (finalAttrs: {
   src = fetchFromGitHub {
     owner = "joleuger";
     repo = "vuinputd";
-    tag = finalAttrs.version;
-    hash = "sha256-X9uGLz86k0RveCasi/sjBwCy5xZAcGAOQWnOYD1VZWE=";
+    rev = "4c4fefb0c6590ec1f273fa80e82d090539033523";
+    hash = "sha256-zqMLi0sHozb4oMS4lndCOzFB+wuX8ehvjDOaQx8wraU=";
   };
 
   postPatch = ''
