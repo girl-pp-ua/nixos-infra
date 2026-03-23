@@ -149,10 +149,6 @@ in
         #   isReadOnly = false;
         # };
       };
-      tmpfs = [
-        "/dev/shm"
-        "/tmp"
-      ];
       specialArgs = {
         inherit secrets;
       };
