@@ -6,13 +6,12 @@
   imports = [
     ./modules/environment.nix
     ./modules/graphics.nix
+    ./modules/labwc.nix
     ./modules/networking.nix
     ./modules/nix.nix
     ./modules/security.nix
     ./modules/sunshine.nix
     ./modules/users.nix
-    ./modules/xrdp.nix
-    ./modules/xserver.nix
   ];
 
   services.libinput.enable = true;

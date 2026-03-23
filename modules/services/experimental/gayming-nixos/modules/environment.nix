@@ -10,6 +10,8 @@
     vulkan-tools
   ];
 
+  fonts.enableDefaultPackages = true;
+
   programs.firefox.enable = true;
 
   programs.steam = {
@@ -19,15 +21,13 @@
     protontricks.enable = true;
     extest.enable = true;
   };
-  environment.etc."xdg/autostart/steam.desktop".text = ''
-    [Desktop Entry]
-    Type=Application
-    Name=Steam
-    Exec=${pkgs.steam}/bin/steam
-    X-GNOME-Autostart-enabled=true
-  '';
 
-  fonts.enableDefaultPackages = true;
-
-  services.dbus.implementation = "broker";
+  # environment.etc."xdg/autostart/steam.desktop".text = ''
+  #   [Desktop Entry]
+  #   Type=Application
+  #   Name=Steam
+  #   Exec=${pkgs.steam}/bin/steam
+  #   X-GNOME-Autostart-enabled=true
+  # '';
+  # services.dbus.implementation = "broker";
 }
