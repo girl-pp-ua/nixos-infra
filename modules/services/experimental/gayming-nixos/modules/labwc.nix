@@ -55,6 +55,7 @@
           <item label="Web Browser">
             <action name="Execute" command="firefox" />
           </item>
+
           <separator />
           <item label="Steam">
             <action name="Execute" command="steam" />
@@ -62,6 +63,8 @@
           <item label="Steam (Big Picture)">
             <action name="Execute" command="steam -bigpicture steam://open/bigpicture" />
           </item>
+
+          <!--
           <separator />
           <item label="Reconfigure">
             <action name="Reconfigure" />
@@ -69,6 +72,8 @@
           <item label="Exit">
             <action name="Exit" />
           </item>
+          -->
+
         </menu>
 
         </openbox_menu>
