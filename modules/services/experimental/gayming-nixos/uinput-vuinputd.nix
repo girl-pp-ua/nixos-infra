@@ -25,7 +25,7 @@ in
       after = [ "systemd-udevd.service" ];
       wants = [ "systemd-udevd.service" ];
       serviceConfig = {
-        ExecStart = "${vuinputd}/bin/vuinputd --major 120 --minor 414795";
+        ExecStart = "${vuinputd}/bin/vuinputd --major 120 --minor 414795 --device-policy sanitized";
         Restart = "on-failure";
         # TODO: granular device permissions
         User = "root";
