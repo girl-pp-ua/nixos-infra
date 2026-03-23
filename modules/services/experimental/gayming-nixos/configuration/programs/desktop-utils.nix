@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, lib, ... }:
 {
   # basic desktop apps
   environment.systemPackages = with pkgs; [
@@ -8,7 +8,7 @@
     pavucontrol
   ];
 
-  gayming.labwc-headless.menuItems = [
+  gayming.labwc-headless.menuItems = lib.mkBefore [
     {
       label = "Terminal";
       command = "alacritty";

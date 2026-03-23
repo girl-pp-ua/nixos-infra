@@ -28,6 +28,8 @@
       ExecStart = "${pkgs.sunshine}/bin/sunshine";
       KillMode = "mixed";
       TimeoutStopSec = 15;
+      LogRateLimitIntervalSec = 30;
+      LogRateLimitBurst = 100;
     };
   };
 }
