@@ -20,6 +20,10 @@ in
     ./uinput-base.nix
   ];
   config = lib.mkIf cfg.enable {
+    polaris.services.backup.extraExclude = [
+      "/var/lib/nixos-containers/gayming"
+    ];
+
     boot.enableContainers = true;
     virtualisation.containers.enable = true;
 
