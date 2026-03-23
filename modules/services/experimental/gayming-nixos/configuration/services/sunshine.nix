@@ -24,7 +24,7 @@
       # do we run it as user?
       User = "gamer";
       Type = "simple";
-      ExecStartPre = "${pkgs.coreutils}/bin/sleep 3";
+      ExecStartPre = "${pkgs.coreutils}/bin/sleep 5";
       ExecStart = "${pkgs.sunshine}/bin/sunshine";
       KillMode = "mixed";
       TimeoutStopSec = 15;

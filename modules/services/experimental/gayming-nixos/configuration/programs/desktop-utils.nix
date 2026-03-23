@@ -6,6 +6,7 @@
     pcmanfm
     mousepad
     pavucontrol
+    wdisplays
   ];
 
   gayming.labwc-headless.menuItems = lib.mkBefore [
@@ -24,6 +25,10 @@
     {
       label = "PulseAudio Volume Control";
       command = "pavucontrol";
+    }
+    {
+      label = "Display Settings";
+      command = "wdisplays";
     }
   ];
 }
