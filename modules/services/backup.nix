@@ -10,6 +10,16 @@ in
       default = "";
       description = "The backup repository";
     };
+    extraInclude = lib.mkOption {
+      type = lib.types.listOf lib.types.str;
+      default = [ ];
+      description = "Extra paths to include in the backup";
+    };
+    extraExclude = lib.mkOption {
+      type = lib.types.listOf lib.types.str;
+      default = [ ];
+      description = "Extra paths to exclude from the backup";
+    };
   };
 
   config = lib.mkIf cfg.enable {
@@ -21,13 +31,15 @@ in
           "/home"
           "/root"
           "/var/lib"
-        ];
+        ]
+        ++ cfg.extraInclude;
         exclude = [
           "/home/*/.cache"
           "/root/.cache"
           "/root/.nix-channels"
           "/nix"
-        ];
+        ]
+        ++ cfg.extraExclude;
         removableDevice = true;
         prune.keep = {
           within = "7d"; # keep everything from the last week
