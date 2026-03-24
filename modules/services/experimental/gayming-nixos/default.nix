@@ -108,6 +108,10 @@ in
           node = if cfg.vuinputd.enable then "/dev/vuinput" else "/dev/uinput";
           modifier = "rw";
         }
+        {
+          node = "/dev/shm";
+          modifier = "rwm";
+        }
       ];
       bindMounts = {
         "/dev/dri" = {
@@ -118,14 +122,15 @@ in
           hostPath = if cfg.vuinputd.enable then "/dev/vuinput" else "/dev/uinput";
           isReadOnly = false;
         };
+        "/dev/shm" = {
+          hostPath = "/dev/shm";
+          isReadOnly = false;
+        };
         "/dev/input" = {
-          hostPath = "/dev/input"; # TODO check if needed
+          hostPath = "/dev/input";
           isReadOnly = false;
         };
       };
-      tmpfs = [
-        "/dev/shm"
-      ];
       specialArgs = {
         inherit secrets;
       };
