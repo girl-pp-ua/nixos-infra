@@ -99,7 +99,7 @@ in
         requires = [ "dbus.socket" ];
         wants = [ "dbus.socket" ];
         environment = {
-          WLR_RENDERER = "vulkan";
+          # WLR_RENDERER = "vulkan";
           WLR_BACKENDS = "headless,libinput";
           WLR_LIBINPUT_NO_DEVICES = "1";
           LIBSEAT_BACKEND = "noop";
