@@ -25,34 +25,33 @@
       };
       apps =
         let
-          setRes = {
-            do = ''sh -c "${pkgs.wlr-randr}/bin/wlr-randr --output HEADLESS-1 --custom-mode ''${SUNSHINE_CLIENT_WIDTH}x''${SUNSHINE_CLIENT_HEIGHT}@''${SUNSHINE_CLIENT_FPS}Hz" '';
-            undo = "${pkgs.wlr-randr}/bin/wlr-randr --output HEADLESS-1 --custom-mode 1280x720@60Hz";
-          };
+          setModeClient = ''sh -c "${pkgs.wlr-randr}/bin/wlr-randr --output HEADLESS-1 --custom-mode ''${SUNSHINE_CLIENT_WIDTH}x''${SUNSHINE_CLIENT_HEIGHT}@''${SUNSHINE_CLIENT_FPS}Hz" '';
+          setModeStatic = mode: "${pkgs.wlr-randr}/bin/wlr-randr --output HEADLESS-1 --custom-mode ${mode}";
+          setModeDefault = setModeStatic "1280x720@60Hz";
         in
         [
           {
             name = "Desktop";
             image-path = "desktop.png";
             prep-cmd = [
-              setRes
+              {
+                do = setModeClient;
+                undo = setModeDefault;
+              }
             ];
           }
           {
-            name = "Desktop (720p)";
-            image-path = "desktop.png";
-            prep-cmd = [
-              {
-                do = "${pkgs.wlr-randr}/bin/wlr-randr --output HEADLESS-1 --custom-mode 1280x720@60Hz";
-                undo = "";
-              }
-            ];
+            name = "Direct";
+            image-path = "";
           }
           {
             name = "Steam";
             image-path = "steam.png";
             prep-cmd = [
-              setRes
+              {
+                do = setModeClient;
+                undo = setModeDefault;
+              }
               {
                 do = "";
                 undo = "setsid steam steam://exit";
@@ -66,7 +65,10 @@
             name = "QLaunch";
             image-path = "";
             prep-cmd = [
-              setRes
+              {
+                do = setModeStatic "1920x1080@60Hz";
+                undo = setModeDefault;
+              }
             ];
             cmd = "eden -f -qlaunch";
           }
