@@ -34,25 +34,6 @@ in
       enableIPv6 = true;
     };
 
-    # steam firewall
-    # networking.firewall = {
-    #   allowedTCPPorts = [
-    #     27036
-    #     27037
-    #   ];
-    #   allowedUDPPorts = [
-    #     27036 # Peer discovery
-    #     10400
-    #     10401
-    #   ];
-    #   allowedUDPPortRanges = [
-    #     {
-    #       from = 27031;
-    #       to = 27035;
-    #     }
-    #   ];
-    # };
-
     containers.gayming = {
       autoStart = true;
       privateNetwork = true;
@@ -76,10 +57,6 @@ in
           udp = forward "udp";
         in
         [
-          # RDP
-          (tcp 3389)
-          (udp 3389)
-
           # Sunshine
           # 47984-47990/tcp
           (tcp 47984)
@@ -113,19 +90,12 @@ in
         ];
       additionalCapabilities = [
         "CAP_SYS_NICE"
-        "CAP_IPC_LOCK" # allow mlock etc
-        # "CAP_MKNOD"
-        # "CAP_SYS_ADMIN"
       ];
       allowedDevices = [
         {
           node = "/dev/dri/renderD128";
           modifier = "rw";
         }
-        # {
-        #   node = "/dev/dri/card1";
-        #   modifier = "rw";
-        # }
         {
           node = "char-drm";
           modifier = "rw";
@@ -138,10 +108,6 @@ in
           node = if cfg.vuinputd.enable then "/dev/vuinput" else "/dev/uinput";
           modifier = "rw";
         }
-        {
-          node = "/dev/shm";
-          modifier = "rwm";
-        }
       ];
       bindMounts = {
         "/dev/dri" = {
@@ -152,15 +118,14 @@ in
           hostPath = if cfg.vuinputd.enable then "/dev/vuinput" else "/dev/uinput";
           isReadOnly = false;
         };
-        "/dev/shm" = {
-          hostPath = "/dev/shm";
-          isReadOnly = false;
-        };
         "/dev/input" = {
-          hostPath = "/dev/input";
+          hostPath = "/dev/input"; # TODO check if needed
           isReadOnly = false;
         };
       };
+      tmpfs = [
+        "/dev/shm"
+      ];
       specialArgs = {
         inherit secrets;
       };
