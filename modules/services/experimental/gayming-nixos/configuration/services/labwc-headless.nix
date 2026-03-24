@@ -53,6 +53,11 @@ in
           in
           ''
             ${pkgs.swaybg}/bin/swaybg -i ${wallpaper} -m fill -o HEADLESS-1 >/dev/null 2>&1 &
+
+            ${pkgs.lxqt.lxqt-policykit}/bin/lxqt-policykit-agent >/dev/null 2>&1 &
+
+            mako >/dev/null 2>&1 &
+
             exec ${pkgs.systemd}/bin/systemd-notify READY=1
           ''
         );
