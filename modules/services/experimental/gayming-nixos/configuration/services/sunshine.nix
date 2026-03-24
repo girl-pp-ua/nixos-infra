@@ -101,6 +101,10 @@
       TimeoutStopSec = 15;
       LogRateLimitIntervalSec = 30;
       LogRateLimitBurst = 100;
+      Restart = "on-failure";
+      RestartSec = 2;
+      StartLimitIntervalSec = 30;
+      StartLimitBurst = 5;
     };
   };
 }

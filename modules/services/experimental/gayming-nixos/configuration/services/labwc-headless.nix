@@ -44,9 +44,18 @@ in
     ];
     systemd.services.labwc-headless =
       let
-        labwc-autostart = pkgs.writeShellScript "autostart" ''
-          exec ${pkgs.systemd}/bin/systemd-notify READY=1
-        '';
+        labwc-autostart = pkgs.writeShellScript "autostart" (
+          let
+            wallpaper = pkgs.fetchurl {
+              url = "https://i.imgur.com/Q2our4U.jpeg";
+              hash = "sha256-QVAuNFiYQ2NcwIq9ffu0sttg8PS0D4XkppGe+C+ZJcE=";
+            };
+          in
+          ''
+            ${pkgs.swaybg}/bin/swaybg -i ${wallpaper} -m fill -o HEADLESS-1 >/dev/null 2>&1 &
+            exec ${pkgs.systemd}/bin/systemd-notify READY=1
+          ''
+        );
         labwc-menu = pkgs.writeText "menu.xml" ''
           <openbox_menu>
           <menu id="client-menu">
