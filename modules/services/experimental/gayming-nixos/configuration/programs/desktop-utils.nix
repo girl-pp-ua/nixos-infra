@@ -7,6 +7,7 @@
     mousepad
     pavucontrol
     wdisplays
+    jstest-gtk
   ];
 
   gayming.labwc-headless.menuItems = lib.mkBefore [
@@ -23,12 +24,16 @@
       command = "mousepad";
     }
     {
-      label = "PulseAudio Volume Control";
+      label = "Audio Settings";
       command = "pavucontrol";
     }
     {
       label = "Display Settings";
       command = "wdisplays";
+    }
+    {
+      label = "Gamepad Test";
+      command = "jstest-gtk";
     }
   ];
 }

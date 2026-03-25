@@ -11,5 +11,6 @@
     vulkan-tools
     dbus
     wlr-randr
+    linuxConsoleTools
   ];
 }
