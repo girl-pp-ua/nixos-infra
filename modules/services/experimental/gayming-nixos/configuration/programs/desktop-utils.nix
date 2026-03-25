@@ -8,6 +8,7 @@
     pavucontrol
     wdisplays
     jstest-gtk
+    antimicrox
   ];
 
   gayming.labwc-headless.menuItems = lib.mkBefore [
@@ -34,6 +35,10 @@
     {
       label = "Gamepad Test";
       command = "jstest-gtk";
+    }
+    {
+      label = "AntiMicroX";
+      command = "antimicrox";
     }
   ];
 }
