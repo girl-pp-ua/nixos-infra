@@ -8,29 +8,30 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     deploy-rs = {
-      url = "github:PhilTaken/deploy-rs/phil/async-build-and-push";
+      # fork with https://github.com/serokell/deploy-rs/pull/271 merged
+      url = "github:neunenak/deploy-rs";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     dns = {
       url = "github:nix-community/dns.nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    redlib = {
-      url = "github:redlib-org/redlib";
-      flake = false; # (using as source for pkgs.redlib)
-    };
+    # redlib = {
+    #   url = "github:redlib-org/redlib";
+    #   flake = false; # (using as source for pkgs.redlib)
+    # };
     nextcloud-testumgebung = {
       url = "github:onny/nixos-nextcloud-testumgebung";
       flake = false;
     };
 
+    devlootbox = {
+      url = "git+file:./submodules/devlootbox";
+    };
+
     secrets = {
       url = "git+file:./submodules/secrets";
       flake = false;
-    };
-    devlootbox = {
-      url = "git+file:./submodules/devlootbox";
-      # inputs.nixpkgs.follows = "nixpkgs";
     };
   };
   outputs =
