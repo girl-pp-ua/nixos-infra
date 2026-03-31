@@ -101,6 +101,8 @@ in
         PAPERLESS_ACCOUNT_DEFAULT_GROUPS = "New Users";
         # PAPERLESS_SOCIALACCOUNT_DEFAULT_PERMISSIONS = "view_uisettings";
         # PAPERLESS_SOCIALACCOUNT_ADMIN_GROUPS = "paperless.admin@${cfg-svc.kanidm.domain}";
+
+        # TODO: add PAPERLESS_ADMIN_USER
       };
     };
 

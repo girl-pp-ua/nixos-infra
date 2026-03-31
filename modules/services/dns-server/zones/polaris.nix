@@ -10,7 +10,7 @@ in
     SOA = {
       nameServer = "localhost";
       adminEmail = "nobody@localhost";
-      serial = 2026010400; # YYYYMMDDNN
+      serial = 2026033100; # YYYYMMDDNN
     };
 
     subdomains = {
@@ -22,6 +22,7 @@ in
       nextcloud.CNAME = [ "dell-sv" ];
       paperless.CNAME = [ "dell-sv" ];
       immich.CNAME = [ "dell-sv" ];
+      forgejo.CNAME = [ "dell-sv" ];
     };
   };
 }

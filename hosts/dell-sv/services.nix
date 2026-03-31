@@ -7,6 +7,7 @@
     nextcloud.enable = true;
     paperless.enable = true;
     immich.enable = true;
+    forgejo.enable = true;
 
     backup = {
       enable = true;

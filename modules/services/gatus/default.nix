@@ -145,6 +145,10 @@ in
                   "[STATUS] == 200"
                   "[BODY].res == pong"
                 ];
+                forgejo = mkUrl' "https://${cfg-svc.forgejo.domain}/api/v1/version" [
+                  "[STATUS] == 200"
+                  "[BODY] == pat(*version*)"
+                ];
               };
               nextcloud-apps = mkEndpoints {
                 nextcloud-whiteboard = mkUrl' "https://${cfg-svc.nextcloud.domain}/whiteboard/" [

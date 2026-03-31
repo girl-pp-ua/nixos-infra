@@ -25,7 +25,7 @@ in
   };
   config = lib.mkIf cfg.enable {
     services.kanidm = {
-      package = pkgs.kanidm_1_9.withSecretProvisioning;
+      package = pkgs.kanidmWithSecretProvisioning_1_9;
       server = {
         enable = true;
         settings = {
@@ -69,6 +69,7 @@ in
               "paperless.django_admin"
               "immich.access"
               "immich.role.admin"
+              "forgejo.access"
             ];
           };
           niko = {
@@ -83,6 +84,7 @@ in
               "nextcloud.access"
               "immich.access"
               "immich.role.user"
+              "forgejo.access"
             ];
           };
           svitlana = {
@@ -248,8 +250,34 @@ in
               valuesByGroup."immich.role.admin" = [ "admin" ];
             };
           };
-
           # TODO: support quota
+        };
+
+        groups."forgejo.access" = { };
+        systems.oauth2.${cfg-svc.forgejo.client_id} = {
+          displayName = "Forgejo";
+          imageFile = "${root}/assets/sso-images/forgejo-wordmark.svg";
+          originLanding = "https://${cfg-svc.forgejo.domain}/";
+
+          allowInsecureClientDisablePkce = true;
+          preferShortUsername = true;
+
+          basicSecretFile = config.sops.secrets."kanidm.forgejo/clientSecret".path;
+          originUrl = [
+            "https://${cfg-svc.forgejo.domain}/user/oauth2/kanidm/callback"
+            "https://${cfg-svc.forgejo.intraDomain}/user/oauth2/kanidm/callback"
+          ];
+
+          scopeMaps."forgejo.access" = [
+            "openid"
+            "email"
+            "profile"
+            "groups"
+          ];
+          claimMaps.groups = {
+            joinType = "array";
+            valuesByGroup."forgejo.access" = [ "forgejo_access" ];
+          };
         };
       };
     };
@@ -289,6 +317,9 @@ in
         };
         "kanidm.immich/clientSecret" = kanidmSecret // {
           key = "immich/clientSecret";
+        };
+        "kanidm.forgejo/clientSecret" = kanidmSecret // {
+          key = "forgejo/clientSecret";
         };
         "kanidm_tls_key" = kanidmSecret // {
           sopsFile = "${inputs.secrets}/certs/tls_key.sops.pem";

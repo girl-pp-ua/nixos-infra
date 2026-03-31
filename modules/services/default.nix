@@ -4,18 +4,19 @@
     # Base services
     ./caddy
     ./dns-server
-    ./nextcloud
+    ./experimental
     ./gatus
+    ./nextcloud
     ./projects
-    ./tailscale.nix
-    ./redlib.nix
-    ./ntfy.nix
-    ./kanidm.nix
-    ./oauth2-proxy.nix
+    ./backup.nix
+    ./forgejo.nix
     ./garage.nix
     ./immich.nix
+    ./kanidm.nix
+    ./ntfy.nix
+    ./oauth2-proxy.nix
     ./paperless.nix
-    ./backup.nix
-    ./experimental
+    ./redlib.nix
+    ./tailscale.nix
   ];
 }
