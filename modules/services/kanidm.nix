@@ -261,7 +261,6 @@ in
           imageFile = "${root}/assets/sso-images/forgejo-wordmark.svg";
           originLanding = "https://${cfg-svc.forgejo.domain}/";
 
-          allowInsecureClientDisablePkce = true;
           preferShortUsername = true;
 
           basicSecretFile = config.sops.secrets."kanidm.forgejo/clientSecret".path;
