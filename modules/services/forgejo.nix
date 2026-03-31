@@ -245,6 +245,7 @@ in
     systemd.tmpfiles.rules = [
       "d '${config.services.forgejo.customDir}/public' 0750 ${config.services.forgejo.user} ${config.services.forgejo.group} - -"
       "d '${config.services.forgejo.customDir}/public/assets' 0750 ${config.services.forgejo.user} ${config.services.forgejo.group} - -"
+      "r '${config.services.forgejo.customDir}/public/assets/css'"
       "L '${config.services.forgejo.customDir}/public/assets/css' - - - - ${catppuccin-gitea}"
     ];
 
