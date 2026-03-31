@@ -160,7 +160,9 @@ in
                   "[BODY].productName == Collabora Online Development Edition"
                 ];
                 nextcloud-push-notify = mkUrl' "https://${cfg-svc.nextcloud.domain}/push/test/cookie" [
-                  "[STATUS] == 200"
+                  # TODO sth better to test for
+                  "[STATUS] == 400"
+                  "[BODY] == pat(*Missing request header \"token\"*)"
                 ];
               };
             });
