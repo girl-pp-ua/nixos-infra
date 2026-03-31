@@ -76,6 +76,10 @@ in
           USERNAME = "nickname"; # preferred_username?
           UPDATE_AVATAR = true;
         };
+        picture = {
+          GRAVATAR_SOURCE = "gravatar";
+          ENABLE_FEDERATED_AVATAR = true;
+        };
         # oauth2 = {
         #   JWT_SIGNING_ALGORITHM = "ES256";
         # };
@@ -113,7 +117,8 @@ in
           scopes = "profile email groups";
           skip-local-2fa = true;
           allow-username-change = true;
-          admin-group = "forgejo_admin";
+          group-claim-name = "groups";
+          admin-group = "forgejo.admin@sso.girl.pp.ua";
         };
         providerArgs = lib.cli.toCommandLineShellGNU { } provider;
         providerSecret = config.sops.secrets."forgejo/clientSecret".path;

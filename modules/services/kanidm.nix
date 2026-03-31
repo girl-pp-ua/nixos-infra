@@ -159,12 +159,6 @@ in
             "email"
             "profile"
           ];
-          claimMaps.groups = {
-            joinType = "array";
-            valuesByGroup."oracle-cloud-infrastructure.access" = [
-              "oracle_cloud_infrastructure_access"
-            ];
-          };
         };
 
         groups."nextcloud.access" = { };
@@ -190,10 +184,6 @@ in
             "profile"
             "groups"
           ];
-          claimMaps.groups = {
-            joinType = "array";
-            valuesByGroup."nextcloud.access" = [ "nextcloud_access" ];
-          };
           claimMaps.preferred_username_override = {
             joinType = "ssv";
             valuesByGroup."nextcloud.preferred_username_override.luna" = [ "grfgh" ];
@@ -222,11 +212,6 @@ in
             "groups"
             "openid"
           ];
-          claimMaps.groups = {
-            joinType = "array";
-            valuesByGroup."paperless.access" = [ "paperless_access" ];
-            # valuesByGroup."paperless.admin" = [ "paperless_admin" ];
-          };
         };
 
         groups."immich.access" = {
@@ -259,16 +244,10 @@ in
             "email"
             "profile"
           ];
-          claimMaps = {
-            groups = {
-              joinType = "array";
-              valuesByGroup."immich.access" = [ "immich_access" ];
-            };
-            immich_role = {
-              joinType = "array";
-              valuesByGroup."immich.role.user" = [ "user" ];
-              valuesByGroup."immich.role.admin" = [ "admin" ];
-            };
+          claimMaps.immich_role = {
+            joinType = "array";
+            valuesByGroup."immich.role.user" = [ "user" ];
+            valuesByGroup."immich.role.admin" = [ "admin" ];
           };
           # TODO: support quota
         };
@@ -297,11 +276,6 @@ in
             "profile"
             "groups"
           ];
-          claimMaps.groups = {
-            joinType = "array";
-            valuesByGroup."forgejo.access" = [ "forgejo_access" ];
-            valuesByGroup."forgejo.admin" = [ "forgejo_admin" ];
-          };
         };
       };
     };
