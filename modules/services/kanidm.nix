@@ -74,23 +74,6 @@ in
             ];
           };
 
-          # # yes, another one.
-          # luna = {
-          #   displayName = "Luna";
-          #   mailAddresses = [
-          #     "luna@lunya.cc" # placeholder
-          #   ];
-          #   groups = [
-          #     "nextcloud.access"
-          #     "paperless.access"
-          #     "paperless.django_admin"
-          #     "immich.access"
-          #     "immich.role.admin"
-          #     "forgejo.access"
-          #     "forgejo.admin"
-          #   ];
-          # };
-
           niko = {
             displayName = "Niko";
             mailAddresses = [ "nyanbinary@tutamail.com" ];
@@ -185,6 +168,9 @@ in
         };
 
         groups."nextcloud.access" = { };
+        groups."nextcloud.preferred_username_override.luna" = {
+          members = [ "luna" ];
+        };
         systems.oauth2.${cfg-svc.nextcloud.client_id} = {
           displayName = "Nextcloud";
           imageFile = "${root}/assets/sso-images/nextcloud.svg";
@@ -207,6 +193,10 @@ in
           claimMaps.groups = {
             joinType = "array";
             valuesByGroup."nextcloud.access" = [ "nextcloud_access" ];
+          };
+          claimMaps.preferred_username_override = {
+            joinType = "ssv";
+            valuesByGroup."nextcloud.preferred_username_override.luna" = [ "grfgh" ];
           };
         };
 

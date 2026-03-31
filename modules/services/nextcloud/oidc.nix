@@ -45,7 +45,8 @@ in
           --group-provisioning 1 \
           --group-whitelist-regex "nextcloud\..*" \
           --group-restrict-login-to-whitelist 1 \
-          --mapping-uid "preferred_username";
+          --mapping-uid "preferred_username_override | preferred_username" \
+          --resolve-nested-claims 1;
       '';
     };
   };
