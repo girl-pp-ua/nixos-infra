@@ -35,7 +35,10 @@ in
       package = pkgs.forgejo;
       lfs.enable = true;
       dump.enable = true;
-      database.createDatabase = true;
+      database = {
+        type = "postgres";
+        createDatabase = true;
+      };
       useWizard = false;
       secrets = {
         security.SECRET_KEY = lib.mkForce config.sops.secrets."forgejo/secret_key".path;
@@ -49,9 +52,15 @@ in
           DOMAIN = cfg.domain;
           PROTOCOL = "http+unix";
           DISABLE_SSH = true; # SSH_PORT = 2222; TODO
+          OFFLINE_MODE = false;
+          ENABLE_GZIP = true;
+          LANDING_PAGE = "explore";
         };
         security = {
           INSTALL_LOCK = true;
+          PASSWORD_HASH_ALGO = "argon2";
+          CSRF_COOKIE_HTTP_ONLY = true;
+          DISABLE_QUERY_AUTH_TOKEN = true;
         };
         service = {
           DISABLE_REGISTRATION = false;
@@ -72,17 +81,15 @@ in
         oauth2_client = {
           OPENID_CONNECT_SCOPES = "profile email groups";
           ENABLE_AUTO_REGISTRATION = true;
-          ACCOUNT_LINKING = "auto";
+          ACCOUNT_LINKING = "login";
           USERNAME = "nickname"; # preferred_username?
           UPDATE_AVATAR = true;
         };
         picture = {
+          DISABLE_GRAVATAR = false;
           GRAVATAR_SOURCE = "gravatar";
           ENABLE_FEDERATED_AVATAR = true;
         };
-        # oauth2 = {
-        #   JWT_SIGNING_ALGORITHM = "ES256";
-        # };
         repository = {
           DEFAULT_BRANCH = "master"; # sorry im too used to this one :p
         };
@@ -115,7 +122,6 @@ in
           key = cfg.client_id;
           auto-discover-url = idp.oidc_discovery;
           scopes = "profile email groups";
-          skip-local-2fa = true;
           allow-username-change = true;
           group-claim-name = "groups";
           admin-group = "forgejo.admin@sso.girl.pp.ua";
