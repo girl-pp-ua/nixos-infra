@@ -55,7 +55,7 @@ in
         groups."idm_service_account_admins".overwriteMembers = false;
 
         persons = {
-          grfgh = {
+          luna = {
             displayName = "Luna";
             mailAddresses = [
               "luna.prasol@proton.me"
@@ -70,13 +70,35 @@ in
               "immich.access"
               "immich.role.admin"
               "forgejo.access"
+              "forgejo.admin"
             ];
           };
+
+          # # yes, another one.
+          # luna = {
+          #   displayName = "Luna";
+          #   mailAddresses = [
+          #     "luna@lunya.cc" # placeholder
+          #   ];
+          #   groups = [
+          #     "nextcloud.access"
+          #     "paperless.access"
+          #     "paperless.django_admin"
+          #     "immich.access"
+          #     "immich.role.admin"
+          #     "forgejo.access"
+          #     "forgejo.admin"
+          #   ];
+          # };
+
           niko = {
             displayName = "Niko";
             mailAddresses = [ "nyanbinary@tutamail.com" ];
-            groups = [ ];
+            groups = [
+              "forgejo.access"
+            ];
           };
+
           lucy = {
             displayName = "Lucy";
             mailAddresses = [ secrets.lucy.email ];
@@ -87,6 +109,7 @@ in
               "forgejo.access"
             ];
           };
+
           svitlana = {
             displayName = "Svitlana";
             mailAddresses = [ secrets.svitlana.email ];
@@ -187,7 +210,9 @@ in
           };
         };
 
-        groups."paperless.access" = { };
+        groups."paperless.access" = {
+          members = [ "paperless.django_admin" ];
+        };
         groups."paperless.django_admin" = { };
         systems.oauth2.${cfg-svc.paperless.client_id} = {
           displayName = "Paperless-ngx";
@@ -214,7 +239,12 @@ in
           };
         };
 
-        groups."immich.access" = { };
+        groups."immich.access" = {
+          members = [
+            "immich.role.user"
+            "immich.role.admin"
+          ];
+        };
         groups."immich.role.user" = { };
         groups."immich.role.admin" = { };
         systems.oauth2.${cfg-svc.immich.client_id} = {
@@ -253,7 +283,10 @@ in
           # TODO: support quota
         };
 
-        groups."forgejo.access" = { };
+        groups."forgejo.access" = {
+          members = [ "forgejo.admin" ];
+        };
+        groups."forgejo.admin" = { };
         systems.oauth2.${cfg-svc.forgejo.client_id} = {
           displayName = "Forgejo";
           imageFile = "${root}/assets/sso-images/forgejo-wordmark.svg";
@@ -277,6 +310,7 @@ in
           claimMaps.groups = {
             joinType = "array";
             valuesByGroup."forgejo.access" = [ "forgejo_access" ];
+            valuesByGroup."forgejo.admin" = [ "forgejo_admin" ];
           };
         };
       };

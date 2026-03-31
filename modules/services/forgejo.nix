@@ -113,7 +113,7 @@ in
           scopes = "profile email groups";
           skip-local-2fa = true;
           allow-username-change = true;
-          # --admin-group todo
+          admin-group = "forgejo_admin";
         };
         providerArgs = lib.cli.toCommandLineShellGNU { } provider;
         providerSecret = config.sops.secrets."forgejo/clientSecret".path;
