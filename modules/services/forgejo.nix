@@ -12,8 +12,8 @@ let
     inherit (cfg) client_id;
   };
   catppuccin-gitea = pkgs.fetchzip {
-    url = "https://github.com/catppuccin/gitea/releases/download/v1.0.2/catppuccin-gitea.tar.gz";
-    hash = "sha256-rZHLORwLUfIFcB6K9yhrzr+UwdPNQVSadsw6rg8Q7gs=";
+    url = "https://github.com/griffi-gh/catppuccin-gitea/releases/download/v1.0.1/catppuccin-gitea.tar.gz";
+    hash = "sha256-fpQM3ghvMOuzP6B9p0b0ogjkk6/KZVOc/5e65JJVSso=";
     stripRoot = false;
   };
 in
