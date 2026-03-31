@@ -16,21 +16,23 @@
       url = "github:nix-community/dns.nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    # submodules:
+    secrets = {
+      url = "git+file:./submodules/secrets";
+      flake = false;
+    };
+    devlootbox = {
+      url = "git+file:./submodules/devlootbox";
+    };
+
+    # misc deps:
     # redlib = {
     #   url = "github:redlib-org/redlib";
     #   flake = false; # (using as source for pkgs.redlib)
     # };
     nextcloud-testumgebung = {
       url = "github:onny/nixos-nextcloud-testumgebung";
-      flake = false;
-    };
-
-    devlootbox = {
-      url = "git+file:./submodules/devlootbox";
-    };
-
-    secrets = {
-      url = "git+file:./submodules/secrets";
       flake = false;
     };
   };
