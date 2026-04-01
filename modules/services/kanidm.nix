@@ -62,7 +62,7 @@ in
               "prasol258@gmail.com"
             ];
             groups = [
-              "authtest.access"
+              "oauth2_proxy.authtest_access"
               "oracle-cloud-infrastructure.access"
               "nextcloud.access"
               "paperless.access"
@@ -105,10 +105,13 @@ in
           };
         };
 
-        groups."authtest.access" = { };
-        groups."oauth2_proxy".members = [
-          "authtest.access"
+        groups."oauth2_proxy.authtest_access" = { };
+        groups."oauth2_proxy.paperless_django_admin".members = [
           "paperless.django_admin"
+        ];
+        groups."oauth2_proxy.access".members = [
+          "oauth2_proxy.authtest_access"
+          "oauth2_proxy.paperless_django_admin"
         ];
         systems.oauth2.${cfg-svc.oauth2_proxy.client_id} = {
           displayName = "oauth2-proxy";
@@ -124,7 +127,7 @@ in
             cfg-svc.paperless.intraDomain
           ];
 
-          scopeMaps."oauth2_proxy" = [
+          scopeMaps."oauth2_proxy.access" = [
             "profile"
             "email"
             "groups"
@@ -132,8 +135,8 @@ in
           ];
 
           claimMaps.groups.valuesByGroup = {
-            "authtest.access" = [ "authtest_access" ];
-            "paperless.django_admin" = [ "paperless_django_admin" ];
+            "oauth2_proxy.authtest_access" = [ "authtest_access" ];
+            "oauth2_proxy.paperless_django_admin" = [ "paperless_django_admin" ];
           };
         };
 
@@ -186,7 +189,7 @@ in
           };
         };
 
-        groups."paperless.access".members = [ "paperless.django_admin" ];
+        groups."paperless.access" = { };
         groups."paperless.django_admin" = { };
         systems.oauth2.${cfg-svc.paperless.client_id} = {
           displayName = "Paperless-ngx";
