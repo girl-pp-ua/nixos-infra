@@ -27,7 +27,6 @@ in
           userinfo_bearer_validation = true;
           auto_provision = true;
           soft_auto_provision = true; # allow login into existing accounts
-          allow_multiple_user_backends = false;
         };
 
         hide_login_form = true; # use ?direct=1 to bypass/login as root
@@ -36,6 +35,8 @@ in
         lost_password_link = "disabled";
       };
       extraOCCCommands = ''
+        occ config:app:set user_oidc allow_multiple_user_backends --type=string --value=0
+
         occ user_oidc:provider girlcock \
           --discoveryuri="${idp.oidc_discovery}" \
           --clientid="${cfg-nextcloud.client_id}" \
