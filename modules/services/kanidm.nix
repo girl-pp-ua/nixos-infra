@@ -191,6 +191,7 @@ in
         };
 
         groups."paperless.access" = { };
+        # XXX: this is currently no-op, except allowing access to admin page through oauth2-proxy
         groups."paperless.django_admin" = { };
         systems.oauth2.${cfg-svc.paperless.client_id} = {
           displayName = "Paperless-ngx";
