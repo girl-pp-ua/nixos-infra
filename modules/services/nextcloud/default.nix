@@ -80,6 +80,9 @@ in
       # php stuff
       phpOptions = {
         "opcache.interned_strings_buffer" = "64";
+        "opcache.save_comments" = "1";
+        "opcache.jit" = "1255";
+        "opcache.jit_buffer_size" = "8M";
       };
       phpExtraExtensions =
         ext: with ext; [
@@ -105,13 +108,37 @@ in
           forms
           tables
           bookmarks
-          # recognize (no support for nextcloud33)
+          groupfolders
+          # recognize # TODO: blocked on nextcloud 33 support
           impersonate
           end_to_end_encryption
           integration_paperless
           dav_push
           qownnotesapi
+          files_retention
+          guests
+          # markdownreadme
+          # iframewidget
+          # external
+          # externalportal
+          # linkboard # seems interesting
           ;
+
+        # TODO: use https://github.com/helsinki-systems/nc4nix instead? or at least their json assets
+
+        # https://apps.nextcloud.com/apps/integration_immich
+        integration_immich = pkgs.fetchNextcloudApp {
+          url = "https://github.com/xXRoxXeRXx/integration_immich/releases/download/v1.0.9/integration_immich.tar.gz";
+          hash = "sha256-nZTEyT7OW1ppG+gF3RGmrLgZO7niVPdOF27BGBYWDow=";
+          license = "agpl3Plus";
+        };
+
+        # https://apps.nextcloud.com/apps/files_lock
+        files_lock = pkgs.fetchNextcloudApp {
+          url = "https://github.com/nextcloud-releases/files_lock/releases/download/v33.0.1/files_lock-v33.0.1.tar.gz";
+          hash = "sha256-9hbc+b6qIdmfT0AulZqW6Y9Jz6hLKW2HCH1SIBVFjQg=";
+          license = "agpl3Plus";
+        };
       };
     };
 
