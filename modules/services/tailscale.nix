@@ -30,10 +30,6 @@ in
     systemd.services.tailscaled.restartIfChanged = false; # just don't.
     # restartIfChanged = !polaris.services.tailscale.isTsDeploy;
 
-    networking.firewall = {
-      trustedInterfaces = [ "tailscale0" ];
-    };
-
     sops.secrets."tailscale/authKey" = {
       mode = "0400";
       owner = "root";

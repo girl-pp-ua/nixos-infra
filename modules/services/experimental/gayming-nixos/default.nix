@@ -34,6 +34,37 @@ in
       enableIPv6 = true;
     };
 
+    # see forwardPorts below
+    networking.firewall.interfaces.tailscale0 = {
+      allowedTCPPorts = [
+        48010
+        27036
+        27037
+      ];
+      allowedUDPPorts = [
+        48010
+        27036
+        10400
+        10401
+      ];
+      allowedTCPPortRanges = [
+        {
+          from = 47984;
+          to = 47990;
+        }
+      ];
+      allowedUDPPortRanges = [
+        {
+          from = 47998;
+          to = 48000;
+        }
+        {
+          from = 27031;
+          to = 27035;
+        }
+      ];
+    };
+
     containers.gayming = {
       autoStart = true;
       privateNetwork = true;
@@ -43,9 +74,6 @@ in
       localAddress = "192.168.100.11";
       hostAddress6 = "fc00::1";
       localAddress6 = "fc00::2";
-      # Boot up full system (i.e. invoke init)
-      # extraFlags = [ "--boot" ];
-      # extraFlags = [ "--privileged" ];
       forwardPorts =
         let
           forward = protocol: port: {
@@ -66,7 +94,7 @@ in
           (tcp 47988)
           (tcp 47989)
           (tcp 47990)
-          # 48010:48010
+          # 48010:48010/tcp,udp
           (tcp 48010)
           (udp 48010)
           # 47998-48000/udp
