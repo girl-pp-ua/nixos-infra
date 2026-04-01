@@ -185,6 +185,7 @@ in
             "groups"
           ];
           claimMaps.preferred_username_override = {
+            joinType = "csv";
             valuesByGroup."nextcloud.preferred_username_override.luna" = [ "grfgh" ];
           };
         };
@@ -242,6 +243,7 @@ in
             "profile"
           ];
           claimMaps.immich_role = {
+            joinType = "csv";
             valuesByGroup."immich.role.user" = [ "user" ];
             valuesByGroup."immich.role.admin" = [ "admin" ];
           };
