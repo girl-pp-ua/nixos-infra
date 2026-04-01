@@ -106,10 +106,16 @@ in
         };
 
         groups."authtest.access" = { };
+        groups."oauth2_proxy".members = [
+          "authtest.access"
+          "paperless.django_admin"
+        ];
         systems.oauth2.${cfg-svc.oauth2_proxy.client_id} = {
           displayName = "oauth2-proxy";
           imageFile = "${root}/assets/sso-images/oauth2-proxy.svg";
           originLanding = "https://authtest.girl.pp.ua/";
+
+          preferShortUsername = true;
 
           basicSecretFile = config.sops.secrets."kanidm.oauth2_proxy/clientSecret".path;
           originUrl = lib.map (domain: "https://${domain}${cfg-svc.oauth2_proxy.urlPrefix}/callback") [
@@ -118,25 +124,16 @@ in
             cfg-svc.paperless.intraDomain
           ];
 
-          preferShortUsername = true;
-          scopeMaps =
-            let
-              scope = [
-                "profile"
-                "email"
-                "groups"
-                "openid"
-              ];
-            in
-            {
-              "authtest.access" = scope;
-            };
-          claimMaps.groups = {
-            joinType = "array";
-            valuesByGroup = {
-              "authtest.access" = [ "authtest_access" ];
-              "paperless.django_admin" = [ "paperless_django_admin" ];
-            };
+          scopeMaps."oauth2_proxy" = [
+            "profile"
+            "email"
+            "groups"
+            "openid"
+          ];
+
+          claimMaps.groups.valuesByGroup = {
+            "authtest.access" = [ "authtest_access" ];
+            "paperless.django_admin" = [ "paperless_django_admin" ];
           };
         };
 
@@ -146,14 +143,15 @@ in
           imageFile = "${root}/assets/sso-images/oracle-cloud-infrastructure.svg";
           originLanding = "https://cloud.oracle.com/?tenant=${secrets.ociTenancy.tenancyName}&region=${secrets.ociTenancy.tenancyRegion}";
 
-          basicSecretFile = config.sops.secrets."ociTenancy/clientSecret".path;
+          preferShortUsername = true;
           allowInsecureClientDisablePkce = true; # Oracle Cloud does not support PKCE
+
+          basicSecretFile = config.sops.secrets."ociTenancy/clientSecret".path;
           originUrl = [
             "https://${secrets.ociTenancy.identityDomain}/oauth2/v1/social/callback"
             "https://${secrets.ociTenancy.identityDomain}:443/oauth2/v1/social/callback"
           ];
 
-          preferShortUsername = true;
           scopeMaps."oracle-cloud-infrastructure.access" = [
             "openid"
             "email"
@@ -168,14 +166,15 @@ in
           imageFile = "${root}/assets/sso-images/nextcloud.svg";
           originLanding = "https://${cfg-svc.nextcloud.domain}/";
 
-          basicSecretFile = config.sops.secrets."kanidm.nextcloud/clientSecret".path;
+          preferShortUsername = true;
           enableLegacyCrypto = true; # Nextcloud does not support ES256
+
+          basicSecretFile = config.sops.secrets."kanidm.nextcloud/clientSecret".path;
           originUrl = [
             "https://${cfg-svc.nextcloud.domain}/apps/user_oidc/code"
             "https://${cfg-svc.nextcloud.intraDomain}/apps/user_oidc/code"
           ];
 
-          preferShortUsername = true;
           scopeMaps."nextcloud.access" = [
             "openid"
             "email"
@@ -183,7 +182,6 @@ in
             "groups"
           ];
           claimMaps.preferred_username_override = {
-            joinType = "ssv";
             valuesByGroup."nextcloud.preferred_username_override.luna" = [ "grfgh" ];
           };
         };
@@ -195,13 +193,14 @@ in
           imageFile = "${root}/assets/sso-images/paperless-ngx.svg";
           originLanding = "https://${cfg-svc.paperless.domain}/";
 
+          preferShortUsername = true;
+
           basicSecretFile = config.sops.secrets."kanidm.paperless/clientSecret".path;
           originUrl = [
             "https://${cfg-svc.paperless.domain}/accounts/oidc/kanidm/login/callback/"
             "https://${cfg-svc.paperless.intraDomain}/accounts/oidc/kanidm/login/callback/"
           ];
 
-          preferShortUsername = true;
           scopeMaps."paperless.access" = [
             "profile"
             "email"
@@ -221,6 +220,8 @@ in
           imageFile = "${root}/assets/sso-images/immich.svg";
           originLanding = "https://${cfg-svc.immich.domain}/";
 
+          preferShortUsername = true;
+
           basicSecretFile = config.sops.secrets."kanidm.immich/clientSecret".path;
           originUrl = [
             "https://${cfg-svc.immich.domain}/auth/login"
@@ -232,14 +233,12 @@ in
             "app.immich:///oauth-callback"
           ];
 
-          preferShortUsername = true;
           scopeMaps."immich.access" = [
             "openid"
             "email"
             "profile"
           ];
           claimMaps.immich_role = {
-            joinType = "array";
             valuesByGroup."immich.role.user" = [ "user" ];
             valuesByGroup."immich.role.admin" = [ "admin" ];
           };
