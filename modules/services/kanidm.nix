@@ -162,9 +162,7 @@ in
         };
 
         groups."nextcloud.access" = { };
-        groups."nextcloud.preferred_username_override.luna" = {
-          members = [ "luna" ];
-        };
+        groups."nextcloud.preferred_username_override.luna".members = [ "luna" ];
         systems.oauth2.${cfg-svc.nextcloud.client_id} = {
           displayName = "Nextcloud";
           imageFile = "${root}/assets/sso-images/nextcloud.svg";
@@ -190,9 +188,7 @@ in
           };
         };
 
-        groups."paperless.access" = {
-          members = [ "paperless.django_admin" ];
-        };
+        groups."paperless.access".members = [ "paperless.django_admin" ];
         groups."paperless.django_admin" = { };
         systems.oauth2.${cfg-svc.paperless.client_id} = {
           displayName = "Paperless-ngx";
@@ -214,12 +210,10 @@ in
           ];
         };
 
-        groups."immich.access" = {
-          members = [
-            "immich.role.user"
-            "immich.role.admin"
-          ];
-        };
+        groups."immich.access".members = [
+          "immich.role.user"
+          "immich.role.admin"
+        ];
         groups."immich.role.user" = { };
         groups."immich.role.admin" = { };
         systems.oauth2.${cfg-svc.immich.client_id} = {
@@ -252,9 +246,7 @@ in
           # TODO: support quota
         };
 
-        groups."forgejo.access" = {
-          members = [ "forgejo.admin" ];
-        };
+        groups."forgejo.access".members = [ "forgejo.admin" ];
         groups."forgejo.admin" = { };
         systems.oauth2.${cfg-svc.forgejo.client_id} = {
           displayName = "Forgejo";
