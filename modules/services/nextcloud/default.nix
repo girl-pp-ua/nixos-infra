@@ -83,6 +83,10 @@ in
         "opcache.save_comments" = "1";
         "opcache.jit" = "1255";
         "opcache.jit_buffer_size" = "8M";
+        # https://docs.nextcloud.com/server/23/admin_manual/installation/server_tuning.html#enable-php-opcache
+        "opcache.revalidate_freq" = "60";
+        "opcache.validate_timestamps" = "0";
+        # "opcache.optimization_level" =
       };
       phpExtraExtensions =
         ext: with ext; [
@@ -90,11 +94,16 @@ in
           gd
         ];
 
-      extraOCCCommands = lib.mkBefore ''
-        tmpdir=$(mktemp -d)
-        ln -s "${config.services.nextcloud.occ}/bin/nextcloud-occ" "$tmpdir/occ"
-        export PATH="$tmpdir:$PATH"
-      '';
+      extraOCCCommands = lib.mkBefore (
+        ''
+          tmpdir=$(mktemp -d)
+          ln -s "${config.services.nextcloud.occ}/bin/nextcloud-occ" "$tmpdir/occ"
+          export PATH="$tmpdir:$PATH"
+        ''
+        + ''
+          occ config:app:set bookmarks privacy.enableScraping --type=boolean --value=true
+        ''
+      );
 
       # apps
       extraAppsEnable = true;
