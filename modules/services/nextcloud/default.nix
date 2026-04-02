@@ -117,11 +117,6 @@ in
           qownnotesapi
           files_retention
           guests
-          # markdownreadme
-          # iframewidget
-          # external
-          # externalportal
-          # linkboard # seems interesting
           ;
 
         # TODO: use https://github.com/helsinki-systems/nc4nix instead? or at least their json assets
@@ -139,6 +134,33 @@ in
           hash = "sha256-9hbc+b6qIdmfT0AulZqW6Y9Jz6hLKW2HCH1SIBVFjQg=";
           license = "agpl3Plus";
         };
+
+        # https://apps.nextcloud.com/apps/integration_google
+        # automatically migrate your Google calendars, contacts, and files into Nextcloud
+        # TODO: needs oauth setup
+        # integration_google = pkgs.fetchNextcloudApp {
+        #   url = "https://github.com/nextcloud-releases/integration_google/releases/download/v4.3.1/integration_google-v4.3.1.tar.gz";
+        #   hash = "sha256-heozfHJjcpnwShX9f0Ll+zX3guQqgX+iUDWJwoHlzt0=";
+        #   license = "agpl3Plus";
+        # };
+
+        # https://apps.nextcloud.com/apps/sketch_picker
+        sketch_picker = pkgs.fetchNextcloudApp {
+          url = "https://github.com/nextcloud-releases/sketch_picker/releases/download/v2.4.0/sketch_picker-v2.4.0.tar.gz";
+          hash = "sha256-7jwNaYvcnCwLrGNulI1r2VYyDzE85hHPisdb3ztyv/w=";
+          license = "agpl3Plus";
+        };
+
+        # TODO:
+        # https://github.com/beleon/transfer
+        #
+        # also:
+        # # integration_giphy
+        # markdownreadme
+        # iframewidget
+        # external
+        # externalportal
+        # linkboard # seems interesting
       };
     };
 
