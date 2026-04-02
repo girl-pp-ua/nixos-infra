@@ -12,9 +12,16 @@ in
 
   # TODO: fix
   config = lib.mkIf cfg.enable {
-    services.nextcloud.notify_push = {
-      enable = true;
-      nextcloudUrl = "https://${cfg-nextcloud.domain}";
+    services.nextcloud = {
+      notify_push = {
+        enable = true; # app is added automatically by this
+        nextcloudUrl = "https://${cfg-nextcloud.domain}";
+      };
+
+      # allow text app to use notify_push for live updates
+      extraOCCCommands = ''
+        occ config:app:set text notify_push --type=boolean --value=true
+      '';
     };
 
     services.caddy.virtualHosts."http://${cfg-nextcloud.domain}" = {
