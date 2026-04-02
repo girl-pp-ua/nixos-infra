@@ -20,7 +20,7 @@ in
       inherit (cfg) port;
       aliasGroups = [
         {
-          host = "https://cloud.girl.pp.ua:443";
+          host = "https://${cfg-nextcloud.domain}:443";
           aliases = [ ];
         }
       ];
