@@ -80,6 +80,7 @@ in
       # php stuff
       phpOptions = {
         "opcache.interned_strings_buffer" = "64";
+        "opcache.memory_consumption" = "256";
         "opcache.save_comments" = "1";
         "opcache.jit" = "1255";
         "opcache.jit_buffer_size" = "8M";
@@ -87,6 +88,10 @@ in
         "opcache.revalidate_freq" = "60";
         "opcache.validate_timestamps" = "0";
         # "opcache.optimization_level" =
+        "pm.max_children" = "192";
+        "pm.start_servers" = "48";
+        "pm.min_spare_servers" = "48";
+        "pm.max_spare_servers" = "144";
       };
       phpExtraExtensions =
         ext: with ext; [
