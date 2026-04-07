@@ -1,7 +1,6 @@
 {
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
-    nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-25.11";
 
     sops-nix = {
       url = "github:Mic92/sops-nix";
@@ -49,17 +48,14 @@
     let
       hostSystem = "x86_64-linux";
       pkgs = nixpkgs.legacyPackages.${hostSystem};
-      pkgs-stable = inputs.nixpkgs-stable.legacyPackages.${hostSystem};
       specialArgs = {
         root = ./.;
         libx = import ./lib { };
         secrets = import "${secrets}/plaintext.nix";
-        system = hostSystem;
         inherit
           self
           inputs
           dns
-          pkgs-stable
           ;
       };
       mkNixosSystem =
@@ -81,11 +77,11 @@
           ]
           ++ extraModules;
         });
-      mkDeployProfile = hostname: configuration: {
+      mkDeployProfile = hostname: configuration: targetSystem: {
         inherit hostname;
         sshUser = "nixos";
         user = "root";
-        profiles.system.path = deploy-rs.lib.${hostSystem}.activate.nixos configuration;
+        profiles.system.path = deploy-rs.lib.${targetSystem}.activate.nixos configuration;
       };
     in
     {
@@ -93,6 +89,7 @@
         oci1 = mkNixosSystem "oci1" "x86_64-linux" [ ];
         oci2 = mkNixosSystem "oci2" "x86_64-linux" [ ];
         dell-sv = mkNixosSystem "dell-sv" "x86_64-linux" [ ];
+        astra = mkNixosSystem "astra" "aarch64-linux" [ ];
       };
 
       # deploy-rs configuration
@@ -101,9 +98,10 @@
           inherit (self) nixosConfigurations;
         in
         {
-          oci1 = mkDeployProfile "ipv4.oci1.girl.pp.ua" nixosConfigurations.oci1;
-          oci2 = mkDeployProfile "ipv4.oci2.girl.pp.ua" nixosConfigurations.oci2;
-          dell-sv = mkDeployProfile "dell-sv.intranet.girl.pp.ua" nixosConfigurations.dell-sv;
+          oci1 = mkDeployProfile "ipv4.oci1.girl.pp.ua" nixosConfigurations.oci1 "x86_64-linux";
+          oci2 = mkDeployProfile "ipv4.oci2.girl.pp.ua" nixosConfigurations.oci2 "x86_64-linux";
+          dell-sv = mkDeployProfile "dell-sv.intranet.girl.pp.ua" nixosConfigurations.dell-sv "x86_64-linux";
+          astra = mkDeployProfile "130.61.27.226" nixosConfigurations.astra "aarch64-linux";
         };
 
       checks = builtins.mapAttrs (system: deployLib: deployLib.deployChecks self.deploy) deploy-rs.lib;

@@ -34,6 +34,7 @@ in
     subdomains = {
       oci1 = with hosts.oci1.public; host ipv4 ipv6;
       oci2 = with hosts.oci2.public; host ipv4 ipv6;
+      astra = with hosts.astra.public; host ipv4 ipv6;
 
       ns1 = with hosts.oci1.public; host ipv4 ipv6;
       ns2 = with hosts.oci2.public; host ipv4 ipv6;

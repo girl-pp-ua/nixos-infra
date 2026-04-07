@@ -85,6 +85,7 @@ in
       # hosts (public):
       oci1 = mkDualstackHost hosts.oci1.public;
       oci2 = mkDualstackHost hosts.oci2.public;
+      astra = mkDualstackHost hosts.astra.public;
       # oci-loadbalancer = mkDualstackHost hosts.oci-loadbalancer.public;
       # cocoa = mkDualstackHost hosts.cocoa;
 

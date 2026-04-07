@@ -5,8 +5,17 @@ keys:
   - &dell_host age133qkn62g07yaw533pwh3dfa752jsgtarv7k3jfcu98la2ngcddlqd505s4
   - &oci1_host age1nxwl2wqpj9r6n7x7y5ef3r4cg2wlld5f8ak08tzqq4t8nlu9m5zqw24any
   - &oci2_host age1vxwrs2jqstnr6p74n29tlts6ld67h9cxh85ful5w0ygw6ummfa9s7fky52
+  - &astra_host age1kx9pf290fcc6gm9tmgjrgxcwpzenqrv7zhehezfkwt32fjm5geqqazh6v9
 creation_rules:
   - path_regex: secrets/.*
     key_groups:
       - age:
-          [*nixos_infra, *fw13, *fw13_host, *dell_host, *oci1_host, *oci2_host]
+          [
+            *nixos_infra,
+            *fw13,
+            *fw13_host,
+            *dell_host,
+            *oci1_host,
+            *oci2_host,
+            *astra_host,
+          ]

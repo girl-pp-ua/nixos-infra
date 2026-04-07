@@ -200,22 +200,6 @@
         "type": "github"
       }
     },
-    "nixpkgs-stable": {
-      "locked": {
-        "lastModified": 1775002709,
-        "narHash": "sha256-d3Yx83vSrN+2z/loBh4mJpyRqr9aAJqlke4TkpFmRJA=",
-        "owner": "NixOS",
-        "repo": "nixpkgs",
-        "rev": "bcd464ccd2a1a7cd09aa2f8d4ffba83b761b1d0e",
-        "type": "github"
-      },
-      "original": {
-        "owner": "NixOS",
-        "ref": "nixos-25.11",
-        "repo": "nixpkgs",
-        "type": "github"
-      }
-    },
     "nixpkgs_2": {
       "locked": {
         "lastModified": 1774709303,
@@ -254,7 +238,6 @@
         "dns": "dns",
         "nextcloud-testumgebung": "nextcloud-testumgebung",
         "nixpkgs": "nixpkgs_2",
-        "nixpkgs-stable": "nixpkgs-stable",
         "secrets": "secrets",
         "sops-nix": "sops-nix"
       }
@@ -283,11 +266,11 @@
     "secrets": {
       "flake": false,
       "locked": {
-        "lastModified": 1774954581,
-        "narHash": "sha256-HsaWvN6F7nqKzDKXyJ479DTGyEbdpJyLgqsVvGLrvFw=",
+        "lastModified": 1775597468,
+        "narHash": "sha256-qAQzzOA21ImBG+vHfeswEm4KKgPyZH7GQlEHMDyoHFU=",
         "ref": "refs/heads/master",
-        "rev": "74f518e05cd3b8ed8a0fa356e6cae890fa2e99e1",
-        "revCount": 40,
+        "rev": "e5579a871e8721fd57b9e40c9b6ba2f8ab6002b2",
+        "revCount": 41,
         "type": "git",
         "url": "file:./submodules/secrets"
       },

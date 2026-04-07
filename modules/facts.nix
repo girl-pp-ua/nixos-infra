@@ -51,6 +51,19 @@
         ipv6 = "fd7a:115c:a1e0::2901:2214";
       };
     };
+
+    astra = {
+      public = {
+        fqdn = "astra.lunya.cc";
+        ipv4 = "130.61.27.226";
+        ipv6 = "2603:c020:800c:9c7f:0:d372:6d52:818c";
+      };
+      internal = {
+        fqdn = "astra.polaris";
+        ipv4 = "100.64.0.103";
+        ipv6 = "fd7a:115c:a1e0::a738:aa73";
+      };
+    };
   };
 
   options.polaris.trustedNetworks = lib.mkOption {
