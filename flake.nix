@@ -55,21 +55,15 @@
           inherit inputs;
         };
         mkNixosSystem =
-          host: targetSystem: extraModules:
+          system: extraModules:
           (inputs.nixpkgs.lib.nixosSystem {
-            system = targetSystem;
+            inherit system;
             specialArgs = specialArgs // {
-              system = targetSystem;
-              inherit host;
+              inherit system;
             };
             modules = [
-              {
-                networking.hostName = host;
-                networking.domain = "polaris";
-              }
-              inputs.sops-nix.nixosModules.sops
-              ./hosts/${host}/configuration.nix
               ./modules
+              inputs.sops-nix.nixosModules.sops
             ]
             ++ extraModules;
           });
@@ -90,10 +84,10 @@
         systems = import systems;
 
         flake.nixosConfigurations = {
-          oci1 = mkNixosSystem "oci1" "x86_64-linux" [ ];
-          oci2 = mkNixosSystem "oci2" "x86_64-linux" [ ];
-          dell-sv = mkNixosSystem "dell-sv" "x86_64-linux" [ ];
-          astra = mkNixosSystem "astra" "aarch64-linux" [ ];
+          oci1 = mkNixosSystem "x86_64-linux" [ ./hosts/oci1/configuration.nix ];
+          oci2 = mkNixosSystem "x86_64-linux" [ ./hosts/oci2/configuration.nix ];
+          dell-sv = mkNixosSystem "x86_64-linux" [ ./hosts/dell-sv/configuration.nix ];
+          astra = mkNixosSystem "aarch64-linux" [ ./hosts/astra/configuration.nix ];
         };
 
         flake.deploy.nodes = {

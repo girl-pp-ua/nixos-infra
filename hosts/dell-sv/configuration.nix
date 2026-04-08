@@ -13,6 +13,9 @@
 
   system.stateVersion = "24.11";
 
+  networking.hostName = "astra";
+  networking.domain = "polaris";
+
   # reduce swappiness
   boot.kernel.sysctl = {
     "vm.swappiness" = 10;
