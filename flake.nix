@@ -5,6 +5,15 @@
     flake-parts.url = "github:hercules-ci/flake-parts";
     systems.url = "github:nix-systems/default";
 
+    # submodules:
+    secrets = {
+      url = "git+file:./submodules/secrets";
+      flake = false;
+    };
+    devlootbox = {
+      url = "git+file:./submodules/devlootbox";
+    };
+
     sops-nix = {
       url = "github:Mic92/sops-nix";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -18,19 +27,12 @@
       url = "github:nix-community/dns.nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-
-    # submodules:
-    secrets = {
-      url = "git+file:./submodules/secrets";
-      flake = false;
-    };
-    devlootbox = {
-      url = "git+file:./submodules/devlootbox";
-    };
-
-    # misc deps:
     nextcloud-testumgebung = {
       url = "github:onny/nixos-nextcloud-testumgebung";
+      flake = false;
+    };
+    nc4nix = {
+      url = "git+https://git.helsinki.tools/helsinki-systems/nc4nix";
       flake = false;
     };
   };

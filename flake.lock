@@ -171,6 +171,22 @@
         "type": "github"
       }
     },
+    "nc4nix": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1775667878,
+        "narHash": "sha256-g8k/VTNefwdJBFtnezdsX1o1H+IwXh2neUIoUGaSPvk=",
+        "ref": "refs/heads/main",
+        "rev": "fc9fa8d46ddc2bfed9f6a6b66644739c4dcc6fe9",
+        "revCount": 1305,
+        "type": "git",
+        "url": "https://git.helsinki.tools/helsinki-systems/nc4nix"
+      },
+      "original": {
+        "type": "git",
+        "url": "https://git.helsinki.tools/helsinki-systems/nc4nix"
+      }
+    },
     "nextcloud-testumgebung": {
       "flake": false,
       "locked": {
@@ -270,6 +286,7 @@
         "devlootbox": "devlootbox",
         "dns": "dns",
         "flake-parts": "flake-parts_2",
+        "nc4nix": "nc4nix",
         "nextcloud-testumgebung": "nextcloud-testumgebung",
         "nixpkgs": "nixpkgs_2",
         "secrets": "secrets",

@@ -7,6 +7,7 @@
 }:
 let
   cfg = config.polaris.services.nextcloud;
+  nc4nix = pkgs.callPackage "${inputs.nc4nix}/default.nix" { };
 in
 {
   imports = [
@@ -135,40 +136,18 @@ in
           guests
           ;
 
-        # TODO: use https://github.com/helsinki-systems/nc4nix instead? or at least their json assets
-
-        # https://apps.nextcloud.com/apps/integration_immich
-        integration_immich = pkgs.fetchNextcloudApp {
-          url = "https://github.com/xXRoxXeRXx/integration_immich/releases/download/v1.0.9/integration_immich.tar.gz";
-          hash = "sha256-nZTEyT7OW1ppG+gF3RGmrLgZO7niVPdOF27BGBYWDow=";
-          license = "agpl3Plus";
-        };
-
-        # https://apps.nextcloud.com/apps/files_lock
-        files_lock = pkgs.fetchNextcloudApp {
-          url = "https://github.com/nextcloud-releases/files_lock/releases/download/v33.0.1/files_lock-v33.0.1.tar.gz";
-          hash = "sha256-9hbc+b6qIdmfT0AulZqW6Y9Jz6hLKW2HCH1SIBVFjQg=";
-          license = "agpl3Plus";
-        };
+        inherit (nc4nix.nextcloud-33)
+          integration_immich
+          files_lock
+          sketch_picker
+          markdownreadme
+          transfer
+          recognize # idk if this works, see TODO above
+          ;
 
         # https://apps.nextcloud.com/apps/integration_google
         # automatically migrate your Google calendars, contacts, and files into Nextcloud
         # TODO: needs oauth setup
-        # integration_google = pkgs.fetchNextcloudApp {
-        #   url = "https://github.com/nextcloud-releases/integration_google/releases/download/v4.3.1/integration_google-v4.3.1.tar.gz";
-        #   hash = "sha256-heozfHJjcpnwShX9f0Ll+zX3guQqgX+iUDWJwoHlzt0=";
-        #   license = "agpl3Plus";
-        # };
-
-        # https://apps.nextcloud.com/apps/sketch_picker
-        sketch_picker = pkgs.fetchNextcloudApp {
-          url = "https://github.com/nextcloud-releases/sketch_picker/releases/download/v2.4.0/sketch_picker-v2.4.0.tar.gz";
-          hash = "sha256-7jwNaYvcnCwLrGNulI1r2VYyDzE85hHPisdb3ztyv/w=";
-          license = "agpl3Plus";
-        };
-
-        # TODO:
-        # https://github.com/beleon/transfer
         #
         # also:
         # # integration_giphy
@@ -193,7 +172,8 @@ in
     # required for the trusted proxy chain to be valid when reaching ourselves over public domain
     # which is needded by notify_push
     networking.hosts = {
-      ${config.polaris.hosts.${config.networking.hostName}.internal.ipv6} = [ cfg.domain ];
+      # TODO don't hardcode this; this should be the internal ip of the host running (outermost) reverse proxy
+      ${config.polaris.hosts.astra.internal.ipv6} = [ cfg.domain ];
     };
 
     users.users.nextcloud = {
