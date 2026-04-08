@@ -14,8 +14,18 @@
     ];
     growPartition = true;
     loader.efi.efiSysMountPoint = "/boot/efi";
-    loader.systemd-boot.configurationLimit = lib.mkForce 5;
+    # kinda sucks but whatevr
+    # TODO: make xbootldrMountPoint work?
+    # loader.systemd-boot.configurationLimit = lib.mkForce 2;
     # loader.systemd-boot.xbootldrMountPoint = "/boot";
+  };
+
+  boot.loader.systemd-boot.enable = lib.mkForce false;
+  boot.loader.grub = {
+    enable = true;
+    efiSupport = true;
+    device = "nodev";
+    configurationLimit = 5;
   };
 
   # Oracle Cloud time servers
