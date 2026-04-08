@@ -98,10 +98,10 @@
           inherit (self) nixosConfigurations;
         in
         {
-          oci1 = mkDeployProfile "ipv4.oci1.girl.pp.ua" nixosConfigurations.oci1 "x86_64-linux";
-          oci2 = mkDeployProfile "ipv4.oci2.girl.pp.ua" nixosConfigurations.oci2 "x86_64-linux";
+          oci1 = mkDeployProfile "oci1.lunya.cc" nixosConfigurations.oci1 "x86_64-linux";
+          oci2 = mkDeployProfile "oci2.lunya.cc" nixosConfigurations.oci2 "x86_64-linux";
           dell-sv = mkDeployProfile "dell-sv.intranet.girl.pp.ua" nixosConfigurations.dell-sv "x86_64-linux";
-          astra = mkDeployProfile "130.61.27.226" nixosConfigurations.astra "aarch64-linux";
+          astra = mkDeployProfile "astra.lunya.cc" nixosConfigurations.astra "aarch64-linux";
         };
 
       checks = builtins.mapAttrs (system: deployLib: deployLib.deployChecks self.deploy) deploy-rs.lib;

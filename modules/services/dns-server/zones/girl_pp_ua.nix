@@ -5,7 +5,7 @@ let
   inherit (config.polaris) hosts;
 
   name = "girl.pp.ua";
-  serial = 2026010400; # YYYYMMDDNN
+  serial = 2026040801; # YYYYMMDDNN
 
   /**
     Creates a CNAME record
@@ -106,11 +106,11 @@ in
       status = mkCname "oci1.${name}.";
       authtest = mkCname "oci1.${name}."; # testing
       # --- oci2 ---
-      redlib = mkCname "oci2.${name}."; # (disabled; redirect -> old.reddit.com)
+      redlib = mkCname "oci2.${name}."; # redirect -> old.reddit.com
       ntfy = mkCname "oci2.${name}.";
-      cloud = mkCname "oci2.${name}."; # (proxy -> dell-sv)
-      paperless = mkCname "oci2.${name}."; # (proxy -> dell-sv)
-      photos = mkCname "oci2.${name}."; # (proxy -> dell-sv)
+      cloud = mkCname "oci2.${name}."; # redirect -> cloud.lunya.cc
+      paperless = mkCname "oci2.${name}."; # redirect -> paperless.lunya.cc
+      photos = mkCname "oci2.${name}."; # redirect -> photos.lunya.cc
 
       # cdn:
       files-cdn =

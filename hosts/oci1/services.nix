@@ -2,9 +2,13 @@
 {
   polaris.services = {
     caddy.enable = true;
+    caddy.plugins = {
+      enable = true;
+      webdav = true;
+
+    };
     caddy.endpoints = {
       file-server.enable = true;
-      healthcheck.enable = true;
       webdav.enable = true;
       authtest.enable = true;
     };

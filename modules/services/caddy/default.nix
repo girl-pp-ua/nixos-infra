@@ -11,25 +11,35 @@ in
   imports = [
     ./endpoints/file-server.nix
     ./endpoints/webdav.nix
-    ./endpoints/healthcheck.nix
     ./endpoints/authtest.nix
     ./endpoints/proxies.nix
   ];
 
   options.polaris.services.caddy = {
     enable = lib.mkEnableOption "caddy";
+
+    plugins = {
+      enable = lib.mkEnableOption "plugins" // {
+        default = cfg.plugins.webdav;
+      };
+      webdav = lib.mkEnableOption "caddy webdav plugin";
+    };
   };
 
   config = lib.mkIf cfg.enable {
     services.caddy = {
       enable = true;
-      package = pkgs.caddy.withPlugins {
-        plugins = [
-          "github.com/mholt/caddy-webdav@v0.0.0-20250805175825-7a5c90d8bf90"
-          # "github.com/corazawaf/coraza-caddy/v2@v2.1.0"
-        ];
-        hash = "sha256-n1Bf/wB838qlEqCjPXGMTqEN3lT3qt09G3Zhc60s/Iw=";
-      };
+      package =
+        if cfg.plugins.enable then
+          pkgs.caddy.withPlugins {
+            plugins = [
+              "github.com/mholt/caddy-webdav@v0.0.0-20250805175825-7a5c90d8bf90"
+              # "github.com/corazawaf/coraza-caddy/v2@v2.1.0"
+            ];
+            hash = "sha256-n1Bf/wB838qlEqCjPXGMTqEN3lT3qt09G3Zhc60s/Iw=";
+          }
+        else
+          pkgs.caddy;
       enableReload = true;
       adapter = "caddyfile";
       email = "prasol258@gmail.com";
@@ -37,7 +47,7 @@ in
         grace_period 30s
         skip_install_trust
         renew_interval 30m
-        order webdav before file_server
+        ${lib.optionalString cfg.plugins.webdav "order webdav before file_server"}
         servers {
           trusted_proxies static private_ranges ${lib.concatStringsSep " " config.polaris.trustedNetworks}
           trusted_proxies_strict

@@ -10,7 +10,7 @@ in
     SOA = {
       nameServer = "ns1.${name}.";
       adminEmail = "hostmaster@${name}";
-      serial = 2026033100; # YYYYMMDDNN
+      serial = 2026040801; # YYYYMMDDNN
     };
 
     NS = [
@@ -39,7 +39,7 @@ in
       ns1 = with hosts.oci1.public; host ipv4 ipv6;
       ns2 = with hosts.oci2.public; host ipv4 ipv6;
 
-      dell-sv-proxy.CNAME = [ "oci2" ]; # -> reverse proxy
+      dell-sv-proxy.CNAME = [ "astra" ]; # -> reverse proxy
 
       status.CNAME = [ "oci1" ];
       photos.CNAME = [ "dell-sv-proxy" ];
