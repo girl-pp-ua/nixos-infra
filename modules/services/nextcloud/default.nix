@@ -191,7 +191,6 @@ in
     # required for the trusted proxy chain to be valid when reaching ourselves over public domain
     # which is needded by notify_push
     networking.hosts = {
-      #XXX: TODO dont hardcode this
       ${config.polaris.hosts.${config.networking.hostName}.internal.ipv6} = [ cfg.domain ];
     };
 
