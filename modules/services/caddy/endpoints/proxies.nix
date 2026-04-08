@@ -11,6 +11,14 @@ in
     services.caddy.virtualHosts = {
       ${cfg'.nextcloud.domain}.extraConfig = ''
         import encode
+        @static {
+          path /core/robots.txt /core/css/* /core/js/* /core/fonts/* /core/vendor/* /core/skeleton/* /core/doc/* /core/l10n/* /dist/*
+        }
+        handle @static {
+          import norobot
+          root * ${cfg'.nextcloud.package}
+          file_server
+        }
         reverse_proxy http://${cfg'.nextcloud.intraDomain}
       '';
       ${cfg'.paperless.domain}.extraConfig = ''

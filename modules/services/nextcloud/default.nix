@@ -34,12 +34,14 @@ in
       type = lib.types.str;
       default = "nextcloud";
     };
+
+    package = lib.mkPackageOption pkgs "nextcloud33" { };
   };
 
   config = lib.mkIf cfg.enable {
     services.nextcloud = {
       enable = true;
-      package = pkgs.nextcloud33;
+      package = cfg.package;
 
       # web server
       webserver = "caddy";
