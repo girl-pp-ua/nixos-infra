@@ -29,10 +29,6 @@
     };
 
     # misc deps:
-    # redlib = {
-    #   url = "github:redlib-org/redlib";
-    #   flake = false; # (using as source for pkgs.redlib)
-    # };
     nextcloud-testumgebung = {
       url = "github:onny/nixos-nextcloud-testumgebung";
       flake = false;

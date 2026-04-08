@@ -16,7 +16,6 @@
     ./ntfy.nix
     ./oauth2-proxy.nix
     ./paperless.nix
-    ./redlib.nix
     ./tailscale.nix
   ];
 }
