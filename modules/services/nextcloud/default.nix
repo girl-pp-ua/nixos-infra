@@ -192,7 +192,7 @@ in
     # which is needded by notify_push
     networking.hosts = {
       #XXX: TODO dont hardcode this
-      ${config.polaris.hosts.oci2.internal.ipv6} = [ cfg.domain ];
+      ${config.polaris.hosts.astra.internal.ipv6} = [ cfg.domain ];
     };
 
     users.users.nextcloud = {
