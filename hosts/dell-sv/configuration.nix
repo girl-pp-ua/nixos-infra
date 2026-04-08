@@ -13,7 +13,7 @@
 
   system.stateVersion = "24.11";
 
-  networking.hostName = "astra";
+  networking.hostName = "dell-sv";
   networking.domain = "polaris";
 
   # reduce swappiness
