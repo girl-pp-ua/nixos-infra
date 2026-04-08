@@ -1,6 +1,6 @@
-{ config, dns, ... }:
-with dns.lib.combinators;
+{ config, inputs, ... }:
 let
+  inherit (inputs.dns.lib.combinators) host;
   inherit (config.polaris) hosts;
   name = "polaris";
 in

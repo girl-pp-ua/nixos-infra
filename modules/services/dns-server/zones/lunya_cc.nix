@@ -1,6 +1,6 @@
-{ config, dns, ... }:
-with dns.lib.combinators;
+{ config, inputs, ... }:
 let
+  inherit (inputs.dns.lib.combinators) spf host;
   inherit (config.polaris) hosts;
   name = "lunya.cc";
 in

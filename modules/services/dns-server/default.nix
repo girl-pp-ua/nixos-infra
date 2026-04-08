@@ -1,7 +1,7 @@
 {
   config,
   lib,
-  dns,
+  inputs,
   ...
 }:
 let
@@ -48,7 +48,7 @@ in
           refuse-any: yes
       '';
       zones = lib.mapAttrs (name: cfg: {
-        data = dns.lib.toString name cfg;
+        data = inputs.dns.lib.toString name cfg;
       }) cfg.zones;
     };
     networking.firewall = {

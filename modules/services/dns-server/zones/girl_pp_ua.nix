@@ -1,5 +1,8 @@
 # shit's legacy
-{ config, dns, ... }:
+{ config, inputs, ... }:
+let
+  inherit (inputs) dns;
+in
 with dns.lib.combinators;
 let
   inherit (config.polaris) hosts;

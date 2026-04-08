@@ -2,6 +2,9 @@
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
 
+    flake-parts.url = "github:hercules-ci/flake-parts";
+    systems.url = "github:nix-systems/default";
+
     sops-nix = {
       url = "github:Mic92/sops-nix";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -35,96 +38,117 @@
       flake = false;
     };
   };
+
   outputs =
     inputs@{
-      self,
-      nixpkgs,
-      deploy-rs,
-      dns,
-      sops-nix,
-      secrets,
+      flake-parts,
+      systems,
       ...
     }:
-    let
-      hostSystem = "x86_64-linux";
-      pkgs = nixpkgs.legacyPackages.${hostSystem};
-      specialArgs = {
-        root = ./.;
-        libx = import ./lib { };
-        secrets = import "${secrets}/plaintext.nix";
-        inherit
-          self
-          inputs
-          dns
-          ;
-      };
-      mkNixosSystem =
-        host: targetSystem: extraModules:
-        (nixpkgs.lib.nixosSystem {
-          system = targetSystem;
-          specialArgs = specialArgs // {
+    flake-parts.lib.mkFlake { inherit inputs; } (
+      { self, inputs, ... }:
+      let
+        specialArgs = {
+          root = ./.;
+          libx = import ./lib { };
+          secrets = import "${inputs.secrets}/plaintext.nix";
+          inherit inputs;
+        };
+        mkNixosSystem =
+          host: targetSystem: extraModules:
+          (inputs.nixpkgs.lib.nixosSystem {
             system = targetSystem;
-            inherit host;
+            specialArgs = specialArgs // {
+              system = targetSystem;
+              inherit host;
+            };
+            modules = [
+              {
+                networking.hostName = host;
+                networking.domain = "polaris";
+              }
+              inputs.sops-nix.nixosModules.sops
+              ./hosts/${host}/configuration.nix
+              ./modules
+            ]
+            ++ extraModules;
+          });
+        mkDeployNode =
+          {
+            hostname,
+            configuration,
+            system,
+          }:
+          {
+            inherit hostname;
+            sshUser = "nixos";
+            user = "root";
+            profiles.system.path = inputs.deploy-rs.lib.${system}.activate.nixos configuration;
           };
-          modules = [
-            {
-              networking.hostName = host;
-              networking.domain = "polaris";
-            }
-            ./hosts/${host}/configuration.nix
-            ./modules
-            sops-nix.nixosModules.sops
-          ]
-          ++ extraModules;
-        });
-      mkDeployProfile = hostname: configuration: targetSystem: {
-        inherit hostname;
-        sshUser = "nixos";
-        user = "root";
-        profiles.system.path = deploy-rs.lib.${targetSystem}.activate.nixos configuration;
-      };
-    in
-    {
-      nixosConfigurations = {
-        oci1 = mkNixosSystem "oci1" "x86_64-linux" [ ];
-        oci2 = mkNixosSystem "oci2" "x86_64-linux" [ ];
-        dell-sv = mkNixosSystem "dell-sv" "x86_64-linux" [ ];
-        astra = mkNixosSystem "astra" "aarch64-linux" [ ];
-      };
+      in
+      {
+        systems = import systems;
 
-      # deploy-rs configuration
-      deploy.nodes =
-        let
-          inherit (self) nixosConfigurations;
-        in
-        {
-          oci1 = mkDeployProfile "oci1.lunya.cc" nixosConfigurations.oci1 "x86_64-linux";
-          oci2 = mkDeployProfile "oci2.lunya.cc" nixosConfigurations.oci2 "x86_64-linux";
-          dell-sv = mkDeployProfile "dell-sv.intranet.girl.pp.ua" nixosConfigurations.dell-sv "x86_64-linux";
-          astra = mkDeployProfile "astra.lunya.cc" nixosConfigurations.astra "aarch64-linux";
+        flake.nixosConfigurations = {
+          oci1 = mkNixosSystem "oci1" "x86_64-linux" [ ];
+          oci2 = mkNixosSystem "oci2" "x86_64-linux" [ ];
+          dell-sv = mkNixosSystem "dell-sv" "x86_64-linux" [ ];
+          astra = mkNixosSystem "astra" "aarch64-linux" [ ];
         };
 
-      checks = builtins.mapAttrs (system: deployLib: deployLib.deployChecks self.deploy) deploy-rs.lib;
+        flake.deploy.nodes = {
+          oci1 = mkDeployNode {
+            hostname = "oci1.lunya.cc";
+            system = "x86_64-linux";
+            configuration = self.nixosConfigurations.oci1;
+          };
+          oci2 = mkDeployNode {
+            hostname = "oci2.lunya.cc";
+            system = "x86_64-linux";
+            configuration = self.nixosConfigurations.oci2;
+          };
+          dell-sv = mkDeployNode {
+            hostname = "dell-sv.intranet.girl.pp.ua";
+            system = "x86_64-linux";
+            configuration = self.nixosConfigurations.dell-sv;
+          };
+          astra = mkDeployNode {
+            hostname = "astra.lunya.cc";
+            system = "aarch64-linux";
+            configuration = self.nixosConfigurations.astra;
+          };
+        };
 
-      # dev shells
-      devShells.${hostSystem}.default = pkgs.mkShell {
-        packages = [
-          deploy-rs.outputs.packages.${hostSystem}.deploy-rs
-        ]
-        ++ (with pkgs; [
-          nil
-          nixd
-          nixfmt
-          nixfmt-tree
-          sops
-          age
-          ssh-to-age
-        ]);
-        shellHook = ''
-          export SOPS_AGE_KEY=$(ssh-to-age -i ~/.ssh/id_ed25519 -private-key)
-        '';
-      };
+        perSystem =
+          {
+            pkgs,
+            inputs',
+            system,
+            ...
+          }:
+          {
+            formatter = pkgs.nixfmt-tree;
 
-      formatter.${hostSystem} = nixpkgs.legacyPackages.${hostSystem}.nixfmt-tree;
-    };
+            checks = inputs.deploy-rs.lib.${system}.deployChecks self.deploy;
+
+            devShells.default = pkgs.mkShell {
+              packages = [
+                inputs'.deploy-rs.packages.deploy-rs
+              ]
+              ++ (with pkgs; [
+                nil
+                nixd
+                nixfmt
+                nixfmt-tree
+                sops
+                age
+                ssh-to-age
+              ]);
+              shellHook = ''
+                export SOPS_AGE_KEY=$(ssh-to-age -i ~/.ssh/id_ed25519 -private-key)
+              '';
+            };
+          };
+      }
+    );
 }
