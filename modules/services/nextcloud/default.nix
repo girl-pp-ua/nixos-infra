@@ -113,6 +113,7 @@ in
           occ config:app:set bookmarks privacy.enableScraping --type=boolean --value=true
           occ config:app:set recognize node_binary --type=string --value="${pkgs.nodejs}/bin/node"
           occ config:app:set recognize ffmpeg_binary --type=string --value="${pkgs.ffmpeg}/bin/ffmpeg"
+          occ config:app:set recognize nice_binary --type=string --value="${pkgs.coreutils}/bin/nice"
         ''
       );
 
