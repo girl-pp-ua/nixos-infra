@@ -187,12 +187,6 @@ in
       ];
       extraConfig = lib.mkOrder 100 ''
         import encode
-
-        @force-immutable {
-          path /apps/side_menu/css/stylesheet
-          query v=*
-        }
-        header @force-immutable Cache-Control "max-age=15778463, immutable"
       '';
     };
 

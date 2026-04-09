@@ -14,8 +14,8 @@ in
         @dist {
           path ${
             lib.concatStringsSep " " [
-              "/core/robots.txt"
               "/dist/*"
+              "/core/robots.txt"
               "/core/css/*"
               "/core/js/*"
               "/core/fonts/*"
@@ -56,7 +56,7 @@ in
               "/apps/systemtags/img/*"
               "/apps/testing/img/*"
               "/apps/text/img/*"
-              # "/apps/theming/img/*"
+              # "/apps/theming/img/*" # XXX: serves generated shit in there
               "/apps/twofactor_nextcloud_notification/img/*"
               "/apps/twofactor_totp/img/*"
               "/apps/updatenotification/img/*"
@@ -192,6 +192,12 @@ in
 
           file_server
         }
+
+        @force-immutable {
+          path /apps/side_menu/css/stylesheet /core/preview
+          query v=*
+        }
+        header @force-immutable Cache-Control "max-age=15778463, immutable"
 
         reverse_proxy http://${cfg'.nextcloud.intraDomain}
       '';
