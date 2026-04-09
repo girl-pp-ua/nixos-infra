@@ -7,7 +7,7 @@
 }:
 let
   cfg = config.polaris.services.nextcloud;
-  nc4nix = pkgs.callPackage "${inputs.nc4nix}/default.nix" { };
+  nc4nix = pkgs.callPackage inputs.nc4nix { };
 in
 {
   imports = [
