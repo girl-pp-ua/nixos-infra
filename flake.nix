@@ -2,6 +2,8 @@
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
 
+    nixpkgs-but-with-nextcloud-recognize-omg-im-so-fucking-annoyed-by-this-shit.url = "github:NixOS/nixpkgs/pull/508335/head";
+
     flake-parts.url = "github:hercules-ci/flake-parts";
     systems.url = "github:nix-systems/default";
 

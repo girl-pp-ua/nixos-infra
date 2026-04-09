@@ -3,6 +3,7 @@
   config,
   pkgs,
   lib,
+  system,
   ...
 }:
 let
@@ -110,6 +111,8 @@ in
         ''
         + ''
           occ config:app:set bookmarks privacy.enableScraping --type=boolean --value=true
+          occ config:app:set recognize node_binary --type=string --value="${pkgs.nodejs}/bin/node"
+          occ config:app:set recognize ffmpeg_binary --type=string --value="${pkgs.ffmpeg}/bin/ffmpeg"
         ''
       );
 
@@ -126,7 +129,6 @@ in
           tables
           bookmarks
           groupfolders
-          # recognize # TODO: blocked on nextcloud 33 support
           impersonate
           end_to_end_encryption
           integration_paperless
@@ -136,13 +138,18 @@ in
           guests
           ;
 
+        inherit
+          (inputs.nixpkgs-but-with-nextcloud-recognize-omg-im-so-fucking-annoyed-by-this-shit.legacyPackages.${system}.nextcloud33.packages.apps
+          )
+          recognize
+          ;
+
         inherit (nc4nix.nextcloud-33)
           integration_immich
           files_lock
           sketch_picker
           markdownreadme
           transfer
-          recognize # idk if this works, see TODO above
           ;
 
         # https://apps.nextcloud.com/apps/integration_google

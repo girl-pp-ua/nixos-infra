@@ -219,6 +219,22 @@
         "type": "github"
       }
     },
+    "nixpkgs-but-with-nextcloud-recognize-omg-im-so-fucking-annoyed-by-this-shit": {
+      "locked": {
+        "lastModified": 1775743978,
+        "narHash": "sha256-FCFY2fn1rSQTkZiHX0Qsj/ppf3kov9mKM4ImPzys/hs=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "6428a8aec3ec7e4a5578d946e80157ffed335125",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "ref": "pull/508335/head",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
     "nixpkgs-lib": {
       "locked": {
         "lastModified": 1754788789,
@@ -289,6 +305,7 @@
         "nc4nix": "nc4nix",
         "nextcloud-testumgebung": "nextcloud-testumgebung",
         "nixpkgs": "nixpkgs_2",
+        "nixpkgs-but-with-nextcloud-recognize-omg-im-so-fucking-annoyed-by-this-shit": "nixpkgs-but-with-nextcloud-recognize-omg-im-so-fucking-annoyed-by-this-shit",
         "secrets": "secrets",
         "sops-nix": "sops-nix",
         "systems": "systems_3"
