@@ -97,6 +97,7 @@ let
       "files"
       "photos"
       "calendar"
+      "deck"
       "tasks"
       "notes"
     ];
@@ -106,6 +107,7 @@ let
       "files"
       "photos"
       "calendar"
+      "deck"
       "tasks"
       "notes"
     ];
