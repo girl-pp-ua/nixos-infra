@@ -20,6 +20,7 @@ in
     ./theming.nix
     ./oidc.nix
     ./previews.nix
+    ./side_menu.nix
   ];
 
   options.polaris.services.nextcloud = {
@@ -38,6 +39,20 @@ in
     };
 
     package = lib.mkPackageOption pkgs "nextcloud33" { };
+
+    apps-packages = lib.mkOption {
+      # type = lib.types.any;
+      default =
+        nc4nix.nextcloud-33
+        // config.services.nextcloud.package.packages.apps
+        // {
+          inherit
+            (inputs.nixpkgs-but-with-nextcloud-recognize-omg-im-so-fucking-annoyed-by-this-shit.legacyPackages.${system}.nextcloud33.packages.apps
+            )
+            recognize
+            ;
+        };
+    };
   };
 
   config = lib.mkIf cfg.enable {
@@ -120,7 +135,7 @@ in
       # apps
       extraAppsEnable = true;
       extraApps = {
-        inherit (config.services.nextcloud.package.packages.apps)
+        inherit (cfg.apps-packages)
           calendar
           tasks
           contacts
@@ -137,21 +152,20 @@ in
           qownnotesapi
           files_retention
           guests
-          ;
 
-        inherit
-          (inputs.nixpkgs-but-with-nextcloud-recognize-omg-im-so-fucking-annoyed-by-this-shit.legacyPackages.${system}.nextcloud33.packages.apps
-          )
-          recognize
-          ;
-
-        inherit (nc4nix.nextcloud-33)
           integration_immich
           files_lock
           sketch_picker
           markdownreadme
           transfer
+          # mydash
+          ak_language_switcher
+          # intros
           ;
+
+        # inherit (nc4nix.nextcloud-31)
+        #   pride_flags
+        #   ;
 
         # https://apps.nextcloud.com/apps/integration_google
         # automatically migrate your Google calendars, contacts, and files into Nextcloud
@@ -173,6 +187,12 @@ in
       ];
       extraConfig = lib.mkOrder 100 ''
         import encode
+
+        @force-immutable {
+          path /apps/side_menu/css/stylesheet
+          query v=*
+        }
+        header @force-immutable Cache-Control "max-age=15778463, immutable"
       '';
     };
 
