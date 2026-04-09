@@ -197,7 +197,7 @@ in
           path /apps/side_menu/css/stylesheet /core/preview
           query v=*
         }
-        header @force-immutable Cache-Control "max-age=15778463, immutable"
+        header @force-immutable Cache-Control replace "max-age=15778463, immutable"
 
         reverse_proxy http://${cfg'.nextcloud.intraDomain}
       '';
