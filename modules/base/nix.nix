@@ -53,6 +53,8 @@
     config = {
       allowAliases = false;
       allowUnfree = true;
+      # (suppress warning)
+      allowDeprecatedx86_64Darwin = true;
     };
     flake = {
       setNixPath = true;

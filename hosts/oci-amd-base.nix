@@ -18,7 +18,8 @@
     ];
     kernelModules = [
       "kvm-amd"
-    ] ++ initrd.kernelModules;
+    ]
+    ++ initrd.kernelModules;
     kernelParams = [
       "console=tty1"
       "console=ttyS0"

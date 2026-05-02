@@ -2,8 +2,6 @@
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
 
-    nixpkgs-but-with-nextcloud-recognize-omg-im-so-fucking-annoyed-by-this-shit.url = "github:NixOS/nixpkgs/pull/508335/head";
-
     flake-parts.url = "github:hercules-ci/flake-parts";
     systems.url = "github:nix-systems/default";
 
@@ -21,10 +19,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     deploy-rs = {
-      # fork with https://github.com/serokell/deploy-rs/pull/271 merged
+      # fork (with https://github.com/serokell/deploy-rs/pull/271 merged)
       url = "github:neunenak/deploy-rs";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
     dns = {
       url = "github:nix-community/dns.nix";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -34,7 +33,7 @@
       flake = false;
     };
     nc4nix = {
-      url = "git+https://git.helsinki.tools/helsinki-systems/nc4nix";
+      url = "git+https://git.helsinki.tools/helsinki-systems/nc4nix.git/";
       flake = false;
     };
   };

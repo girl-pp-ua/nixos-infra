@@ -42,16 +42,7 @@ in
 
     apps-packages = lib.mkOption {
       # type = lib.types.any;
-      default =
-        nc4nix.nextcloud-33
-        // config.services.nextcloud.package.packages.apps
-        // {
-          inherit
-            (inputs.nixpkgs-but-with-nextcloud-recognize-omg-im-so-fucking-annoyed-by-this-shit.legacyPackages.${system}.nextcloud33.packages.apps
-            )
-            recognize
-            ;
-        };
+      default = nc4nix.nextcloud-33 // config.services.nextcloud.package.packages.apps;
     };
   };
 
@@ -158,15 +149,12 @@ in
           sketch_picker
           markdownreadme
           transfer
-          # mydash
           ak_language_switcher
-          # intros
           ;
 
         # inherit (nc4nix.nextcloud-31)
         #   pride_flags
         #   ;
-
         # https://apps.nextcloud.com/apps/integration_google
         # automatically migrate your Google calendars, contacts, and files into Nextcloud
         # TODO: needs oauth setup

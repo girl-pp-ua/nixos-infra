@@ -122,11 +122,11 @@
         "nixpkgs-lib": "nixpkgs-lib_2"
       },
       "locked": {
-        "lastModified": 1775087534,
-        "narHash": "sha256-91qqW8lhL7TLwgQWijoGBbiD4t7/q75KTi8NxjVmSmA=",
+        "lastModified": 1777678872,
+        "narHash": "sha256-EPIFsulyon7Z1vLQq5Fk64GR8L7cQsT+IPhcsukVbgk=",
         "owner": "hercules-ci",
         "repo": "flake-parts",
-        "rev": "3107b77cd68437b9a76194f0f7f9c55f2329ca5b",
+        "rev": "5250617bffd85403b14dbf43c3870e7f255d2c16",
         "type": "github"
       },
       "original": {
@@ -174,17 +174,17 @@
     "nc4nix": {
       "flake": false,
       "locked": {
-        "lastModified": 1775667878,
-        "narHash": "sha256-g8k/VTNefwdJBFtnezdsX1o1H+IwXh2neUIoUGaSPvk=",
+        "lastModified": 1777655064,
+        "narHash": "sha256-6OB7kPuMcUuePJCf/vz3MOiix1SdUTKKBVPM5dR2qm8=",
         "ref": "refs/heads/main",
-        "rev": "fc9fa8d46ddc2bfed9f6a6b66644739c4dcc6fe9",
-        "revCount": 1305,
+        "rev": "a3cd2c931aad16d6bcb258a014b342b945f39f89",
+        "revCount": 1330,
         "type": "git",
-        "url": "https://git.helsinki.tools/helsinki-systems/nc4nix"
+        "url": "https://git.helsinki.tools/helsinki-systems/nc4nix.git/"
       },
       "original": {
         "type": "git",
-        "url": "https://git.helsinki.tools/helsinki-systems/nc4nix"
+        "url": "https://git.helsinki.tools/helsinki-systems/nc4nix.git/"
       }
     },
     "nextcloud-testumgebung": {
@@ -219,22 +219,6 @@
         "type": "github"
       }
     },
-    "nixpkgs-but-with-nextcloud-recognize-omg-im-so-fucking-annoyed-by-this-shit": {
-      "locked": {
-        "lastModified": 1775743978,
-        "narHash": "sha256-FCFY2fn1rSQTkZiHX0Qsj/ppf3kov9mKM4ImPzys/hs=",
-        "owner": "NixOS",
-        "repo": "nixpkgs",
-        "rev": "6428a8aec3ec7e4a5578d946e80157ffed335125",
-        "type": "github"
-      },
-      "original": {
-        "owner": "NixOS",
-        "ref": "pull/508335/head",
-        "repo": "nixpkgs",
-        "type": "github"
-      }
-    },
     "nixpkgs-lib": {
       "locked": {
         "lastModified": 1754788789,
@@ -252,11 +236,11 @@
     },
     "nixpkgs-lib_2": {
       "locked": {
-        "lastModified": 1774748309,
-        "narHash": "sha256-+U7gF3qxzwD5TZuANzZPeJTZRHS29OFQgkQ2kiTJBIQ=",
+        "lastModified": 1777168982,
+        "narHash": "sha256-GOkGPcboWE9BmGCRMLX3worL4EMnsnG8MyKmXNeYuhQ=",
         "owner": "nix-community",
         "repo": "nixpkgs.lib",
-        "rev": "333c4e0545a6da976206c74db8773a1645b5870a",
+        "rev": "f5901329dade4a6ea039af1433fb087bd9c1fe14",
         "type": "github"
       },
       "original": {
@@ -267,11 +251,11 @@
     },
     "nixpkgs_2": {
       "locked": {
-        "lastModified": 1775423009,
-        "narHash": "sha256-vPKLpjhIVWdDrfiUM8atW6YkIggCEKdSAlJPzzhkQlw=",
+        "lastModified": 1777578337,
+        "narHash": "sha256-Ad49moKWeXtKBJNy2ebiTQUEgdLyvGmTeykAQ9xM+Z4=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "68d8aa3d661f0e6bd5862291b5bb263b2a6595c9",
+        "rev": "15f4ee454b1dce334612fa6843b3e05cf546efab",
         "type": "github"
       },
       "original": {
@@ -305,7 +289,6 @@
         "nc4nix": "nc4nix",
         "nextcloud-testumgebung": "nextcloud-testumgebung",
         "nixpkgs": "nixpkgs_2",
-        "nixpkgs-but-with-nextcloud-recognize-omg-im-so-fucking-annoyed-by-this-shit": "nixpkgs-but-with-nextcloud-recognize-omg-im-so-fucking-annoyed-by-this-shit",
         "secrets": "secrets",
         "sops-nix": "sops-nix",
         "systems": "systems_3"
@@ -370,11 +353,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1775619836,
-        "narHash": "sha256-VcC/+MMMldwQKcST2y/QTndGLusSxjeUvYwFwzZKKko=",
+        "lastModified": 1777338324,
+        "narHash": "sha256-bc+ZZCmOTNq86/svGnw0tVpH7vJaLYvGLLKFYP08Q8E=",
         "owner": "Mic92",
         "repo": "sops-nix",
-        "rev": "de5f2d596eb896a5728afcd15f823f59cb9ecfdb",
+        "rev": "8eaee5c45428b28b8c47a83e4c09dccec5f279b5",
         "type": "github"
       },
       "original": {

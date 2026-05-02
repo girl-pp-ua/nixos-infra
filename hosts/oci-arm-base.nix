@@ -36,6 +36,7 @@
   fileSystems = {
     "/boot" = {
       device = lib.mkOverride 99 "/dev/disk/by-label/BOOT";
+      fsType = "ext4";
     };
     "/boot/efi" = {
       device = lib.mkOverride 99 "/dev/disk/by-label/UEFI";
