@@ -174,11 +174,11 @@
     "nc4nix": {
       "flake": false,
       "locked": {
-        "lastModified": 1781283972,
-        "narHash": "sha256-+72b96WUoxzXYYUsGabesqW2I32PGtUUkyxV3jIlIt4=",
+        "lastModified": 1781456812,
+        "narHash": "sha256-lH+HUixfLRGPssrZuTXjd3hJXhdu5p6NHFG90m+J4lo=",
         "ref": "refs/heads/main",
-        "rev": "4778baa18b1ccc28d457918390bc89ce714d4b4b",
-        "revCount": 1370,
+        "rev": "5017b16dfc25cd1f9e58bd8746d65a303d678ddb",
+        "revCount": 1372,
         "type": "git",
         "url": "https://git.helsinki.tools/helsinki-systems/nc4nix.git/"
       },
