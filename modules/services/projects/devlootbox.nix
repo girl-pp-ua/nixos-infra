@@ -25,7 +25,8 @@ in
 
       aws = {
         region = "garage";
-        endpointUrl = "http://garage.polaris:3900";
+        # endpointUrl = "http://garage.polaris:3900";
+        endpointUrl = "http://${config.polaris.hosts.oci1.internal.ipv4}:3900";
         accessKeyIdFile = config.sops.secrets."garage/keys/devlootbox/key_id".path;
         secretAccessKeyFile = config.sops.secrets."garage/keys/devlootbox/secret".path;
       };
