@@ -18,6 +18,19 @@ in
       type = lib.types.str;
       default = "garage.polaris";
     };
+
+    s3_port = lib.mkOption {
+      type = lib.types.port;
+      default = 3900;
+    };
+    rpc_port = lib.mkOption {
+      type = lib.types.port;
+      default = 3901;
+    };
+    s3_web_port = lib.mkOption {
+      type = lib.types.port;
+      default = 3902;
+    };
   };
   config = lib.mkIf cfg.enable {
     services.garage = {
@@ -35,16 +48,16 @@ in
         # data_fsync = false;
 
         rpc_secret_file = config.sops.secrets."garage/rpc_secret".path;
-        rpc_bind_addr = "[::]:3901";
+        rpc_bind_addr = "[::]:${toString cfg.rpc_port}";
         rpc_bind_outgoing = true;
 
         s3_api = {
-          api_bind_addr = "[::]:3900";
+          api_bind_addr = "[::]:${toString cfg.s3_port}";
           s3_region = "garage";
           root_domain = ".s3.garage";
         };
         s3_web = {
-          bind_addr = "[::]:3902";
+          bind_addr = "[::]:${toString cfg.s3_web_port}";
           add_host_to_metrics = true;
           root_domain = ".web.garage";
         };
@@ -78,6 +91,19 @@ in
       "d ${metadata_snapshots_dir} 0750 garage garage -"
     ];
 
+    networking.firewall.interfaces.tailscale0 = {
+      allowedTCPPorts = [
+        cfg.s3_port
+        cfg.rpc_port
+        cfg.s3_web_port
+      ];
+      allowedUDPPorts = [
+        cfg.s3_port
+        cfg.rpc_port
+        cfg.s3_web_port
+      ];
+    };
+
     sops.secrets =
       let
         usr = {
@@ -97,7 +123,7 @@ in
       extraConfig = ''
         import encode
         import norobot
-        reverse_proxy localhost:3902 {
+        reverse_proxy localhost:${toString cfg.s3_web_port} {
           header_up Host "svc-media.web.garage"
         }
       '';
