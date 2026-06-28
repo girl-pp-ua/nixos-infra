@@ -262,8 +262,8 @@ in
 
           basicSecretFile = config.sops.secrets."kanidm.forgejo/clientSecret".path;
           originUrl = [
-            "https://${cfg-svc.forgejo.domain}/user/oauth2/kanidm/callback"
-            "https://${cfg-svc.forgejo.intraDomain}/user/oauth2/kanidm/callback"
+            "https://${cfg-svc.forgejo.domain}/user/oauth2/kanidm_internal/callback"
+            "https://${cfg-svc.forgejo.intraDomain}/user/oauth2/kanidm_internal/callback"
           ];
 
           scopeMaps."forgejo.access" = [
