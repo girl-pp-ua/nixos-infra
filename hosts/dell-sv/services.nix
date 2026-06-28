@@ -20,6 +20,7 @@
         enable = true;
         vuinputd.enable = true;
       };
+      hydra.enable = true;
     };
   };
 }
