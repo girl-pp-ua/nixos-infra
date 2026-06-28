@@ -215,7 +215,7 @@ in
         exe = lib.getExe config.services.forgejo.package;
         provider = {
           provider = "openidConnect";
-          name = "kanidm (internal)";
+          name = "kanidm";
           key = cfg.client_id;
           auto-discover-url = idp.oidc_discovery;
           scopes = "profile email groups";
