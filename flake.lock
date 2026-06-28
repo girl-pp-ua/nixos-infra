@@ -174,11 +174,11 @@
     "nc4nix": {
       "flake": false,
       "locked": {
-        "lastModified": 1782234250,
-        "narHash": "sha256-psf8tGeFuhUfVRDPZjT9Eyj+Mk0ZL9L0MUrtuDK5Mpc=",
+        "lastModified": 1782579853,
+        "narHash": "sha256-J24xiGFierBjgR5ZifdcvYtlwNX2o0JRSQ6ygy2fkLQ=",
         "ref": "refs/heads/main",
-        "rev": "a5305414e5e01adb82ec0e64724f6fc67bd24f20",
-        "revCount": 1381,
+        "rev": "f1ac5edab27a2f16f09e00137e61f930abc89789",
+        "revCount": 1385,
         "type": "git",
         "url": "https://git.helsinki.tools/helsinki-systems/nc4nix.git/"
       },
@@ -251,11 +251,11 @@
     },
     "nixpkgs_2": {
       "locked": {
-        "lastModified": 1782118813,
-        "narHash": "sha256-BnbXO5s5EhV89lLXMAGCzPdEN5a6vNqvMk71obeTEUw=",
+        "lastModified": 1782545840,
+        "narHash": "sha256-PkBPmP5ofNtunCU7/tfn6wi9OLlzFGcHAqqmY+/mwUI=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "b3c092d3c36d91e2f61f3dfb39a159f180a56659",
+        "rev": "3d46470bb3030020f7e1361f33514854f5bfa86d",
         "type": "github"
       },
       "original": {
