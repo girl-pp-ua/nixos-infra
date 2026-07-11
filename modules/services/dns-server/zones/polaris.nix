@@ -10,7 +10,7 @@ in
     SOA = {
       nameServer = "localhost";
       adminEmail = "nobody@localhost";
-      serial = 2026040801; # YYYYMMDDNN
+      serial = 2026071101; # YYYYMMDDNN
     };
 
     subdomains = {
@@ -24,6 +24,7 @@ in
       paperless.CNAME = [ "dell-sv" ];
       immich.CNAME = [ "dell-sv" ];
       forgejo.CNAME = [ "dell-sv" ];
+      hydra.CNAME = [ "dell-sv" ];
     };
   };
 }
