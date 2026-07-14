@@ -30,27 +30,42 @@ in
       listenHost = "localhost";
       hydraURL = "http://localhost:${cfg.port}";
       notificationSender = "hydra@localhost";
-      buildMachinesFiles = [
-        {
-          hostName = "localhost";
-          protocol = null;
-          inherit system;
-          supportedFeatures = [
-            "kvm"
-            "nixos-test"
-            "big-parallel"
-            "benchmark"
-          ];
-          maxJobs = 8;
-        }
-      ];
       useSubstitutes = true;
+      extraConfig = ''
+        evaluator_max_memory_size = 4096
+        evaluator_workers = 8
+        max_concurrent_evals = 2
+        max_output_size = ${toString (8 * 1024 * 1024 * 1024)}
+      '';
     };
 
-    # required for hydra
+    # nix.distributedBuilds = true;
+    nix.buildMachines = [
+      {
+        hostName = "localhost";
+        protocol = null;
+        inherit system;
+        supportedFeatures = [
+          "kvm"
+          "nixos-test"
+          "big-parallel"
+          "benchmark"
+        ];
+        maxJobs = 8;
+      }
+    ];
     nix.settings = {
+      # keep-{derivations,outputs} is required for hydra
       keep-derivations = lib.mkForce true;
       keep-outputs = lib.mkForce true;
+      allowed-uris = [
+        "https:"
+        "git+https:"
+        "git+ssh:"
+        "github:"
+        "gitlab:"
+        "sourcehut:"
+      ];
     };
 
     services.caddy.virtualHosts."${cfg.intraDomain}" = {
