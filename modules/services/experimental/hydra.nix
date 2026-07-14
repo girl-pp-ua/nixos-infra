@@ -1,5 +1,6 @@
 {
   config,
+  system,
   lib,
   ...
 }:
@@ -29,6 +30,20 @@ in
       listenHost = "localhost";
       hydraURL = "http://localhost:${cfg.port}";
       notificationSender = "hydra@localhost";
+      buildMachinesFiles = [
+        {
+          hostName = "localhost";
+          protocol = null;
+          inherit system;
+          supportedFeatures = [
+            "kvm"
+            "nixos-test"
+            "big-parallel"
+            "benchmark"
+          ];
+          maxJobs = 8;
+        }
+      ];
       useSubstitutes = true;
     };
 
