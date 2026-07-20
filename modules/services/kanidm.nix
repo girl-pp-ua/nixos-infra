@@ -71,6 +71,7 @@ in
               "immich.role.admin"
               "forgejo.access"
               "forgejo.admin"
+              "lore.access"
             ];
           };
 
@@ -90,6 +91,7 @@ in
               "immich.access"
               "immich.role.user"
               "forgejo.access"
+              "lore.access"
             ];
           };
 
@@ -273,6 +275,25 @@ in
             "groups"
           ];
         };
+
+        groups."lore.access" = { };
+        systems.oauth2.${cfg-svc.experimental.lore.client_id} = {
+          displayName = "Lore Version Control";
+          originLanding = "https://auth.lore.lunya.cc/";
+
+          preferShortUsername = true;
+
+          basicSecretFile = config.sops.secrets."kanidm.lore/clientSecret".path;
+          originUrl = [
+            "https://auth.lore.lunya.cc/oauth2/callback"
+          ];
+
+          scopeMaps."lore.access" = [
+            "openid"
+            "profile"
+            "email"
+          ];
+        };
       };
     };
 
@@ -314,6 +335,9 @@ in
         };
         "kanidm.forgejo/clientSecret" = kanidmSecret // {
           key = "forgejo/clientSecret";
+        };
+        "kanidm.lore/clientSecret" = kanidmSecret // {
+          key = "lore/clientSecret";
         };
         "kanidm_tls_key" = kanidmSecret // {
           sopsFile = "${inputs.secrets}/certs/tls_key.sops.pem";

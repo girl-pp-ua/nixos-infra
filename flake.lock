@@ -249,6 +249,22 @@
         "type": "github"
       }
     },
+    "nixpkgs-lore": {
+      "locked": {
+        "lastModified": 1782579202,
+        "narHash": "sha256-DHliSrx/lwYNeChDB2GQX23o805N9VDMLOU9HY0BqPE=",
+        "owner": "jchw-forks",
+        "repo": "nixpkgs",
+        "rev": "ef0b0b5e57a91e2fac1fc8a0ee3ed5855394b792",
+        "type": "github"
+      },
+      "original": {
+        "owner": "jchw-forks",
+        "ref": "init/loreserver",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
     "nixpkgs_2": {
       "locked": {
         "lastModified": 1784497964,
@@ -289,6 +305,7 @@
         "nc4nix": "nc4nix",
         "nextcloud-testumgebung": "nextcloud-testumgebung",
         "nixpkgs": "nixpkgs_2",
+        "nixpkgs-lore": "nixpkgs-lore",
         "secrets": "secrets",
         "sops-nix": "sops-nix",
         "systems": "systems_3"
@@ -318,11 +335,10 @@
     "secrets": {
       "flake": false,
       "locked": {
+        "dirtyRev": "ecad41b24f18f556f4f56a63b0847e869a609d6b-dirty",
+        "dirtyShortRev": "ecad41b-dirty",
         "lastModified": 1781697261,
-        "narHash": "sha256-/AXSEy7SEwtcwpFFHkhtIJ+4BZHxNsTvR/dZJ2dGD3I=",
-        "ref": "refs/heads/master",
-        "rev": "ecad41b24f18f556f4f56a63b0847e869a609d6b",
-        "revCount": 42,
+        "narHash": "sha256-gK+w/01639j9bMLEm2PT8YiHGOkgUNv5xuRGOKRBklI=",
         "type": "git",
         "url": "file:./submodules/secrets"
       },
