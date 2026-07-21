@@ -143,6 +143,9 @@ in
                   "[STATUS] == 200"
                   "[BODY] == pat(*version*)"
                 ];
+                hydra = mkUrl' "https://${cfg-svc.experimental.hydra.domain}/api/latestbuilds?nr=1" [
+                  "[STATUS] == 200"
+                ];
               };
               nextcloud-apps = mkEndpoints {
                 nextcloud-whiteboard = mkUrl' "https://${cfg-svc.nextcloud.domain}/whiteboard/" [
