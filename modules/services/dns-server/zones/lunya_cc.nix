@@ -10,7 +10,7 @@ in
     SOA = {
       nameServer = "ns1.${name}.";
       adminEmail = "hostmaster@${name}";
-      serial = 2026071101; # YYYYMMDDNN
+      serial = 2026072101; # YYYYMMDDNN
     };
 
     NS = [
@@ -49,6 +49,7 @@ in
       hydra.CNAME = [ "dell-sv-proxy" ];
       # ntfy.CNAME = [ "oci2" ];
       # docs.CNAME = [ "dell-sv-proxy" ];
+      svn.CNAME = [ "astra" ];
 
       _atproto.TXT = [ "did=did:plc:wvftnj7awmh4gwf3pt5mlvwq" ];
     };
