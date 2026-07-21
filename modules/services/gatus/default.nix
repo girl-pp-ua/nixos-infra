@@ -146,6 +146,9 @@ in
                 hydra = mkUrl' "https://${cfg-svc.experimental.hydra.domain}/api/latestbuilds?nr=1" [
                   "[STATUS] == 200"
                 ];
+                svn = mkUrl' "tcp://${cfg-svc.experimental.svn.domain}:3690" [
+                  "[CONNECTED] == true"
+                ];
               };
               nextcloud-apps = mkEndpoints {
                 nextcloud-whiteboard = mkUrl' "https://${cfg-svc.nextcloud.domain}/whiteboard/" [

@@ -10,6 +10,10 @@ in
 {
   options.polaris.services.experimental.svn = {
     enable = lib.mkEnableOption "snvserve";
+    domain = lib.mkOption {
+      type = lib.types.str;
+      default = "svn.lunya.cc";
+    };
   };
   config = lib.mkIf cfg.enable {
     systemd.services.svnserve = {
