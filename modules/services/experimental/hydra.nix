@@ -2,6 +2,8 @@
   config,
   system,
   lib,
+  inputs,
+  secrets,
   ...
 }:
 let
@@ -39,7 +41,7 @@ in
       '';
     };
 
-    # nix.distributedBuilds = true;
+    nix.distributedBuilds = true;
     nix.buildMachines = [
       {
         hostName = "localhost";
@@ -48,10 +50,22 @@ in
         supportedFeatures = [
           "kvm"
           "nixos-test"
-          "big-parallel"
           "benchmark"
         ];
         maxJobs = 8;
+        speedFactor = 2;
+      }
+      {
+        inherit (secrets.exarch.builder) hostName;
+        protocol = "ssh-ng";
+        system = "x86_64-linux";
+        supportedFeatures = [
+          "kvm"
+          "big-parallel"
+        ];
+        speedFactor = 20;
+        sshUser = "luna";
+        sshKey = config.sops.secrets."keys/exarch".path;
       }
     ];
     nix.settings = {
@@ -76,6 +90,13 @@ in
         import encode
         reverse_proxy localhost:${cfg.port}
       '';
+    };
+
+    sops.secrets = {
+      "keys/exarch" = {
+        sopsFile = "${inputs.secrets}/keys/exarch.sops";
+        format = "binary";
+      };
     };
   };
 }
