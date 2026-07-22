@@ -66,6 +66,7 @@ in
         speedFactor = 20;
         sshUser = "luna";
         sshKey = config.sops.secrets."keys/exarch".path;
+        maxJobs = 16;
       }
     ];
     nix.settings = {
