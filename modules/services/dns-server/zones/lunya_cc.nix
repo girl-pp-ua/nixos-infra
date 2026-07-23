@@ -29,6 +29,7 @@ in
     TXT = [
       (spf.strict [ ])
       "$argon2id$v=19$m=512,t=256,p=1$9qUkhB9I4tK2n5v00pLnvg$yAO8W0NDNMJY/CwJPieSTfWUh8OqCSEFY0xMrunlD6U" # keyoxide
+      "google-site-verification=-4kbF70BCsXL41ZLeBYq_U40bHqFwuM04XwRtkhvR5M"
     ];
 
     subdomains = {
