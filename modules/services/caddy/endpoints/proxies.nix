@@ -220,7 +220,7 @@ in
         import encode
         import norobot
 
-        @block path /nix-cache-info /nar/* *.narinfo /build/*/nix/closure /build/*/download/* /channel/* /*/channel/*
+        @block path /nix-cache-info /nar/* *.narinfo /build/*/nix/closure /build/*/nix/closure/* /build/*/download/* /channel/* /*/channel/*
         respond @block 403
 
         reverse_proxy http://${cfg'.experimental.hydra.intraDomain}
