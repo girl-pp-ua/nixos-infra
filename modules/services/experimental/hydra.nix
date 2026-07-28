@@ -56,19 +56,28 @@ in
         speedFactor = 2;
       }
       {
-        inherit (secrets.exarch.builder) hostName;
+        hostName = secrets.exarch.builder.hostNameHydra;
         protocol = "ssh-ng";
         system = "x86_64-linux";
         supportedFeatures = [
           "kvm"
           "big-parallel"
         ];
-        speedFactor = 20;
         sshUser = "luna";
         sshKey = config.sops.secrets."keys/exarch".path;
-        maxJobs = 16;
+        maxJobs = 32;
+        speedFactor = 20;
       }
     ];
+
+    programs.ssh.knownHosts =
+      let
+        exarch_pub = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILZsGBZ9yzdfHBPH9fpFMpIT5+ZxDk+GdQeL4oX6BzP7";
+      in
+      {
+        ${secrets.exarch.builder.hostNameSsh}.publicKey = exarch_pub;
+      };
+
     nix.settings = {
       # keep-{derivations,outputs} is required for hydra
       keep-derivations = lib.mkForce true;
@@ -97,6 +106,9 @@ in
       "keys/exarch" = {
         sopsFile = "${inputs.secrets}/keys/exarch.sops";
         format = "binary";
+        owner = "hydra-queue-runner";
+        group = "hydra";
+        mode = "0400";
       };
     };
   };
