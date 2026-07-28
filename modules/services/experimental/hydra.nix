@@ -43,18 +43,18 @@ in
 
     nix.distributedBuilds = true;
     nix.buildMachines = [
-      {
-        hostName = "localhost";
-        protocol = null;
-        inherit system;
-        supportedFeatures = [
-          "kvm"
-          "nixos-test"
-          "benchmark"
-        ];
-        maxJobs = 8;
-        speedFactor = 2;
-      }
+      # {
+      #   hostName = "localhost";
+      #   protocol = null;
+      #   inherit system;
+      #   supportedFeatures = [
+      #     "kvm"
+      #     "nixos-test"
+      #     "benchmark"
+      #   ];
+      #   maxJobs = 8;
+      #   speedFactor = 2;
+      # }
       {
         hostName = secrets.exarch.builder.hostNameHydra;
         # protocol = "ssh-ng";
