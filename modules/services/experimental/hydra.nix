@@ -45,7 +45,8 @@ in
     nix.buildMachines = [
       {
         hostName = secrets.exarch.builder.hostNameHydra;
-        protocol = "ssh-ng";
+        # protocol = "ssh-ng";
+        protocol = "ssh"; # hydra does not support ssh-ng
         system = "x86_64-linux";
         supportedFeatures = [
           "kvm"
