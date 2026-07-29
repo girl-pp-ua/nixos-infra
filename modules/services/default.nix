@@ -9,6 +9,7 @@
     ./nextcloud
     ./projects
     ./backup.nix
+    ./dashy.nix
     ./forgejo.nix
     ./garage.nix
     ./immich.nix

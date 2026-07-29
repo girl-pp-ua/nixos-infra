@@ -7,6 +7,8 @@
     };
     dns-server.enable = true;
 
+    dashy.enable = true;
+
     experimental = {
       svn.enable = true;
     };
