@@ -34,4 +34,6 @@
   boot.kernel.sysctl = {
     "vm.swappiness" = 10;
   };
+
+  services.qemuGuest.enable = true;
 }
