@@ -64,6 +64,16 @@
         ipv6 = "fd7a:115c:a1e0::a738:aa73";
       };
     };
+
+    amoeba = {
+      public = {
+        ipv4 = "152.53.95.222";
+        ipv6 = "2a0a:4cc0:80:54d9::1";
+      };
+      internal = {
+        # TBD
+      };
+    };
   };
 
   options.polaris.trustedNetworks = lib.mkOption {

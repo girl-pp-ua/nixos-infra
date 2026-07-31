@@ -6,6 +6,7 @@ keys:
   - &oci1_host age1nxwl2wqpj9r6n7x7y5ef3r4cg2wlld5f8ak08tzqq4t8nlu9m5zqw24any
   - &oci2_host age1vxwrs2jqstnr6p74n29tlts6ld67h9cxh85ful5w0ygw6ummfa9s7fky52
   - &astra_host age1kx9pf290fcc6gm9tmgjrgxcwpzenqrv7zhehezfkwt32fjm5geqqazh6v9
+  - &amoeba_host age1twkrp4g03daaj024g8k8834jkuuwzuwt6x00tyr2j5t4gsdyxcaqsyjsv6
 creation_rules:
   - path_regex: secrets/.*
     key_groups:
@@ -18,4 +19,5 @@ creation_rules:
             *oci1_host,
             *oci2_host,
             *astra_host,
+            *amoeba_host,
           ]

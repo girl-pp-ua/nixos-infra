@@ -87,6 +87,7 @@
           oci2 = mkNixosSystem "x86_64-linux" [ ./hosts/oci2/configuration.nix ];
           dell-sv = mkNixosSystem "x86_64-linux" [ ./hosts/dell-sv/configuration.nix ];
           astra = mkNixosSystem "aarch64-linux" [ ./hosts/astra/configuration.nix ];
+          amoeba = mkNixosSystem "x86_64-linux" [ ./hosts/amoeba/configuration.nix ];
         };
 
         flake.deploy.nodes = {
@@ -109,6 +110,11 @@
             hostname = "astra.lunya.cc";
             system = "aarch64-linux";
             configuration = self.nixosConfigurations.astra;
+          };
+          amoeba = mkDeployNode {
+            hostname = "amoeba.lunya.cc";
+            system = "aarch64-linux";
+            configuration = self.nixosConfigurations.amoeba;
           };
         };
 
