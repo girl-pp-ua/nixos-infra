@@ -33,6 +33,13 @@
     "169.254.169.254"
   ];
 
+  swapDevices = [
+    {
+      device = "/swapfile";
+      size = 16 * 1024; # (16GB)
+    }
+  ];
+
   fileSystems = {
     "/boot" = {
       device = lib.mkOverride 99 "/dev/disk/by-label/BOOT";
