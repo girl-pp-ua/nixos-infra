@@ -65,4 +65,7 @@
       setFlakeRegistry = true;
     };
   };
+
+  # default is 100, so puts it at 1:10 weight with other tasks under contention
+  systemd.services.nix-daemon.serviceConfig.CPUWeight = 10;
 }
