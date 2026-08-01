@@ -47,6 +47,8 @@
     flake-parts.lib.mkFlake { inherit inputs; } (
       { self, inputs, ... }:
       let
+        hosts = import ./data/hosts.nix;
+
         specialArgs = {
           root = ./.;
           libx = import ./lib { };
@@ -92,27 +94,27 @@
 
         flake.deploy.nodes = {
           oci1 = mkDeployNode {
-            hostname = "oci1.lunya.cc";
+            hostname = hosts.oci1.internal.ipv6;
             system = "x86_64-linux";
             configuration = self.nixosConfigurations.oci1;
           };
           oci2 = mkDeployNode {
-            hostname = "oci2.lunya.cc";
+            hostname = hosts.oci2.internal.ipv6;
             system = "x86_64-linux";
             configuration = self.nixosConfigurations.oci2;
           };
           dell-sv = mkDeployNode {
-            hostname = "dell-sv.intranet.girl.pp.ua";
+            hostname = hosts.dell-sv.internal.ipv6;
             system = "x86_64-linux";
             configuration = self.nixosConfigurations.dell-sv;
           };
           astra = mkDeployNode {
-            hostname = "astra.lunya.cc";
+            hostname = hosts.astra.internal.ipv6;
             system = "aarch64-linux";
             configuration = self.nixosConfigurations.astra;
           };
           amoeba = mkDeployNode {
-            hostname = "amoeba.lunya.cc";
+            hostname = hosts.amoeba.internal.ipv6;
             system = "x86_64-linux";
             configuration = self.nixosConfigurations.amoeba;
           };
