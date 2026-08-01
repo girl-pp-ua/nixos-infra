@@ -40,7 +40,7 @@ in
     package = lib.mkPackageOption pkgs "nextcloud34" { };
 
     apps-packages = lib.mkOption {
-      default = nc4nix.nextcloud-34 // cfg.package.packages.apps;
+      default = nc4nix."nextcloud-${lib.versions.major cfg.package.version}" // cfg.package.packages.apps;
     };
   };
 
