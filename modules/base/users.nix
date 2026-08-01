@@ -1,4 +1,10 @@
 { pkgs, ... }:
+let
+  pubkeys = {
+    luna_fw13 = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIB23Z5khaSPYhYX1AZFZIVKwjXaDZbGQFVxzPPWa6f4r user@fw13";
+    builder = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJz3xo+K9lHHXuR5rLWhwxok1/CP9KBFs7GEdEIYFl9t";
+  };
+in
 {
   users.mutableUsers = false;
   users.users = {
@@ -12,9 +18,8 @@
       initialHashedPassword = "";
       extraGroups = [ "wheel" ];
       shell = pkgs.fish;
-      openssh.authorizedKeys.keys = [
-        # fw13
-        "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIB23Z5khaSPYhYX1AZFZIVKwjXaDZbGQFVxzPPWa6f4r user@fw13"
+      openssh.authorizedKeys.keys = with pubkeys; [
+        luna_fw13
       ];
     };
 
@@ -25,8 +30,8 @@
       createHome = true;
       initialHashedPassword = "";
       shell = pkgs.fish;
-      openssh.authorizedKeys.keys = [
-        "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIB23Z5khaSPYhYX1AZFZIVKwjXaDZbGQFVxzPPWa6f4r user@fw13"
+      openssh.authorizedKeys.keys = with pubkeys; [
+        luna_fw13
       ];
     };
 
@@ -36,8 +41,9 @@
       createHome = true;
       initialHashedPassword = "";
       shell = pkgs.bashInteractive;
-      openssh.authorizedKeys.keys = [
-        "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJz3xo+K9lHHXuR5rLWhwxok1/CP9KBFs7GEdEIYFl9t"
+      openssh.authorizedKeys.keys = with pubkeys; [
+        luna_fw13
+        builder
       ];
     };
   };
