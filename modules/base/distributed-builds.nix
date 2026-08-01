@@ -94,9 +94,4 @@ in
       group = "hydra";
     };
   };
-
-  # programs.ssh.knownHosts = {
-  #   "[81.2.102.158]:444".publicKey =
-  #     "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILZsGBZ9yzdfHBPH9fpFMpIT5+ZxDk+GdQeL4oX6BzP7";
-  # };
 }

@@ -11,6 +11,7 @@
       ipv4 = "100.64.0.101";
       ipv6 = "fd7a:115c:a1e0::2a01:371";
     };
+    hostKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOdClYKL5tPu69exT3VWQxB+zv1iByDu4fdqHVByAWuc";
   };
 
   # oci2: Oracle Cloud Infrastructure (Frankfurt) - VM.Standard.E2.1.Micro
@@ -25,6 +26,7 @@
       ipv4 = "100.64.0.102";
       ipv6 = "fd7a:115c:a1e0::2501:5a59";
     };
+    hostKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKE8HbZ9bJNZJNzupr+T78vaf8ikydcjANZc4H8VZHMT";
   };
 
   # oci-loadbalancer: Oracle Cloud Infrastructure - test-loadbalancer
@@ -42,6 +44,7 @@
       ipv4 = "100.64.0.2";
       ipv6 = "fd7a:115c:a1e0::2901:2214";
     };
+    hostKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBVuMrzpOxwjWvE0jyoLUJ0nu6inh19/koZmPYG0/3o7";
   };
 
   astra = {
@@ -55,16 +58,20 @@
       ipv4 = "100.64.0.103";
       ipv6 = "fd7a:115c:a1e0::a738:aa73";
     };
+    hostKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDWnjM88bM0HFeKZL7AAAuG3yn4smHiqYqxq7aSMDXLo";
   };
 
   amoeba = {
     public = {
+      fqdn = "amoeba.lunya.cc";
       ipv4 = "152.53.95.222";
       ipv6 = "2a0a:4cc0:80:54d9::1";
     };
     internal = {
+      fqdn = "amoeba.polaris";
       ipv4 = "100.98.239.0";
       ipv6 = "fd7a:115c:a1e0::7238:ef01";
     };
+    hostKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOLOgaBrlKFPD999h4MkTi1X2K3qN0UKt3c841Jl0K20";
   };
 }
