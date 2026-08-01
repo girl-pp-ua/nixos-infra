@@ -79,6 +79,10 @@
             sshUser = "nixos";
             user = "root";
             profiles.system.path = inputs.deploy-rs.lib.${system}.activate.nixos configuration;
+            sshOpts = [
+              "-o"
+              "StrictHostKeyChecking=accept-new"
+            ];
           };
       in
       {
