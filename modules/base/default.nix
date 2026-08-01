@@ -67,4 +67,11 @@
   '';
 
   # services.dbus.implementation = "broker";
+
+  # zram swap :3
+  zramSwap = {
+    enable = true;
+    algorithm = "zstd";
+    memoryPercent = 100;
+  };
 }

@@ -49,6 +49,9 @@
       persistent = true;
       randomizedDelaySec = "1800";
     };
+    daemonCPUSchedPolicy = "batch";
+    daemonIOSchedClass = "idle";
+    daemonIOSchedPriority = 7;
   };
   nixpkgs = {
     config = {
