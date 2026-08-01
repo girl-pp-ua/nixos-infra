@@ -113,7 +113,7 @@
           };
           amoeba = mkDeployNode {
             hostname = "amoeba.lunya.cc";
-            system = "aarch64-linux";
+            system = "x86_64-linux";
             configuration = self.nixosConfigurations.amoeba;
           };
         };
