@@ -33,8 +33,9 @@
       flake = false;
     };
     nc4nix = {
-      url = "git+https://git.helsinki.tools/helsinki-systems/nc4nix.git/";
+      url = "github:helsinki-systems/nc4nix";
       flake = false;
+      # url = "git+https://git.helsinki.tools/helsinki-systems/nc4nix.git/";
     };
   };
 
