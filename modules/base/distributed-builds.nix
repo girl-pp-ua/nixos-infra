@@ -73,7 +73,7 @@ let
       inherit sshKey;
       publicHostKey = "c3NoLWVkMjU1MTkgQUFBQUMzTnphQzFsWkRJMU5URTVBQUFBSUxac0dCWjl5emRmSEJQSDlmcEZNcElUNStaeERrK0dkUWVMNG9YNkJ6UDcgcm9vdEBab3JheWFzCg==";
       maxJobs = 32;
-      speedFactor = 20;
+      speedFactor = 30;
     };
   };
 in
