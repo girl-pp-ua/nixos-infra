@@ -10,7 +10,7 @@ in
     SOA = {
       nameServer = "localhost";
       adminEmail = "nobody@localhost";
-      serial = 2026072101; # YYYYMMDDNN
+      serial = 2026080101; # YYYYMMDDNN
     };
 
     subdomains = {
@@ -18,7 +18,7 @@ in
       oci2 = with hosts.oci2.internal; host ipv4 ipv6;
       dell-sv = with hosts.dell-sv.internal; host ipv4 ipv6;
       astra = with hosts.astra.internal; host ipv4 ipv6;
-      # amoeba = with hosts.amoeba.internal; host ipv4 ipv6;
+      amoeba = with hosts.amoeba.internal; host ipv4 ipv6;
 
       garage.CNAME = [ "oci1" ];
       nextcloud.CNAME = [ "dell-sv" ];
