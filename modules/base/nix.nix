@@ -25,6 +25,7 @@
       trusted-users = [
         "root"
         "@wheel"
+        "builder"
       ];
       auto-allocate-uids = true;
       auto-optimise-store = true;

@@ -8,6 +8,7 @@
     ./nix.nix
     ./users.nix
     ./sudo.nix
+    ./distributed-builds.nix
     ./environment.nix
     ./usb.nix
   ];

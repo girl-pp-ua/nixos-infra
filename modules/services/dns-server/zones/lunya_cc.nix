@@ -10,7 +10,7 @@ in
     SOA = {
       nameServer = "ns1.${name}.";
       adminEmail = "hostmaster@${name}";
-      serial = 2026072901; # YYYYMMDDNN
+      serial = 2026080101; # YYYYMMDDNN
     };
 
     NS = [
@@ -48,7 +48,7 @@ in
       paperless.CNAME = [ "dell-sv-proxy" ];
       cloud.CNAME = [ "dell-sv-proxy" ];
       git.CNAME = [ "dell-sv-proxy" ];
-      hydra.CNAME = [ "dell-sv-proxy" ];
+      hydra.CNAME = [ "amoeba" ];
       # ntfy.CNAME = [ "oci2" ];
       # docs.CNAME = [ "dell-sv-proxy" ];
       svn.CNAME = [ "astra" ];

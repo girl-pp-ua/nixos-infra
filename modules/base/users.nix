@@ -29,5 +29,16 @@
         "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIB23Z5khaSPYhYX1AZFZIVKwjXaDZbGQFVxzPPWa6f4r user@fw13"
       ];
     };
+
+    builder = {
+      isNormalUser = true;
+      home = "/home/builder";
+      createHome = true;
+      initialHashedPassword = "";
+      shell = pkgs.bashInteractive;
+      openssh.authorizedKeys.keys = [
+        "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJz3xo+K9lHHXuR5rLWhwxok1/CP9KBFs7GEdEIYFl9t"
+      ];
+    };
   };
 }

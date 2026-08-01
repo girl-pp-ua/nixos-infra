@@ -1,8 +1,6 @@
 {
   config,
   lib,
-  inputs,
-  secrets,
   ...
 }:
 let
@@ -40,44 +38,6 @@ in
       '';
     };
 
-    nix.distributedBuilds = true;
-    nix.buildMachines = [
-      # {
-      #   hostName = "localhost";
-      #   protocol = null;
-      #   inherit system;
-      #   supportedFeatures = [
-      #     "kvm"
-      #     "nixos-test"
-      #     "benchmark"
-      #   ];
-      #   maxJobs = 8;
-      #   speedFactor = 2;
-      # }
-      {
-        hostName = secrets.exarch.builder.hostNameHydra;
-        # protocol = "ssh-ng";
-        protocol = "ssh"; # hydra does not support ssh-ng
-        system = "x86_64-linux";
-        supportedFeatures = [
-          "kvm"
-          "big-parallel"
-        ];
-        sshUser = "luna";
-        sshKey = config.sops.secrets."keys/exarch".path;
-        maxJobs = 32;
-        speedFactor = 20;
-      }
-    ];
-
-    programs.ssh.knownHosts =
-      let
-        exarch_pub = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILZsGBZ9yzdfHBPH9fpFMpIT5+ZxDk+GdQeL4oX6BzP7";
-      in
-      {
-        ${secrets.exarch.builder.hostNameSsh}.publicKey = exarch_pub;
-      };
-
     nix.settings = {
       # keep-{derivations,outputs} is required for hydra
       keep-derivations = lib.mkForce true;
@@ -92,24 +52,25 @@ in
       ];
     };
 
-    services.caddy.virtualHosts."${cfg.intraDomain}" = {
-      serverAliases = [
-        "http://${cfg.domain}"
-      ];
-      extraConfig = ''
-        import encode
-        reverse_proxy localhost:${cfg.port}
-      '';
-    };
+    services.caddy.virtualHosts = {
+      "${cfg.domain}" = {
+        extraConfig = ''
+          import encode
+          import norobot
 
-    sops.secrets = {
-      "keys/exarch" = {
-        sopsFile = "${inputs.secrets}/keys/exarch.sops";
-        format = "binary";
-        owner = "hydra-queue-runner";
-        group = "hydra";
-        mode = "0400";
+          @block path /nix-cache-info /nar/* *.narinfo /build/*/nix/closure /build/*/nix/closure/* /build/*/download/* /channel/* /*/channel/*
+          respond @block 403
+
+          reverse_proxy localhost:${cfg.port}
+        '';
+      };
+      "http://${cfg.intraDomain}" = {
+        extraConfig = ''
+          import encode
+          reverse_proxy localhost:${cfg.port}
+        '';
       };
     };
+
   };
 }

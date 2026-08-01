@@ -3,6 +3,7 @@
   imports = [
     # Include the results of the hardware scan.
     ./hardware-configuration.nix
+    ./services.nix
   ];
 
   system.stateVersion = "26.11";
