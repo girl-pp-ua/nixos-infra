@@ -37,18 +37,17 @@ in
       default = "nextcloud";
     };
 
-    package = lib.mkPackageOption pkgs "nextcloud33" { };
+    package = lib.mkPackageOption pkgs "nextcloud34" { };
 
     apps-packages = lib.mkOption {
-      # type = lib.types.any;
-      default = nc4nix.nextcloud-33 // config.services.nextcloud.package.packages.apps;
+      default = nc4nix.nextcloud-34 // cfg.package.packages.apps;
     };
   };
 
   config = lib.mkIf cfg.enable {
     services.nextcloud = {
       enable = true;
-      package = cfg.package;
+      inherit (cfg) package;
 
       # web server
       webserver = "caddy";
@@ -134,7 +133,7 @@ in
           forms
           tables
           bookmarks
-          groupfolders
+          # groupfolders
           impersonate
           end_to_end_encryption
           integration_paperless
@@ -144,11 +143,11 @@ in
           guests
 
           integration_immich
-          files_lock
+          # files_lock
           sketch_picker
           markdownreadme
-          transfer
-          ak_language_switcher
+          # transfer
+          # ak_language_switcher
           ;
 
         # inherit (nc4nix.nextcloud-31)
