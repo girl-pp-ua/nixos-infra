@@ -72,7 +72,7 @@ let
       sshUser = "luna";
       inherit sshKey;
       publicHostKey = "c3NoLWVkMjU1MTkgQUFBQUMzTnphQzFsWkRJMU5URTVBQUFBSUxac0dCWjl5emRmSEJQSDlmcEZNcElUNStaeERrK0dkUWVMNG9YNkJ6UDcgcm9vdEBab3JheWFzCg==";
-      maxJobs = 32;
+      maxJobs = 8;
       speedFactor = 30;
     };
   };
