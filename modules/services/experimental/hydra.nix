@@ -1,5 +1,6 @@
 {
   config,
+  pkgs,
   lib,
   ...
 }:
@@ -70,6 +71,15 @@ in
           reverse_proxy localhost:${cfg.port}
         '';
       };
+    };
+
+    systemd.services.kick-hydra = {
+      script = ''
+        ${pkgs.systemd}/bin/systemctl restart hydra-evaluator
+        ${pkgs.systemd}/bin/systemctl restart hydra-queue-runner
+      '';
+      startAt = "0/2:00";
+      wantedBy = [ "multi-user.target" ];
     };
 
   };
