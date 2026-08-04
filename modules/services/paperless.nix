@@ -107,6 +107,8 @@ in
         # PAPERLESS_SOCIALACCOUNT_ADMIN_GROUPS = "paperless.admin@${cfg-svc.kanidm.domain}";
 
         # TODO: add PAPERLESS_ADMIN_USER
+
+        # TODO: PAPERLESS_AI_ENABLED, maybe consider PAPERLESS_REMOTE_OCR_ENGINE?
       };
     };
 
