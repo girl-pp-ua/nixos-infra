@@ -88,6 +88,10 @@ in
         # XXX: django-ipware/python ipware expects partial ips like "127.0." here
         # NOT CIDR notation. but this should still work for fixed ips
         PAPERLESS_TRUSTED_PROXIES = config.polaris.trustedNetworks;
+        # caddy@localhost -> caddy@astra
+        PAPERLESS_ALLAUTH_TRUSTED_PROXY_COUNT = 2;
+        # TODO set this instead: (ie X-Real-IP)
+        # PAPERLESS_ALLAUTH_TRUSTED_CLIENT_IP_HEADER = ;
 
         PAPERLESS_APPS = "allauth.socialaccount.providers.openid_connect";
 
