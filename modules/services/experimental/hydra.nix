@@ -78,7 +78,7 @@ in
         ${pkgs.systemd}/bin/systemctl restart hydra-evaluator
         ${pkgs.systemd}/bin/systemctl restart hydra-queue-runner
       '';
-      startAt = "0/2:00";
+      startAt = "0/6:00";
       wantedBy = [ "multi-user.target" ];
     };
 
