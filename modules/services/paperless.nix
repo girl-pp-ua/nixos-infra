@@ -38,11 +38,25 @@ in
     services.paperless = {
       enable = true;
 
-      package = pkgs.paperless-ngx.overrideAttrs (prev: {
-        # (pytest check takes ridiculously long time)
-        dontUsePythonImportsCheck = true;
-        dontUsePytestCheck = true;
-      });
+      package =
+        (pkgs.paperless-ngx.override {
+          # TODO: submit the pr for this upstream
+          # this allows qpdf to ignore warnings about extra non-pdf stuff in pdf files...
+          # ...like "CAdES enveloped" signatures
+          qpdf = pkgs.symlinkJoin {
+            name = "qpdf";
+            paths = [ pkgs.qpdf ];
+            nativeBuildInputs = [ pkgs.makeWrapper ];
+            postBuild = ''
+              wrapProgram $out/bin/qpdf --add-flags --warning-exit-0
+            '';
+          };
+        }).overrideAttrs
+          (prev: {
+            # (pytest check takes ridiculously long time)
+            dontUsePythonImportsCheck = true;
+            dontUsePytestCheck = true;
+          });
 
       # package = pkgs.paperless-ngx.overrideAttrs (prev: {
       #   # XXX: build failure
