@@ -59,22 +59,22 @@ let
       speedFactor = 10;
     };
 
-    exarch = {
-      hostName = "81.2.102.158:444";
-      systems = [ "x86_64-linux" ];
-      supportedFeatures = [
-        "kvm"
-        "big-parallel"
-        "nixos-test"
-      ];
-      # protocol = "ssh-ng";
-      protocol = "ssh";
-      sshUser = "luna";
-      inherit sshKey;
-      publicHostKey = "c3NoLWVkMjU1MTkgQUFBQUMzTnphQzFsWkRJMU5URTVBQUFBSUxac0dCWjl5emRmSEJQSDlmcEZNcElUNStaeERrK0dkUWVMNG9YNkJ6UDcgcm9vdEBab3JheWFzCg==";
-      maxJobs = 8;
-      speedFactor = 30;
-    };
+    # exarch = {
+    #   hostName = "81.2.102.158:444";
+    #   systems = [ "x86_64-linux" ];
+    #   supportedFeatures = [
+    #     "kvm"
+    #     "big-parallel"
+    #     "nixos-test"
+    #   ];
+    #   # protocol = "ssh-ng";
+    #   protocol = "ssh";
+    #   sshUser = "luna";
+    #   inherit sshKey;
+    #   publicHostKey = "c3NoLWVkMjU1MTkgQUFBQUMzTnphQzFsWkRJMU5URTVBQUFBSUxac0dCWjl5emRmSEJQSDlmcEZNcElUNStaeERrK0dkUWVMNG9YNkJ6UDcgcm9vdEBab3JheWFzCg==";
+    #   maxJobs = 8;
+    #   speedFactor = 30;
+    # };
   };
 in
 {
