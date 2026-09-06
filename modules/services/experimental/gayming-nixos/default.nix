@@ -11,13 +11,18 @@ in
 {
   options.polaris.services.experimental.gayming-nixos = {
     enable = lib.mkEnableOption "gayming-nixos";
+    fwdHostGids = lib.mkEnableOption "forward host gids" // {
+      default = !cfg.vuinputd.enable;
+    };
     vuinputd.enable = lib.mkEnableOption "vuinputd" // {
+      default = false;
       description = "Use vuinputd for virtual input devices instead of exposing /dev/uinput directly";
     };
   };
   imports = [
-    ./uinput-vuinputd.nix
     ./uinput-base.nix
+    ./uinput-raw.nix
+    ./uinput-vuinputd.nix
   ];
   config = lib.mkIf cfg.enable {
     polaris.services.backup.extraExclude = [
@@ -132,6 +137,14 @@ in
           node = "char-input";
           modifier = "rw";
         }
+        {
+          node = "char-hidraw";
+          modifier = "rw";
+        }
+        {
+          node = "/dev/fuse";
+          modifier = "rw";
+        }
       ]
       ++ (
         if cfg.vuinputd.enable then
@@ -162,6 +175,10 @@ in
           hostPath = "/dev/input";
           isReadOnly = false;
         };
+        "/dev/fuse" = {
+          hostPath = "/dev/fuse";
+          isReadOnly = false;
+        };
       }
       // (
         if cfg.vuinputd.enable then
@@ -181,10 +198,17 @@ in
               hostPath = "/dev/uhid";
               isReadOnly = false;
             };
+            "/run/udev" = {
+              hostPath = "/run/udev";
+              isReadOnly = true;
+            };
           }
       );
       specialArgs = {
         inherit secrets;
+        inherit (cfg) fwdHostGids;
+        hostInputGid = config.users.groups.input.gid;
+        hostUinputGid = config.users.groups.uinput.gid;
       };
       config =
         { ... }:
