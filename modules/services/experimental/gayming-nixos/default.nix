@@ -25,6 +25,17 @@ in
     ./uinput-vuinputd.nix
   ];
   config = lib.mkIf cfg.enable {
+    assertions =
+      map
+        (name: {
+          assertion = cfg.fwdHostGids -> config.users.groups.${name}.gid != null;
+          message = "gayming-nixos: host group '${name}' has no static gid";
+        })
+        [
+          "input"
+          "uinput"
+        ];
+
     polaris.services.backup.extraExclude = [
       "/var/lib/nixos-containers/gayming"
     ];
@@ -207,6 +218,7 @@ in
       specialArgs = {
         inherit secrets;
         inherit (cfg) fwdHostGids;
+        useVuinputd = cfg.vuinputd.enable;
         hostInputGid = config.users.groups.input.gid;
         hostUinputGid = config.users.groups.uinput.gid;
       };
