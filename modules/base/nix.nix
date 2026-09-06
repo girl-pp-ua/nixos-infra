@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, pkgs-stable, ... }:
 {
   nix = {
     package = pkgs.lixPackageSets.git.lix;
@@ -64,6 +64,11 @@
       setNixPath = true;
       setFlakeRegistry = true;
     };
+    overlays = [
+      (self: super: {
+        inherit (pkgs-stable) caddy;
+      })
+    ];
   };
 
   # default is 100, so puts it at 1:10 weight with other tasks under contention

@@ -1,6 +1,7 @@
 {
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-26.05";
 
     flake-parts.url = "github:hercules-ci/flake-parts";
     systems.url = "github:nix-systems/default";
@@ -41,6 +42,7 @@
 
   outputs =
     inputs@{
+      nixpkgs-stable,
       flake-parts,
       systems,
       ...
@@ -61,6 +63,9 @@
           (inputs.nixpkgs.lib.nixosSystem {
             inherit system;
             specialArgs = specialArgs // {
+              pkgs-stable = import nixpkgs-stable {
+                inherit system;
+              };
               inherit system;
             };
             modules = [
