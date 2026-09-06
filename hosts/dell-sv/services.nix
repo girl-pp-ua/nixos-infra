@@ -18,7 +18,7 @@
     experimental = {
       gayming-nixos = {
         enable = true;
-        vuinputd.enable = true;
+        # vuinputd.enable = true;
       };
       # hydra.enable = true;
     };

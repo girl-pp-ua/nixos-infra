@@ -132,25 +132,57 @@ in
           node = "char-input";
           modifier = "rw";
         }
-        {
-          node = if cfg.vuinputd.enable then "/dev/vuinput" else "/dev/uinput";
-          modifier = "rw";
-        }
-      ];
+      ]
+      ++ (
+        if cfg.vuinputd.enable then
+          [
+            {
+              node = "/dev/vuinput";
+              modifier = "rw";
+            }
+          ]
+        else
+          [
+            {
+              node = "/dev/uinput";
+              modifier = "rw";
+            }
+            {
+              node = "/dev/uhid";
+              modifier = "rw";
+            }
+          ]
+      );
       bindMounts = {
         "/dev/dri" = {
           hostPath = "/dev/dri";
-          isReadOnly = false;
-        };
-        "/dev/uinput" = {
-          hostPath = if cfg.vuinputd.enable then "/dev/vuinput" else "/dev/uinput";
           isReadOnly = false;
         };
         "/dev/input" = {
           hostPath = "/dev/input";
           isReadOnly = false;
         };
-      };
+      }
+      // (
+        if cfg.vuinputd.enable then
+          {
+            "/dev/uinput" = {
+              hostPath = "/dev/vuinput";
+              isReadOnly = false;
+            };
+          }
+        else
+          {
+            "/dev/uinput" = {
+              hostPath = "/dev/uinput";
+              isReadOnly = false;
+            };
+            "/dev/uhid" = {
+              hostPath = "/dev/uhid";
+              isReadOnly = false;
+            };
+          }
+      );
       specialArgs = {
         inherit secrets;
       };
