@@ -4,7 +4,6 @@
   secrets,
   fwdHostGids,
   hostInputGid,
-  hostUinputGid,
   ...
 }:
 {
@@ -12,7 +11,6 @@
     mutableUsers = false;
     groups = lib.optionalAttrs fwdHostGids {
       input.gid = lib.mkForce hostInputGid;
-      uinput.gid = lib.mkForce hostUinputGid;
     };
     users.gamer = {
       isNormalUser = true;

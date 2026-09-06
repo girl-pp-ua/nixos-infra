@@ -21,6 +21,7 @@
     ./services/labwc-headless.nix
     ./services/pipewire.nix
     ./services/sunshine.nix
+    ./services/udev.nix
 
     ./vuinputd-guest.nix
   ];
