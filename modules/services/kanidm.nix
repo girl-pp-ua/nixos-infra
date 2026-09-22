@@ -71,6 +71,7 @@ in
               "immich.role.admin"
               "forgejo.access"
               "forgejo.admin"
+              "bookorbit.admin"
             ];
           };
 
@@ -251,6 +252,31 @@ in
           # TODO: support quota
         };
 
+        groups."bookorbit.access".members = [ "bookorbit.admin" ];
+        groups."bookorbit.admin" = { };
+        systems.oauth2.${cfg-svc.bookorbit.client_id} = {
+          displayName = "BookOrbit";
+          imageFile = "${root}/assets/sso-images/bookorbit-icon.png";
+          originLanding = "https://${cfg-svc.bookorbit.domain}/";
+
+          preferShortUsername = true;
+
+          basicSecretFile = config.sops.secrets."kanidm.bookorbit/clientSecret".path;
+          originUrl = [
+            "https://${cfg-svc.bookorbit.domain}/oauth2-callback"
+            "bookorbit://oauth2-callback"
+          ];
+
+          scopeMaps."bookorbit.access" = [
+            "openid"
+            "email"
+            "profile"
+            "groups"
+          ];
+          claimMaps.${cfg-svc.bookorbit.sso.permissionsClaim}.valuesByGroup =
+            cfg-svc.bookorbit.sso.permissions;
+        };
+
         groups."forgejo.access".members = [ "forgejo.admin" ];
         groups."forgejo.admin" = { };
         systems.oauth2.${cfg-svc.forgejo.client_id} = {
@@ -314,6 +340,9 @@ in
         };
         "kanidm.forgejo/clientSecret" = kanidmSecret // {
           key = "forgejo/clientSecret";
+        };
+        "kanidm.bookorbit/clientSecret" = kanidmSecret // {
+          key = "bookorbit/clientSecret";
         };
         "kanidm_tls_key" = kanidmSecret // {
           sopsFile = "${inputs.secrets}/certs/tls_key.sops.pem";

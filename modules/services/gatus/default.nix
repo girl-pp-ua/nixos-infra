@@ -146,6 +146,10 @@ in
                 hydra = mkUrl' "https://${cfg-svc.experimental.hydra.domain}/api/latestbuilds?nr=1" [
                   "[STATUS] == 200"
                 ];
+                bookorbit = mkUrl' "https://${cfg-svc.bookorbit.domain}/api/v1/health" [
+                  "[STATUS] == 200"
+                  "[BODY].status == ok"
+                ];
                 svn = mkUrl' "tcp://${cfg-svc.experimental.svn.domain}:3690" [
                   "[CONNECTED] == true"
                 ];
