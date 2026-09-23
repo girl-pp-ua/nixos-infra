@@ -72,7 +72,18 @@ in
         ffmpeg = {
           accel = "vaapi";
           accelDecode = true;
-          realtime.enable = true;
+          realtime = {
+            enabled = true;
+            resolutions = [
+              480
+              720
+              1080
+            ];
+            videoCodecs = [
+              "h264"
+              "hevc"
+            ];
+          };
         };
       };
     };
