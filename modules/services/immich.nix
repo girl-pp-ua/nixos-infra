@@ -69,6 +69,11 @@ in
           signingAlgorithm = "ES256";
           # profileSigningAlgorithm = "ES256";
         };
+        ffmpeg = {
+          accel = "vaapi";
+          accelDecode = true;
+          realtime.enable = true;
+        };
       };
     };
 
