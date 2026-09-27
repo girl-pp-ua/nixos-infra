@@ -91,6 +91,7 @@ in
               "immich.access"
               "immich.role.user"
               "forgejo.access"
+              "paperless.access"
             ];
           };
 
