@@ -48,6 +48,9 @@ in
         pkgs.home-assistant-custom-components.auth_oidc
       ];
       config = {
+        homeassistant = {
+          auth_providers = [ ];
+        };
         default_config = { };
         http = {
           server_host = [
@@ -57,6 +60,8 @@ in
           server_port = cfg.port;
           use_x_forwarded_for = true;
           trusted_proxies = config.polaris.trustedNetworks;
+          ip_ban_enabled = true;
+          login_attempts_threshold = 5;
         };
         auth_oidc = {
           inherit (cfg) client_id;
@@ -81,6 +86,20 @@ in
     };
 
     systemd.tmpfiles.rules = [
+      "d ${hass.configDir}/.storage 0700 hass hass - -"
+      "f ${hass.configDir}/.storage/onboarding 0600 hass hass - ${
+        builtins.toJSON {
+          version = 4;
+          minor_version = 1;
+          key = "onboarding";
+          data.done = [
+            "user"
+            "core_config"
+            "analytics"
+            "integration"
+          ];
+        }
+      }"
       "f ${hass.configDir}/automations.yaml 0644 hass hass - []"
       "f ${hass.configDir}/scenes.yaml 0644 hass hass - []"
       "f ${hass.configDir}/scripts.yaml 0644 hass hass - {}"

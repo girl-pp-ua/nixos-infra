@@ -219,6 +219,12 @@ in
       ${cfg'.home-assistant.domain}.extraConfig = ''
         import encode
         import norobot
+        header {
+          Strict-Transport-Security "max-age=31536000; includeSubDomains"
+          X-Content-Type-Options "nosniff"
+          Referrer-Policy "same-origin"
+          -Server
+        }
         reverse_proxy http://${cfg'.home-assistant.intraDomain}
       '';
       # ${cfg'.experimental.hydra.domain}.extraConfig = ''
