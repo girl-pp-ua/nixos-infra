@@ -43,6 +43,10 @@ in
         "met"
         "esphome"
         "radio_browser"
+        # zigbee via the official HA dongles (ZBT-1 / ZBT-2)
+        "zha"
+        "homeassistant_sky_connect"
+        "homeassistant_connect_zbt2"
       ];
       customComponents = [
         pkgs.home-assistant-custom-components.auth_oidc
