@@ -90,6 +90,18 @@ in
         "smartthings"
         "ipp"
         "brother"
+        # google
+        "google_assistant"
+        "google_assistant_sdk"
+        "nest"
+        "google"
+        "google_tasks"
+        "google_drive"
+        "google_photos"
+        "google_mail"
+        "google_translate"
+        "google_generative_ai_conversation"
+        "youtube"
       ];
       customComponents = [
         pkgs.home-assistant-custom-components.auth_oidc
