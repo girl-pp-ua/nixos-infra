@@ -97,6 +97,7 @@ in
       config = {
         homeassistant = {
           auth_providers = [ ];
+          time_zone = lib.mkForce null;
         };
         default_config = { };
         http = {
