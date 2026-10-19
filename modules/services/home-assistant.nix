@@ -109,6 +109,7 @@ in
       ];
       customComponents = [
         pkgs.home-assistant-custom-components.auth_oidc
+        pkgs.home-assistant-custom-components.scene_presets
       ];
       config = {
         homeassistant = {
