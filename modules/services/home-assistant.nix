@@ -116,6 +116,8 @@ in
           time_zone = lib.mkForce null;
         };
         default_config = { };
+        # XXX: http settings wont actually be respected, except first launch
+        # womp womp
         http = {
           server_host = [
             "127.0.0.1"
@@ -148,6 +150,18 @@ in
         "script ui" = "!include scripts.yaml";
       };
     };
+
+    # set external_url in the stored core config instead of yaml
+    # (prevent lock on the whole "general" settings page in the ui)
+    systemd.services.home-assistant.preStart = lib.mkAfter ''
+      f=${hass.configDir}/.storage/core.config
+      if [ -f "$f" ]; then
+        ${lib.getExe pkgs.jq} --arg url "https://${cfg.domain}" \
+          '.data.external_url = $url' "$f" > "$f.tmp"
+        chmod 600 "$f.tmp"
+        mv "$f.tmp" "$f"
+      fi
+    '';
 
     # required by the matter integration (ws://localhost:5580/ws)
     services.matter-server.enable = true;
