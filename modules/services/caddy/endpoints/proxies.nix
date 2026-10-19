@@ -216,6 +216,11 @@ in
         import norobot
         reverse_proxy http://${cfg'.forgejo.intraDomain}
       '';
+      ${cfg'.home-assistant.domain}.extraConfig = ''
+        import encode
+        import norobot
+        reverse_proxy http://${cfg'.home-assistant.intraDomain}
+      '';
       # ${cfg'.experimental.hydra.domain}.extraConfig = ''
       #   import encode
       #   import norobot

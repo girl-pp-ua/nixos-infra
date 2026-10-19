@@ -8,6 +8,7 @@
     paperless.enable = true;
     immich.enable = true;
     forgejo.enable = true;
+    home-assistant.enable = true;
 
     backup = {
       enable = true;

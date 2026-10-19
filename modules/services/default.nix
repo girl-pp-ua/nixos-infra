@@ -12,6 +12,7 @@
     ./bookorbit.nix
     ./dashy.nix
     ./forgejo.nix
+    ./home-assistant.nix
     ./garage.nix
     ./immich.nix
     ./kanidm.nix
