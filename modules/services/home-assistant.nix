@@ -102,6 +102,10 @@ in
         "google_translate"
         "google_generative_ai_conversation"
         "youtube"
+        # ai
+        "anthropic"
+        "mcp_server"
+        "mcp"
       ];
       customComponents = [
         pkgs.home-assistant-custom-components.auth_oidc
