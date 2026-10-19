@@ -2,6 +2,7 @@
 {
   imports = [
     ./hardware-configuration.nix
+    ./modules/bluetooth.nix
     ./modules/cpu.nix
     ./modules/fs_data.nix
     ./modules/fs_root.nix
