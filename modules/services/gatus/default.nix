@@ -102,6 +102,7 @@ in
                 oci2 = mkPing "oci2.polaris";
                 dell-sv = mkPing "dell-sv.polaris";
                 astra = mkPing "astra.polaris";
+                amoeba = mkPing "amoeba.polaris";
               };
               nameservers = mkEndpoints {
                 ns1 = mkDns "ns1.girl.pp.ua" hosts.oci1.public.ipv4;
