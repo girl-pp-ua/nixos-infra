@@ -47,6 +47,49 @@ in
         "zha"
         "homeassistant_sky_connect"
         "homeassistant_connect_zbt2"
+        # matter / thread
+        "matter"
+        "thread"
+        "otbr"
+        # generic
+        "mqtt"
+        "homekit_controller"
+        "upnp"
+        "dlna_dmr"
+        # lights
+        "hue"
+        "tradfri"
+        "lifx"
+        "nanoleaf"
+        "wiz"
+        "wled"
+        "yeelight"
+        "govee_light_local"
+        "elgato"
+        # plugs/switches/sensors
+        "tplink"
+        "shelly"
+        "tuya"
+        "switchbot"
+        "broadlink"
+        "xiaomi_miio"
+        "xiaomi_ble"
+        # media
+        "cast"
+        "sonos"
+        "spotify"
+        "apple_tv"
+        "androidtv_remote"
+        "samsungtv"
+        "webostv"
+        # appliances/climate/misc
+        "roborock"
+        "ecovacs"
+        "tado"
+        "netatmo"
+        "smartthings"
+        "ipp"
+        "brother"
       ];
       customComponents = [
         pkgs.home-assistant-custom-components.auth_oidc
@@ -88,6 +131,12 @@ in
         "script ui" = "!include scripts.yaml";
       };
     };
+
+    # required by the matter integration (ws://localhost:5580/ws)
+    services.matter-server.enable = true;
+
+    # mdns, used for local discovery (hue, cast, homekit, matter, etc.)
+    networking.firewall.allowedUDPPorts = [ 5353 ];
 
     systemd.tmpfiles.rules = [
       "d ${hass.configDir}/.storage 0700 hass hass - -"
