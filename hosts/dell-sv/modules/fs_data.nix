@@ -1,5 +1,8 @@
 { ... }:
 {
+  boot.kernelParams = [
+    "usb-storage.quirks=13fd:5912:u"
+  ];
   environment.etc."crypttab".text = ''
     data-mq5jJku1 UUID=2a7de5c5-2512-4547-a8bd-d73e3534ac1e - tpm2-device=auto,nofail,timeout=30
   '';
