@@ -96,6 +96,7 @@ in
         "nest"
         "google"
         "google_tasks"
+        "google_health"
         "google_drive"
         "google_photos"
         "google_mail"
