@@ -72,6 +72,7 @@ in
               "forgejo.access"
               "forgejo.admin"
               "bookorbit.admin"
+              "home-assistant.admin"
             ];
           };
 
@@ -92,6 +93,7 @@ in
               "immich.role.user"
               "forgejo.access"
               "paperless.access"
+              "home-assistant.admin" # :3
             ];
           };
 
@@ -278,6 +280,27 @@ in
             cfg-svc.bookorbit.sso.permissions;
         };
 
+        groups."home-assistant.access".members = [ "home-assistant.admin" ];
+        groups."home-assistant.admin" = { };
+        systems.oauth2.${cfg-svc.home-assistant.client_id} = {
+          displayName = "Home Assistant";
+          originLanding = "https://${cfg-svc.home-assistant.domain}/auth/oidc/welcome";
+
+          preferShortUsername = true;
+
+          basicSecretFile = config.sops.secrets."kanidm.home-assistant/clientSecret".path;
+          originUrl = [
+            "https://${cfg-svc.home-assistant.domain}/auth/oidc/callback"
+          ];
+
+          scopeMaps."home-assistant.access" = [
+            "openid"
+            "email"
+            "profile"
+            "groups"
+          ];
+        };
+
         groups."forgejo.access".members = [ "forgejo.admin" ];
         groups."forgejo.admin" = { };
         systems.oauth2.${cfg-svc.forgejo.client_id} = {
@@ -344,6 +367,9 @@ in
         };
         "kanidm.bookorbit/clientSecret" = kanidmSecret // {
           key = "bookorbit/clientSecret";
+        };
+        "kanidm.home-assistant/clientSecret" = kanidmSecret // {
+          key = "home-assistant/clientSecret";
         };
         "kanidm_tls_key" = kanidmSecret // {
           sopsFile = "${inputs.secrets}/certs/tls_key.sops.pem";
