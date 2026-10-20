@@ -9,6 +9,10 @@ in
       type = lib.types.int;
       default = 16002;
     };
+    metricsPort = lib.mkOption {
+      type = lib.types.int;
+      default = 16003;
+    };
     domain = lib.mkOption {
       type = lib.types.str;
       default = "ntfy.girl.pp.ua";
@@ -25,8 +29,11 @@ in
         # enable-signup = true;
         # enable-login = true;
         enable-reservations = true;
+        enable-metrics = true;
+        metrics-listen-http = ":${toString cfg.metricsPort}";
       };
     };
+    polaris.services.monitoring.exports.ntfy.port = cfg.metricsPort;
 
     services.caddy.virtualHosts.${cfg.domain} = {
       extraConfig = ''

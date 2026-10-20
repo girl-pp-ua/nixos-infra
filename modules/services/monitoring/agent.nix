@@ -3,7 +3,10 @@ let
   cfg = config.polaris.services.monitoring.agent;
   cfg-server = config.polaris.services.monitoring.server;
   collector = config.polaris.hosts.${cfg.collector}.internal;
-  node = config.services.prometheus.exporters.node;
+  exporters = config.services.prometheus.exporters;
+  ports = lib.concatMapStringsSep ", " (e: toString e.port) (
+    lib.attrValues config.polaris.services.monitoring.exports
+  );
 in
 {
   options.polaris.services.monitoring.agent = {
@@ -17,15 +20,37 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    services.prometheus.exporters.node = {
-      enable = true;
-      enabledCollectors = [ "systemd" ];
+    services.prometheus.exporters = {
+      node = {
+        enable = true;
+        enabledCollectors = [ "systemd" ];
+      };
+      unbound = {
+        enable = true;
+        unbound = {
+          host = "unix://${config.services.unbound.localControlSocketPath}";
+          ca = null;
+          certificate = null;
+          key = null;
+        };
+      };
+      postgres = lib.mkIf config.services.postgresql.enable {
+        enable = true;
+        runAsLocalSuperUser = true;
+      };
+    };
+    services.unbound.settings.server.extended-statistics = true;
+
+    polaris.services.monitoring.exports = {
+      node.port = exporters.node.port;
+      unbound.port = exporters.unbound.port;
+      postgres = lib.mkIf config.services.postgresql.enable { inherit (exporters.postgres) port; };
     };
 
     # only the collector can scrape
     networking.firewall.extraInputRules = ''
-      ip saddr ${collector.ipv4} tcp dport ${toString node.port} accept
-      ip6 saddr ${collector.ipv6} tcp dport ${toString node.port} accept
+      ip saddr ${collector.ipv4} tcp dport { ${ports} } accept
+      ip6 saddr ${collector.ipv6} tcp dport { ${ports} } accept
     '';
 
     # logs

@@ -3,6 +3,7 @@
   pkgs,
   lib,
   libx,
+  inputs,
   ...
 }:
 let
@@ -15,21 +16,19 @@ let
 
   fetchDashboard =
     {
-      id,
-      rev,
+      id ? null,
+      rev ? null,
+      url ? "https://grafana.com/api/dashboards/${toString id}/revisions/${toString rev}/download",
       hash,
       replace ? [ ],
     }:
     let
-      src = pkgs.fetchurl {
-        url = "https://grafana.com/api/dashboards/${toString id}/revisions/${toString rev}/download";
-        inherit hash;
-      };
+      src = pkgs.fetchurl { inherit url hash; };
     in
     if replace == [ ] then
       src
     else
-      pkgs.runCommand "dashboard-${toString id}.json" { } ''
+      pkgs.runCommand "dashboard.json" { } ''
         substitute ${src} $out ${lib.escapeShellArgs (lib.concatMap (r: [ "--replace-fail" ] ++ r) replace)}
       '';
 
@@ -81,7 +80,93 @@ let
       rev = 1;
       hash = "sha256-ok5td2ZNKtrSto9Lc9mazYTkhjIkMaUT6Fj1xpapieU=";
     };
+    "Services/caddy.json" = fetchDashboard {
+      id = 24146;
+      rev = 1;
+      hash = "sha256-vw/O3bNKQ0tJwhsZKYvkMU6jeqkG+sfCtA7YT0vp3YY=";
+      replace = [
+        [
+          "\${DS_PROMETHEUS}"
+          "victoriametrics"
+        ]
+      ];
+    };
+    "Services/postgres.json" = fetchDashboard {
+      id = 24919;
+      rev = 1;
+      hash = "sha256-BHr2pJL7rZ4RCITh6pJOdwRenvIJNKJb5JGJjm6N5PU=";
+      replace = [
+        [
+          "\${DS_VICTORIAMETRICS}"
+          "victoriametrics"
+        ]
+      ];
+    };
+    "Services/unbound.json" = fetchDashboard {
+      id = 21006;
+      rev = 4;
+      hash = "sha256-Z+y+8MCIpjgPW12Q2jcbNhaL/WA00SL2uPT/7KKsOVw=";
+    };
+    "Services/ntfy.json" = fetchDashboard {
+      url = "https://raw.githubusercontent.com/binwiederhier/ntfy/v2.32.0/examples/grafana-dashboard/ntfy-grafana.json";
+      hash = "sha256-hSOr3TsDYsYLG13zvfzsXwDWk3b4f5ZoRPwg+B1vnqg=";
+      replace = [
+        [
+          "\${DS_PROMETHEUS}"
+          "victoriametrics"
+        ]
+      ];
+    };
+    "Services/garage.json" = fetchDashboard {
+      url = "https://git.deuxfleurs.fr/Deuxfleurs/garage/raw/tag/v2.4.1/script/telemetry/grafana-garage-dashboard-prometheus.json";
+      hash = "sha256-VUAheA6DTB8TWUhYOwH/O03XqmD7WAhEx5kF4R/Recs=";
+      replace = [
+        [
+          "\${DS_DS_PROMETHEUS}"
+          "victoriametrics"
+        ]
+      ];
+    };
+    "Services/gatus.json" = fetchDashboard {
+      url = "https://raw.githubusercontent.com/TwiN/gatus/v5.36.0/.examples/docker-compose-grafana-prometheus/grafana/provisioning/dashboards/gatus.json";
+      hash = "sha256-qXo73c9rR30nxjnnkh3e7gd3GKkMi0kaVxJFBHCDq1o=";
+      replace = [
+        [
+          ''"value": "cedv077q7bbwgd"''
+          ''"value": "victoriametrics"''
+        ]
+      ];
+    };
+    "Services/forgejo.json" = fetchDashboard {
+      # gitea dashboard; forgejo exports the same gitea_* metrics
+      id = 13192;
+      rev = 1;
+      hash = "sha256-IAaI/HvMxcWE3PGQFK8avNjgj88DgcDvkWRcDAWSejM=";
+      replace = [
+        [
+          "\${DS_PROMETHEUS}"
+          "VictoriaMetrics"
+        ]
+        [
+          ''job=\"gitea\"''
+          ''job=\"forgejo\"''
+        ]
+      ];
+    };
   };
+
+  # polaris.services.monitoring.exports of every host, grouped by job
+  targets = lib.groupBy (t: t.job) (
+    lib.concatLists (
+      lib.mapAttrsToList (
+        host: node:
+        lib.mapAttrsToList (
+          job: e: e // { inherit host job; }
+        ) node.config.polaris.services.monitoring.exports
+      ) inputs.self.nixosConfigurations
+    )
+  );
+  tokenJobs = lib.filterAttrs (_: ts: (lib.head ts).bearerTokenSecret != null) targets;
 in
 {
   options.polaris.services.monitoring.server = {
@@ -124,28 +209,37 @@ in
       extraOptions = [ "-selfScrapeInterval=60s" ];
       prometheusConfig = {
         global.scrape_interval = "60s";
-        scrape_configs = [
-          {
-            job_name = "node";
-            static_configs = lib.mapAttrsToList (name: host: {
-              targets = [ "${host.internal.fqdn}:${toString config.services.prometheus.exporters.node.port}" ];
-              labels = {
-                host = name;
-                instance = name;
-              };
-            }) hosts;
-          }
-          {
-            job_name = "victorialogs";
-            static_configs = [ { targets = [ "127.0.0.1:${toString cfg.victorialogsPort}" ]; } ];
-          }
-          {
-            job_name = "grafana";
-            static_configs = [ { targets = [ "127.0.0.1:${toString cfg.port}" ]; } ];
-          }
-        ];
+        scrape_configs =
+          lib.mapAttrsToList (
+            job: ts:
+            {
+              job_name = job;
+              metrics_path = (lib.head ts).path;
+              static_configs = map (t: {
+                targets = [ "${hosts.${t.host}.internal.fqdn}:${toString t.port}" ];
+                labels.instance = t.host;
+              }) ts;
+            }
+            // lib.optionalAttrs (tokenJobs ? ${job}) {
+              bearer_token_file = "/run/credentials/victoriametrics.service/${job}";
+            }
+          ) targets
+          ++ [
+            {
+              job_name = "victorialogs";
+              static_configs = [ { targets = [ "127.0.0.1:${toString cfg.victorialogsPort}" ]; } ];
+            }
+            {
+              job_name = "grafana";
+              static_configs = [ { targets = [ "127.0.0.1:${toString cfg.port}" ]; } ];
+            }
+          ];
       };
     };
+
+    systemd.services.victoriametrics.serviceConfig.LoadCredential = lib.mapAttrsToList (
+      job: _: "${job}:${config.sops.secrets."monitoring/${job}".path}"
+    ) tokenJobs;
 
     services.victorialogs = {
       enable = true;
@@ -305,6 +399,9 @@ in
       {
         "grafana/secret_key" = grafanaSecret;
         "grafana/clientSecret" = grafanaSecret;
-      };
+      }
+      // lib.mapAttrs' (
+        job: ts: lib.nameValuePair "monitoring/${job}" { key = (lib.head ts).bearerTokenSecret; }
+      ) tokenJobs;
   };
 }

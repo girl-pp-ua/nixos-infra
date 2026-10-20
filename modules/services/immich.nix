@@ -44,7 +44,14 @@ in
       environment = {
         IMMICH_ALLOW_SETUP = "false";
         IMMICH_CONFIG_FILE = config.sops.templates."immich.json".path;
+        IMMICH_TELEMETRY_INCLUDE = "all";
+        IMMICH_API_METRICS_PORT = "8081";
+        IMMICH_MICROSERVICES_METRICS_PORT = "8082";
       };
+    };
+    polaris.services.monitoring.exports = {
+      immich-api.port = 8081;
+      immich-microservices.port = 8082;
     };
 
     users.users.${config.services.immich.user}.extraGroups = [

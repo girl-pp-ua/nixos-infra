@@ -33,6 +33,10 @@ in
       type = lib.types.int;
       default = 8123;
     };
+    metricsPort = lib.mkOption {
+      type = lib.types.port;
+      default = 16131;
+    };
   };
 
   config = lib.mkIf cfg.enable {
@@ -40,6 +44,7 @@ in
       enable = true;
       extraComponents = [
         "default_config"
+        "prometheus"
         "met"
         "esphome"
         "radio_browser"
@@ -118,6 +123,8 @@ in
           time_zone = lib.mkForce null;
         };
         default_config = { };
+        # only reachable through the collector port below
+        prometheus.requires_auth = false;
         # XXX: http settings wont actually be respected, except first launch
         # womp womp
         http = {
@@ -198,8 +205,19 @@ in
       ];
       extraConfig = ''
         import encode
+        respond /api/prometheus* 404
         reverse_proxy http://127.0.0.1:${toString cfg.port}
       '';
+    };
+    services.caddy.virtualHosts."http://:${toString cfg.metricsPort}".extraConfig = ''
+      handle /api/prometheus {
+        reverse_proxy http://127.0.0.1:${toString cfg.port}
+      }
+      respond 403
+    '';
+    polaris.services.monitoring.exports.home-assistant = {
+      port = cfg.metricsPort;
+      path = "/api/prometheus";
     };
 
     sops = {

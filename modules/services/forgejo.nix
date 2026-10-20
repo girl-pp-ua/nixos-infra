@@ -32,6 +32,10 @@ in
       type = lib.types.str;
       default = "forgejo";
     };
+    metricsPort = lib.mkOption {
+      type = lib.types.port;
+      default = 16130;
+    };
   };
 
   config = lib.mkIf cfg.enable {
@@ -95,6 +99,7 @@ in
           GRAVATAR_SOURCE = "gravatar";
           ENABLE_FEDERATED_AVATAR = true;
         };
+        metrics.ENABLED = true;
         repository = {
           DEFAULT_BRANCH = "master"; # sorry im too used to this one :p
         };
@@ -256,9 +261,18 @@ in
       ];
       extraConfig = ''
         import encode
+        respond /metrics 404
         reverse_proxy unix/${config.services.forgejo.settings.server.HTTP_ADDR}
       '';
     };
+    # forgejo only listens on a unix socket, so give the collector its own port
+    services.caddy.virtualHosts."http://:${toString cfg.metricsPort}".extraConfig = ''
+      handle /metrics {
+        reverse_proxy unix/${config.services.forgejo.settings.server.HTTP_ADDR}
+      }
+      respond 403
+    '';
+    polaris.services.monitoring.exports.forgejo.port = cfg.metricsPort;
 
     sops.secrets = {
       "forgejo/secret_key" = { };

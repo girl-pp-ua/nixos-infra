@@ -74,12 +74,17 @@ in
   };
 
   config = lib.mkIf cfg.enable {
+    polaris.services.monitoring.exports = lib.mapAttrs' (
+      name: instance: lib.nameValuePair "gatus-${name}" { inherit (instance) port; }
+    ) config.services.gatus.instances;
+
     services.gatus = {
       # package = gatus';
       instances = {
         girl-pp-ua = {
           port = 16040;
           settings = {
+            metrics = true;
             ui = {
               title = "🏳️‍⚧️ Status";
               # default-sort-by = "group";
@@ -184,6 +189,7 @@ in
         nyanbinary-rs = {
           port = 16041;
           settings = {
+            metrics = true;
             storage = {
               type = "sqlite";
               path = "/var/lib/gatus/data-nyanbinary-rs.db";
@@ -230,6 +236,7 @@ in
           extraConfig = ''
             import encode
             import norobot
+            respond /metrics 404
             reverse_proxy http://localhost:${toString config.services.gatus.instances.${name}.port}
           '';
         };

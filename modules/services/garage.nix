@@ -63,7 +63,7 @@ in
         };
 
         admin = {
-          api_bind_addr = "127.0.0.1:3903";
+          api_bind_addr = "[::]:3903";
           admin_token_file = config.sops.secrets."garage/admin_token".path;
           metrics_token_file = config.sops.secrets."garage/metrics_token".path;
           metrics_require_token = true;
@@ -90,6 +90,11 @@ in
       "d ${metadata_dir} 0750 garage garage -"
       "d ${metadata_snapshots_dir} 0750 garage garage -"
     ];
+
+    polaris.services.monitoring.exports.garage = {
+      port = 3903;
+      bearerTokenSecret = "garage/metrics_token";
+    };
 
     networking.firewall.interfaces.tailscale0 = {
       allowedTCPPorts = [

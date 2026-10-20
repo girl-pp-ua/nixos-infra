@@ -17,6 +17,10 @@ in
 
   options.polaris.services.caddy = {
     enable = lib.mkEnableOption "caddy";
+    metricsPort = lib.mkOption {
+      type = lib.types.port;
+      default = 9180;
+    };
 
     plugins = {
       enable = lib.mkEnableOption "plugins" // {
@@ -47,6 +51,9 @@ in
         grace_period 30s
         skip_install_trust
         renew_interval 30m
+        metrics {
+          per_host
+        }
         ${lib.optionalString cfg.plugins.webdav "order webdav before file_server"}
         servers {
           trusted_proxies static private_ranges ${lib.concatStringsSep " " config.polaris.trustedNetworks}
@@ -70,6 +77,9 @@ in
         }
       '';
     };
+    services.caddy.virtualHosts."http://:${toString cfg.metricsPort}".extraConfig = "metrics";
+    polaris.services.monitoring.exports.caddy.port = cfg.metricsPort;
+
     networking.firewall = {
       allowedTCPPorts = [
         80
