@@ -95,6 +95,7 @@ in
               "forgejo.access"
               "paperless.access"
               "home-assistant.admin" # :3
+              "grafana.access"
             ];
           };
 
