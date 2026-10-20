@@ -86,6 +86,24 @@ in
       environment = {
         GODEBUG = "netdns=cgo";
       };
+      serviceConfig = {
+        ProtectSystem = "strict";
+        ProtectHome = true;
+        PrivateTmp = true;
+        PrivateDevices = true;
+        NoNewPrivileges = true;
+        ProtectKernelTunables = true;
+        ProtectKernelModules = true;
+        ProtectControlGroups = true;
+        RestrictNamespaces = true;
+        RestrictAddressFamilies = [
+          "AF_INET"
+          "AF_INET6"
+          "AF_UNIX"
+        ];
+        SystemCallFilter = [ "@system-service" ];
+        CapabilityBoundingSet = "";
+      };
     };
 
     services.caddy.extraConfig = ''

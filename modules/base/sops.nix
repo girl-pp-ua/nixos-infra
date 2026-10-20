@@ -6,7 +6,7 @@
       keyFile = "/var/lib/sops-nix/key.txt";
       generateKey = true;
     };
-    defaultSopsFile = "${inputs.secrets}/secrets.sops.yaml";
+    defaultSopsFile = builtins.path { path = "${inputs.secrets}/secrets.sops.yaml"; name = "secrets.sops.yaml"; };
     defaultSopsFormat = "yaml";
   };
 }

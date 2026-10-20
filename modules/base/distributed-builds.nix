@@ -1,5 +1,6 @@
 {
   lib,
+  pkgs,
   config,
   inputs,
   ...
@@ -76,22 +77,43 @@ let
     #   speedFactor = 30;
     # };
   };
+  builderPubkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJz3xo+K9lHHXuR5rLWhwxok1/CP9KBFs7GEdEIYFl9t";
+  isBuildMachine = machines ? ${config.networking.hostName};
+  dispatchesBuilds = config.services.hydra.enable;
 in
 {
-  nix = {
-    distributedBuilds = true;
-    buildMachines = builtins.attrValues machines;
-  };
+  config = lib.mkMerge [
+    (lib.mkIf dispatchesBuilds {
+      nix = {
+        distributedBuilds = true;
+        buildMachines = builtins.attrValues machines;
+      };
 
-  sops.secrets = {
-    "keys/builder" = {
-      sopsFile = "${inputs.secrets}/keys/builder.sops";
-      format = "binary";
-      mode = "0400";
-    }
-    // lib.optionalAttrs (config ? users.users.hydra-queue-runner) {
-      owner = "hydra-queue-runner";
-      group = "hydra";
-    };
-  };
+      sops.secrets."keys/builder" = {
+        sopsFile = builtins.path {
+          path = "${inputs.secrets}/keys/builder.sops";
+          name = "builder.sops";
+        };
+        format = "binary";
+        mode = "0400";
+        owner = "hydra-queue-runner";
+        group = "hydra";
+      };
+    })
+
+    (lib.mkIf isBuildMachine {
+      users.users.builder = {
+        isNormalUser = true;
+        home = "/home/builder";
+        createHome = true;
+        hashedPassword = "!";
+        shell = pkgs.bashInteractive;
+        openssh.authorizedKeys.keys = [
+          "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIB23Z5khaSPYhYX1AZFZIVKwjXaDZbGQFVxzPPWa6f4r user@fw13"
+          ''restrict,command="${config.nix.package}/bin/nix-store --serve --write" ${builderPubkey}''
+        ];
+      };
+      nix.settings.trusted-users = [ "builder" ];
+    })
+  ];
 }

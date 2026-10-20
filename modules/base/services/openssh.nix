@@ -3,6 +3,8 @@
   services.openssh = {
     enable = true;
     openFirewall = true;
+    # only declarative keys, ignore ~/.ssh/authorized_keys
+    authorizedKeysFiles = lib.mkForce [ "/etc/ssh/authorized_keys.d/%u" ];
     settings = {
       PermitRootLogin = "no";
       PasswordAuthentication = false;

@@ -425,15 +425,15 @@ in
           key = "grafana/clientSecret";
         };
         "kanidm_tls_key" = kanidmSecret // {
-          sopsFile = "${inputs.secrets}/certs/tls_key.sops.pem";
+          sopsFile = builtins.path { path = "${inputs.secrets}/certs/tls_key.sops.pem"; name = "tls_key.sops.pem"; };
           format = "binary";
         };
         "kanidm_tls_chain" = kanidmSecret // {
-          sopsFile = "${inputs.secrets}/certs/tls_chain.sops.pem";
+          sopsFile = builtins.path { path = "${inputs.secrets}/certs/tls_chain.sops.pem"; name = "tls_chain.sops.pem"; };
           format = "binary";
         };
         "kanidm_caddy_tls_chain" = {
-          sopsFile = "${inputs.secrets}/certs/tls_chain.sops.pem";
+          sopsFile = builtins.path { path = "${inputs.secrets}/certs/tls_chain.sops.pem"; name = "tls_chain.sops.pem"; };
           format = "binary";
           mode = "0400";
           owner = "caddy";
