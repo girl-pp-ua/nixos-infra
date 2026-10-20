@@ -81,6 +81,7 @@ in
           ALLOW_ONLY_EXTERNAL_REGISTRATION = true;
           ENABLE_INTERNAL_SIGNIN = false;
           ENABLE_BASIC_AUTHENTICATION = false;
+          USERNAME_COOLDOWN_PERIOD = 365; # days
         };
         session = {
           DOMAIN = cfg.domain;
@@ -218,34 +219,56 @@ in
       };
     };
 
-    # provision oauth provider
+    # provision oauth providers
     systemd.services.forgejo.postStart =
       let
         exe = lib.getExe config.services.forgejo.package;
-        provider = {
-          provider = "openidConnect";
-          name = "kanidm_internal";
-          key = cfg.client_id;
-          auto-discover-url = idp.oidc_discovery;
-          scopes = "profile email groups";
-          allow-username-change = true;
-          group-claim-name = "groups";
-          admin-group = "forgejo.admin@sso.girl.pp.ua";
-        };
-        providerArgs = lib.cli.toCommandLineShellGNU { } provider;
-        providerSecret = config.sops.secrets."forgejo/clientSecret".path;
+        providers = [
+          {
+            args = {
+              provider = "openidConnect";
+              name = "kanidm_internal";
+              key = cfg.client_id;
+              auto-discover-url = idp.oidc_discovery;
+              scopes = "profile email groups";
+              allow-username-change = true;
+              group-claim-name = "groups";
+              admin-group = "forgejo.admin@sso.girl.pp.ua";
+            };
+            secretFile = config.sops.secrets."forgejo/clientSecret".path;
+          }
+          {
+            args = {
+              provider = "github";
+              name = "github";
+              scopes = "read:user user:email";
+            };
+            keyFile = config.sops.secrets."forgejo/github/clientId".path;
+            secretFile = config.sops.secrets."forgejo/github/clientSecret".path;
+          }
+        ];
         customConf = "--work-path ${config.services.forgejo.stateDir} --config ${config.services.forgejo.customDir}/conf/app.ini";
+        provision =
+          p:
+          let
+            inherit (p.args) name;
+            args =
+              lib.cli.toCommandLineShellGNU { } p.args
+              + lib.optionalString (p ? keyFile) " --key \"$(< ${p.keyFile})\""
+              + " --secret \"$(< ${p.secretFile})\"";
+          in
+          ''
+            provider_id=$(${exe} admin auth list ${customConf} 2>/dev/null | grep -w '${name}' | cut -f1)
+            if [[ -z "$provider_id" ]]; then
+              echo "adding ${name}"
+              ${exe} admin auth add-oauth ${customConf} ${args}
+            else
+              echo "updating ${name}"
+              ${exe} admin auth update-oauth ${customConf} --id "$provider_id" ${args}
+            fi
+          '';
       in
-      ''
-        provider_id=$(${exe} admin auth list ${customConf} 2>/dev/null | grep -w '${provider.name}' | cut -f1)
-        if [[ -z "$provider_id" ]]; then
-          echo "adding ${provider.name} ${provider.key}"
-          ${exe} admin auth add-oauth ${customConf} ${providerArgs} --secret "$(< ${providerSecret})"
-        else
-          echo "updating ${provider.name} ${provider.key}"
-          ${exe} admin auth update-oauth ${customConf} --id "$provider_id" ${providerArgs} --secret "$(< ${providerSecret})"
-        fi
-      '';
+      lib.concatMapStrings provision providers;
 
     # specify secrets explicitly
     systemd.services.forgejo-secrets.script = lib.mkForce "${pkgs.coreutils}/bin/true";
@@ -283,11 +306,18 @@ in
       "forgejo/internal_token" = { };
       "forgejo/jwt_secret" = { };
       "forgejo/lfs_jwt_secret" = { };
-      "forgejo/clientSecret" = {
-        owner = config.services.forgejo.user;
-        group = config.services.forgejo.group;
-        mode = "0400";
-      };
-    };
+    }
+    //
+      lib.genAttrs
+        [
+          "forgejo/clientSecret"
+          "forgejo/github/clientId"
+          "forgejo/github/clientSecret"
+        ]
+        (_: {
+          owner = config.services.forgejo.user;
+          group = config.services.forgejo.group;
+          mode = "0400";
+        });
   };
 }
