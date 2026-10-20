@@ -70,7 +70,6 @@ in
         "wled"
         "yeelight"
         "govee_light_local"
-        "elgato"
         # plugs/switches/sensors
         "tplink"
         "shelly"
@@ -81,17 +80,12 @@ in
         "xiaomi_ble"
         # media
         "cast"
-        "sonos"
         "spotify"
         "apple_tv"
         "androidtv_remote"
         "samsungtv"
         "webostv"
         # appliances/climate/misc
-        "roborock"
-        "ecovacs"
-        "tado"
-        "netatmo"
         "smartthings"
         "ipp"
         "brother"
