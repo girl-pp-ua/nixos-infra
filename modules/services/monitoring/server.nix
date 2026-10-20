@@ -12,27 +12,75 @@ let
     domain = config.polaris.services.kanidm.domain;
     inherit (cfg) client_id;
   };
-  # the official victoria* dashboards find their job by the "victoria-<product>-" version
-  # prefix... which the nixpkgs builds don't use; so match the job name
-  patchVictoriaDashboard =
-    src: product: job:
-    pkgs.runCommand "${product}-dashboard.json" { } ''
-      substitute ${src} $out \
-        --replace-fail 'version=~\"${product}-.*\"' 'job=\"${job}\"'
-    '';
+
+  fetchDashboard =
+    {
+      id,
+      rev,
+      hash,
+      replace ? [ ],
+    }:
+    let
+      src = pkgs.fetchurl {
+        url = "https://grafana.com/api/dashboards/${toString id}/revisions/${toString rev}/download";
+        inherit hash;
+      };
+    in
+    if replace == [ ] then
+      src
+    else
+      pkgs.runCommand "dashboard-${toString id}.json" { } ''
+        substitute ${src} $out ${lib.escapeShellArgs (lib.concatMap (r: [ "--replace-fail" ] ++ r) replace)}
+      '';
+
   dashboards = pkgs.linkFarm "grafana-dashboards" {
-    "Hosts/node-exporter-full.json" = pkgs.fetchurl {
-      url = "https://grafana.com/api/dashboards/1860/revisions/45/download";
+    "Hosts/node-exporter-full.json" = fetchDashboard {
+      id = 1860;
+      rev = 45;
       hash = "sha256-GExrdAnzBtp1Ul13cvcZRbEM6iOtFrXXjEaY6g6lGYY=";
     };
-    "Monitoring/victoriametrics.json" = patchVictoriaDashboard (pkgs.fetchurl {
-      url = "https://grafana.com/api/dashboards/10229/revisions/60/download";
+    "Hosts/fleet-overview.json" = fetchDashboard {
+      id = 11074;
+      rev = 9;
+      hash = "sha256-iT9AKe6bPgeX662YndR7jfUW7U0Hjyje0tbY33u9EGU=";
+      replace = [
+        [
+          "\${DS__VICTORIAMETRICS}"
+          "VictoriaMetrics"
+        ]
+      ];
+    };
+    "Monitoring/victoriametrics.json" = fetchDashboard {
+      id = 10229;
+      rev = 60;
       hash = "sha256-DaucJDJektHb8h+mtRwkpbO97c5YIqh+KzXWK2dTPkM=";
-    }) "victoria-metrics" "victoria-metrics";
-    "Monitoring/victorialogs.json" = patchVictoriaDashboard (pkgs.fetchurl {
-      url = "https://grafana.com/api/dashboards/22084/revisions/12/download";
+      replace = [
+        [
+          # the official victoria* dashboards find their job by the "victoria-<product>-" version
+          # prefix... which the nixpkgs builds don't use; so match the job name
+          ''version=~\"victoria-metrics-.*\"''
+          ''job=\"victoria-metrics\"''
+        ]
+      ];
+    };
+    "Monitoring/victorialogs.json" = fetchDashboard {
+      id = 22084;
+      rev = 12;
       hash = "sha256-7ZwB8CrnE8T5GXGY7rDlXFxkrJvxYclBBQbA2TwswUs=";
-    }) "victoria-logs" "victorialogs";
+      replace = [
+        [
+          # the official victoria* dashboards find their job by the "victoria-<product>-" version
+          # prefix... which the nixpkgs builds don't use; so match the job name
+          ''version=~\"victoria-logs-.*\"''
+          ''job=\"victorialogs\"''
+        ]
+      ];
+    };
+    "Logs/log-insights.json" = fetchDashboard {
+      id = 24585;
+      rev = 1;
+      hash = "sha256-ok5td2ZNKtrSto9Lc9mazYTkhjIkMaUT6Fj1xpapieU=";
+    };
   };
 in
 {
