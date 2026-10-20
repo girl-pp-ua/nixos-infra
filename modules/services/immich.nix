@@ -47,6 +47,7 @@ in
         IMMICH_TELEMETRY_INCLUDE = "all";
         IMMICH_API_METRICS_PORT = "8081";
         IMMICH_MICROSERVICES_METRICS_PORT = "8082";
+        XDG_CACHE_HOME = "/var/cache/immich"; # (for mesa shader cache)
       };
       # keep models loaded (default unloads after 5min idle, making the next search slow)
       machine-learning.environment = {
@@ -58,6 +59,8 @@ in
       immich-api.port = 8081;
       immich-microservices.port = 8082;
     };
+
+    systemd.services.immich-server.serviceConfig.CacheDirectory = "immich";
 
     users.users.${config.services.immich.user}.extraGroups = [
       "video"
@@ -83,7 +86,8 @@ in
         };
         ffmpeg = {
           accel = "vaapi";
-          accelDecode = true;
+          # hw decode tonemaps hdr via hwmap=derive_device=opencl isn't supported on amd (rocm)
+          accelDecode = false;
           realtime = {
             enabled = true;
             resolutions = [
