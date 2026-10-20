@@ -20,6 +20,20 @@ let
       substitute ${src} $out \
         --replace-fail 'version=~\"${product}-.*\"' 'job=\"${job}\"'
     '';
+  dashboards = pkgs.linkFarm "grafana-dashboards" {
+    "Hosts/node-exporter-full.json" = pkgs.fetchurl {
+      url = "https://grafana.com/api/dashboards/1860/revisions/45/download";
+      hash = "sha256-GExrdAnzBtp1Ul13cvcZRbEM6iOtFrXXjEaY6g6lGYY=";
+    };
+    "Monitoring/victoriametrics.json" = patchVictoriaDashboard (pkgs.fetchurl {
+      url = "https://grafana.com/api/dashboards/10229/revisions/60/download";
+      hash = "sha256-DaucJDJektHb8h+mtRwkpbO97c5YIqh+KzXWK2dTPkM=";
+    }) "victoria-metrics" "victoria-metrics";
+    "Monitoring/victorialogs.json" = patchVictoriaDashboard (pkgs.fetchurl {
+      url = "https://grafana.com/api/dashboards/22084/revisions/12/download";
+      hash = "sha256-7ZwB8CrnE8T5GXGY7rDlXFxkrJvxYclBBQbA2TwswUs=";
+    }) "victoria-logs" "victorialogs";
+  };
 in
 {
   options.polaris.services.monitoring.server = {
@@ -67,7 +81,10 @@ in
             job_name = "node";
             static_configs = lib.mapAttrsToList (name: host: {
               targets = [ "${host.internal.fqdn}:${toString config.services.prometheus.exporters.node.port}" ];
-              labels.host = name;
+              labels = {
+                host = name;
+                instance = name;
+              };
             }) hosts;
           }
           {
@@ -121,11 +138,27 @@ in
           reporting_enabled = false;
           check_for_updates = false;
           check_for_plugin_updates = false;
+          feedback_links_enabled = false;
+        };
+        dashboards = {
+          default_home_dashboard_path = "${dashboards}/Hosts/node-exporter-full.json";
+          min_refresh_interval = "1m";
         };
         snapshots.external_enabled = false;
         public_dashboards.enabled = false;
+        plugins = {
+          preinstall_disabled = true;
+          plugin_admin_enabled = false; # plugins are declarative
+        };
+        # cloud upsells and other bs
+        cloud_migration.enabled = false;
         news.news_feed_enabled = false;
-        plugins.preinstall_disabled = true;
+        help.enabled = false;
+        feature_toggles = {
+          feedbackButton = false;
+          grafanaAdvisor = false;
+          grafanaAssistantInProfilesDrilldown = false;
+        };
         auth = {
           disable_login_form = true;
           oauth_auto_login = true;
@@ -170,20 +203,9 @@ in
         dashboards.settings.providers = [
           {
             name = "polaris";
-            folder = "Polaris";
-            options.path = pkgs.linkFarm "grafana-dashboards" {
-              "node-exporter-full.json" = pkgs.fetchurl {
-                url = "https://grafana.com/api/dashboards/1860/revisions/45/download";
-                hash = "sha256-GExrdAnzBtp1Ul13cvcZRbEM6iOtFrXXjEaY6g6lGYY=";
-              };
-              "victoriametrics.json" = patchVictoriaDashboard (pkgs.fetchurl {
-                url = "https://grafana.com/api/dashboards/10229/revisions/60/download";
-                hash = "sha256-DaucJDJektHb8h+mtRwkpbO97c5YIqh+KzXWK2dTPkM=";
-              }) "victoria-metrics" "victoria-metrics";
-              "victorialogs.json" = patchVictoriaDashboard (pkgs.fetchurl {
-                url = "https://grafana.com/api/dashboards/22084/revisions/12/download";
-                hash = "sha256-7ZwB8CrnE8T5GXGY7rDlXFxkrJvxYclBBQbA2TwswUs=";
-              }) "victoria-logs" "victorialogs";
+            options = {
+              path = dashboards;
+              foldersFromFilesStructure = true;
             };
           }
         ];
