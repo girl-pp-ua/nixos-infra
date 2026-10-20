@@ -121,7 +121,7 @@ in
         ];
         systems.oauth2.${cfg-svc.oauth2_proxy.client_id} = {
           displayName = "oauth2-proxy";
-          imageFile = "${root}/assets/sso-images/oauth2-proxy.svg";
+          imageFile = "${root + "/assets/sso-images/oauth2-proxy.svg"}";
           originLanding = "https://authtest.girl.pp.ua/";
 
           preferShortUsername = true;
@@ -149,7 +149,7 @@ in
         groups."oracle-cloud-infrastructure.access" = { };
         systems.oauth2."oracle-cloud-infrastructure" = {
           displayName = "Oracle Cloud Infrastructure";
-          imageFile = "${root}/assets/sso-images/oracle-cloud-infrastructure.svg";
+          imageFile = "${root + "/assets/sso-images/oracle-cloud-infrastructure.svg"}";
           originLanding = "https://cloud.oracle.com/?tenant=${secrets.ociTenancy.tenancyName}&region=${secrets.ociTenancy.tenancyRegion}";
 
           preferShortUsername = true;
@@ -172,7 +172,7 @@ in
         groups."nextcloud.preferred_username_override.luna".members = [ "luna" ];
         systems.oauth2.${cfg-svc.nextcloud.client_id} = {
           displayName = "Nextcloud";
-          imageFile = "${root}/assets/sso-images/nextcloud.svg";
+          imageFile = "${root + "/assets/sso-images/nextcloud.svg"}";
           originLanding = "https://${cfg-svc.nextcloud.domain}/";
 
           preferShortUsername = true;
@@ -201,7 +201,7 @@ in
         groups."paperless.django_admin" = { };
         systems.oauth2.${cfg-svc.paperless.client_id} = {
           displayName = "Paperless-ngx";
-          imageFile = "${root}/assets/sso-images/paperless-ngx.svg";
+          imageFile = "${root + "/assets/sso-images/paperless-ngx.svg"}";
           originLanding = "https://${cfg-svc.paperless.domain}/";
 
           preferShortUsername = true;
@@ -228,7 +228,7 @@ in
         groups."immich.role.admin" = { };
         systems.oauth2.${cfg-svc.immich.client_id} = {
           displayName = "Immich";
-          imageFile = "${root}/assets/sso-images/immich.svg";
+          imageFile = "${root + "/assets/sso-images/immich.svg"}";
           originLanding = "https://${cfg-svc.immich.domain}/";
 
           preferShortUsername = true;
@@ -261,7 +261,7 @@ in
         groups."bookorbit.admin" = { };
         systems.oauth2.${cfg-svc.bookorbit.client_id} = {
           displayName = "BookOrbit";
-          imageFile = "${root}/assets/sso-images/bookorbit-icon.png";
+          imageFile = "${root + "/assets/sso-images/bookorbit-icon.png"}";
           originLanding = "https://${cfg-svc.bookorbit.domain}/";
 
           preferShortUsername = true;
@@ -286,7 +286,7 @@ in
         groups."home-assistant.admin" = { };
         systems.oauth2.${cfg-svc.home-assistant.client_id} = {
           displayName = "Home Assistant";
-          imageFile = "${root}/assets/sso-images/home-assistant.svg";
+          imageFile = "${root + "/assets/sso-images/home-assistant.svg"}";
           originLanding = "https://${cfg-svc.home-assistant.domain}/auth/oidc/welcome";
 
           preferShortUsername = true;
@@ -312,7 +312,7 @@ in
         groups."grafana.admin" = { };
         systems.oauth2.${cfg-svc.monitoring.server.client_id} = {
           displayName = "Grafana";
-          imageFile = "${root}/assets/sso-images/grafana.svg";
+          imageFile = "${root + "/assets/sso-images/grafana.svg"}";
           originLanding = "https://${cfg-svc.monitoring.server.domain}/";
 
           preferShortUsername = true;
@@ -338,7 +338,7 @@ in
         groups."forgejo.admin" = { };
         systems.oauth2.${cfg-svc.forgejo.client_id} = {
           displayName = "Forgejo";
-          imageFile = "${root}/assets/sso-images/forgejo-wordmark.svg";
+          imageFile = "${root + "/assets/sso-images/forgejo-wordmark.svg"}";
           originLanding = "https://${cfg-svc.forgejo.domain}/";
 
           preferShortUsername = true;
@@ -364,6 +364,11 @@ in
         extraConfig = ''
           import encode
           import norobot
+          @versioned {
+            path /pkg/*
+            query v=*
+          }
+          header @versioned >Cache-Control "public, max-age=31536000, immutable"
           reverse_proxy https://127.0.0.1:${toString cfg.port} {
             transport http {
               tls_trust_pool file ${config.sops.secrets."kanidm_caddy_tls_chain".path}

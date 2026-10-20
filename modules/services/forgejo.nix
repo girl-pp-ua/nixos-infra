@@ -43,7 +43,10 @@ in
       enable = true;
       package = pkgs.forgejo;
       lfs.enable = true;
-      dump.enable = true;
+      dump = {
+        enable = true;
+        age = "7d";
+      };
       database = {
         type = "postgres";
         createDatabase = true;
@@ -63,6 +66,7 @@ in
           DISABLE_SSH = true; # SSH_PORT = 2222; TODO
           OFFLINE_MODE = false;
           ENABLE_GZIP = true;
+          STATIC_CACHE_TIME = "8760h"; # asset urls are versioned (default 6h)
           LANDING_PAGE = "explore";
         };
         security = {

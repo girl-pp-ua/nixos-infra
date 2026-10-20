@@ -56,7 +56,7 @@ in
         occ theming:config name "Girlcloud"
         occ theming:config primary_color "${colors.primary}"
         occ theming:config background backgroundColor
-        occ theming:config background "${root}/assets/wallpapers/yuri3.webp"
+        occ theming:config background "${root + "/assets/wallpapers/yuri3.webp"}"
         occ theming:config background_color "${colors.background}"
 
         customcss="${pkgs.writeText "customcss.css" customcss}";

@@ -10,7 +10,7 @@ in
     SOA = {
       nameServer = "ns1.${name}.";
       adminEmail = "hostmaster@${name}";
-      serial = 2026102001; # YYYYMMDDNN
+      serial = 2026102002; # YYYYMMDDNN
     };
 
     NS = [
@@ -36,7 +36,8 @@ in
       oci1 = with hosts.oci1.public; host ipv4 ipv6;
       oci2 = with hosts.oci2.public; host ipv4 ipv6;
       astra = with hosts.astra.public; host ipv4 ipv6;
-      amoeba = with hosts.amoeba.public; host ipv4 ipv6;
+      # TODO: ipv6 isn't configured on amoeba yet
+      amoeba = with hosts.amoeba.public; host ipv4 null;
 
       ns1 = with hosts.oci1.public; host ipv4 ipv6;
       ns2 = with hosts.oci2.public; host ipv4 ipv6;

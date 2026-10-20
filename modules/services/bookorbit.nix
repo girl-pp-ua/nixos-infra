@@ -274,6 +274,7 @@ in
         extraConfig = ''
           import encode
           import norobot
+          header /assets/* >Cache-Control "public, max-age=31536000, immutable"
           reverse_proxy localhost:${toString cfg.port}
         '';
       };

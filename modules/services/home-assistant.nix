@@ -113,6 +113,12 @@ in
         "mcp_server"
         "mcp"
       ];
+      # faster zlib for aiohttp
+      extraPackages =
+        ps: with ps; [
+          zlib-ng
+          isal
+        ];
       customComponents = [
         pkgs.home-assistant-custom-components.auth_oidc
         pkgs.home-assistant-custom-components.scene_presets

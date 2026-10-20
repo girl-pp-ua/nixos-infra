@@ -48,6 +48,11 @@ in
         IMMICH_API_METRICS_PORT = "8081";
         IMMICH_MICROSERVICES_METRICS_PORT = "8082";
       };
+      # keep models loaded (default unloads after 5min idle, making the next search slow)
+      machine-learning.environment = {
+        MACHINE_LEARNING_MODEL_TTL = "0";
+        MACHINE_LEARNING_PRELOAD__CLIP__TEXTUAL = "ViT-B-32__openai";
+      };
     };
     polaris.services.monitoring.exports = {
       immich-api.port = 8081;

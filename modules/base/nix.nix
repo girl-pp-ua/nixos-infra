@@ -39,7 +39,6 @@
       use-xdg-base-directories = true;
       builders-use-substitutes = true;
     };
-    optimise.automatic = true;
     sshServe.protocol = "ssh-ng";
     channel.enable = false;
     gc = {

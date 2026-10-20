@@ -1,4 +1,4 @@
-{ config, ... }:
+{ config, lib, ... }:
 {
   networking.resolvconf.enable = true;
   services.resolved.enable = false;
@@ -12,6 +12,10 @@
         domain-insecure = [ "polaris" ];
         private-domain = [ "polaris" ];
         do-not-query-localhost = false;
+        prefetch = true;
+        serve-expired = true;
+        serve-expired-ttl = 86400;
+        serve-expired-client-timeout = 1800;
       };
       stub-zone = [
         {
@@ -22,7 +26,14 @@
           stub-no-cache = true;
           stub-prime = false;
         }
-      ];
+      ]
+      ++ lib.optionals config.polaris.services.dns-server.enable (
+        map (name: {
+          name = "${name}.";
+          stub-addr = [ config.polaris.services.dns-server.loopbackAddress ];
+          stub-prime = false;
+        }) (lib.attrNames (removeAttrs config.polaris.services.dns-server.zones [ "polaris" ]))
+      );
       forward-zone = [
         {
           name = ".";

@@ -264,6 +264,7 @@ in
           root_url = "https://${cfg.domain}/";
           enable_gzip = true;
         };
+        log.level = "warn";
         database = {
           type = "postgres";
           host = "/run/postgresql";
