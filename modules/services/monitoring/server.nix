@@ -85,7 +85,10 @@ in
 
     services.grafana = {
       enable = true;
-      declarativePlugins = [ pkgs.grafanaPlugins.victoriametrics-logs-datasource ];
+      declarativePlugins = with pkgs.grafanaPlugins; [
+        victoriametrics-logs-datasource
+        grafana-metricsdrilldown-app
+      ];
       settings = {
         server = {
           http_addr = "127.0.0.1";
@@ -164,6 +167,14 @@ in
               "node-exporter-full.json" = pkgs.fetchurl {
                 url = "https://grafana.com/api/dashboards/1860/revisions/45/download";
                 hash = "sha256-GExrdAnzBtp1Ul13cvcZRbEM6iOtFrXXjEaY6g6lGYY=";
+              };
+              "victoriametrics.json" = pkgs.fetchurl {
+                url = "https://grafana.com/api/dashboards/10229/revisions/60/download";
+                hash = "sha256-DaucJDJektHb8h+mtRwkpbO97c5YIqh+KzXWK2dTPkM=";
+              };
+              "victorialogs.json" = pkgs.fetchurl {
+                url = "https://grafana.com/api/dashboards/22084/revisions/12/download";
+                hash = "sha256-7ZwB8CrnE8T5GXGY7rDlXFxkrJvxYclBBQbA2TwswUs=";
               };
             };
           }
