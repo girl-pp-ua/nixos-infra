@@ -40,7 +40,7 @@ in
               "github.com/mholt/caddy-webdav@v0.0.0-20250805175825-7a5c90d8bf90"
               # "github.com/corazawaf/coraza-caddy/v2@v2.1.0"
             ];
-            hash = "sha256-vwTUfqvZLoY3N5VmREh19mxQmd4avLISO0HbHVFK6oU=";
+            hash = "sha256-1yIfI4I01V5usfTgxR1y3y+5jgeI6SUFa3+nYKDB690=";
           }
         else
           pkgs.caddy;
