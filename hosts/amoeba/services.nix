@@ -6,6 +6,8 @@
 
     bookorbit.enable = true;
 
+    monitoring.server.enable = true;
+
     experimental.hydra.enable = true;
   };
 }

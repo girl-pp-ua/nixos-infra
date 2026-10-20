@@ -16,6 +16,7 @@
     ./garage.nix
     ./immich.nix
     ./kanidm.nix
+    ./monitoring
     ./ntfy.nix
     ./oauth2-proxy.nix
     ./paperless.nix

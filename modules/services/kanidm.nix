@@ -73,6 +73,7 @@ in
               "forgejo.admin"
               "bookorbit.admin"
               "home-assistant.admin"
+              "grafana.admin"
             ];
           };
 
@@ -301,6 +302,35 @@ in
           ];
         };
 
+        groups."grafana.access".members = [
+          "grafana.editor"
+          "grafana.admin"
+        ];
+        groups."grafana.editor" = { };
+        groups."grafana.admin" = { };
+        systems.oauth2.${cfg-svc.monitoring.server.client_id} = {
+          displayName = "Grafana";
+          originLanding = "https://${cfg-svc.monitoring.server.domain}/";
+
+          preferShortUsername = true;
+
+          basicSecretFile = config.sops.secrets."kanidm.grafana/clientSecret".path;
+          originUrl = [
+            "https://${cfg-svc.monitoring.server.domain}/login/generic_oauth"
+          ];
+
+          scopeMaps."grafana.access" = [
+            "openid"
+            "email"
+            "profile"
+            "groups"
+          ];
+          claimMaps.grafana_role.valuesByGroup = {
+            "grafana.editor" = [ "Editor" ];
+            "grafana.admin" = [ "GrafanaAdmin" ];
+          };
+        };
+
         groups."forgejo.access".members = [ "forgejo.admin" ];
         groups."forgejo.admin" = { };
         systems.oauth2.${cfg-svc.forgejo.client_id} = {
@@ -370,6 +400,9 @@ in
         };
         "kanidm.home-assistant/clientSecret" = kanidmSecret // {
           key = "home-assistant/clientSecret";
+        };
+        "kanidm.grafana/clientSecret" = kanidmSecret // {
+          key = "grafana/clientSecret";
         };
         "kanidm_tls_key" = kanidmSecret // {
           sopsFile = "${inputs.secrets}/certs/tls_key.sops.pem";

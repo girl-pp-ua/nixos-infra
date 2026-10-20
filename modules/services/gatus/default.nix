@@ -154,6 +154,10 @@ in
                   "[STATUS] == 200"
                   "[BODY].status == ok"
                 ];
+                grafana = mkUrl' "https://${cfg-svc.monitoring.server.domain}/api/health" [
+                  "[STATUS] == 200"
+                  "[BODY].database == ok"
+                ];
                 svn = mkUrl' "tcp://${cfg-svc.experimental.svn.domain}:3690" [
                   "[CONNECTED] == true"
                 ];
