@@ -6,6 +6,7 @@
 }:
 let
   cfg = config.polaris.services.oauth2_proxy;
+  cookieExpire = 3600; # (in seconds)
   idp = libx.idp {
     inherit (config.polaris.services.kanidm) domain;
     inherit (cfg) client_id;
@@ -39,7 +40,7 @@ in
       reverseProxy = true;
       approvalPrompt = "auto";
       setXauthrequest = true;
-      # redirectURL = "https://oauth2.girl.pp.ua/oauth2/callback";
+      cookie.expire = "${toString cookieExpire}s";
 
       provider = "oidc";
       clientID = cfg.client_id;
@@ -55,6 +56,7 @@ in
       extraConfig = {
         provider-display-name = "Kanidm";
         skip-provider-button = true;
+        prompt = "login"; # force-reauthenticate if session expires
         code-challenge-method = "S256";
         set-authorization-header = true;
         pass-access-token = true;
@@ -79,6 +81,8 @@ in
     services.caddy.extraConfig = ''
       (oauth2_proxy_handle) {
         handle ${cfg.urlPrefix}/* {
+          @callback path ${cfg.urlPrefix}/callback
+          header @callback +Set-Cookie "_oauth2_proxy_pass=1; Path=/; Max-Age=${toString cookieExpire}; Secure; SameSite=Lax"
           reverse_proxy http://127.0.0.1:${toString cfg.port} {
             header_up X-Real-IP {remote_host}
             header_up X-Forwarded-Uri {uri}

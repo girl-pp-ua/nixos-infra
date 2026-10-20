@@ -115,9 +115,13 @@ in
         groups."oauth2_proxy.paperless_django_admin".members = [
           "paperless.django_admin"
         ];
+        groups."oauth2_proxy.immich_admin".members = [
+          "immich.role.admin"
+        ];
         groups."oauth2_proxy.access".members = [
           "oauth2_proxy.authtest_access"
           "oauth2_proxy.paperless_django_admin"
+          "oauth2_proxy.immich_admin"
         ];
         systems.oauth2.${cfg-svc.oauth2_proxy.client_id} = {
           displayName = "oauth2-proxy";
@@ -131,6 +135,7 @@ in
             "authtest.girl.pp.ua"
             cfg-svc.paperless.domain
             cfg-svc.paperless.intraDomain
+            cfg-svc.immich.domain
           ];
 
           scopeMaps."oauth2_proxy.access" = [
@@ -143,6 +148,7 @@ in
           claimMaps.groups.valuesByGroup = {
             "oauth2_proxy.authtest_access" = [ "authtest_access" ];
             "oauth2_proxy.paperless_django_admin" = [ "paperless_django_admin" ];
+            "oauth2_proxy.immich_admin" = [ "immich_admin" ];
           };
         };
 
@@ -250,7 +256,7 @@ in
             "profile"
           ];
           claimMaps.immich_role = {
-            joinType = "csv";
+            joinType = "array";
             valuesByGroup."immich.role.user" = [ "user" ];
             valuesByGroup."immich.role.admin" = [ "admin" ];
           };
