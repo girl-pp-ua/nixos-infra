@@ -246,6 +246,19 @@ in
             keyFile = config.sops.secrets."forgejo/github/clientId".path;
             secretFile = config.sops.secrets."forgejo/github/clientSecret".path;
           }
+          {
+            args = {
+              provider = "gitea";
+              name = "codeberg";
+              use-custom-urls = "true";
+              custom-auth-url = "https://codeberg.org/login/oauth/authorize";
+              custom-token-url = "https://codeberg.org/login/oauth/access_token";
+              custom-profile-url = "https://codeberg.org/login/oauth/userinfo";
+              icon-url = "https://codeberg.org/assets/img/favicon.svg";
+            };
+            keyFile = config.sops.secrets."forgejo/codeberg/clientId".path;
+            secretFile = config.sops.secrets."forgejo/codeberg/clientSecret".path;
+          }
         ];
         customConf = "--work-path ${config.services.forgejo.stateDir} --config ${config.services.forgejo.customDir}/conf/app.ini";
         provision =
@@ -313,6 +326,8 @@ in
           "forgejo/clientSecret"
           "forgejo/github/clientId"
           "forgejo/github/clientSecret"
+          "forgejo/codeberg/clientId"
+          "forgejo/codeberg/clientSecret"
         ]
         (_: {
           owner = config.services.forgejo.user;
