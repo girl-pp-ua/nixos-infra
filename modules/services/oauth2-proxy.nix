@@ -92,7 +92,7 @@ in
             header_up X-Real-IP {remote_host}
             @error status 401
             handle_response @error {
-              redir * ${cfg.urlPrefix}/sign_in?rd={scheme}://{host}{uri}
+              redir * ${cfg.urlPrefix}/sign_in?rd={uri}
             }
           }
         }
