@@ -311,6 +311,15 @@ in
       extraConfig = ''
         import encode
         respond /metrics 404
+
+        import oauth2_proxy_handle
+
+        @admin path /admin /admin/* /api/v1/admin/*
+        handle @admin {
+          import oauth2_proxy_secure "forgejo_admin"
+          reverse_proxy unix/${config.services.forgejo.settings.server.HTTP_ADDR}
+        }
+
         reverse_proxy unix/${config.services.forgejo.settings.server.HTTP_ADDR}
       '';
     };
