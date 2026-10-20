@@ -134,10 +134,6 @@ in
                   "[STATUS] == 403"
                   "[BODY] == pat(*<Region>garage</Region>*)"
                 ];
-                garage-web-devlootbox = mkUrl' "https://media-cdn.devlootbox.on.lunya.cc/" [
-                  "[STATUS] == 404"
-                  "[BODY] == pat(*NoSuchKey*)"
-                ];
                 paperless = mkUrl' "https://${cfg-svc.paperless.domain}/" [
                   "[STATUS] == 200"
                 ];
@@ -180,6 +176,12 @@ in
                   # TODO sth better to test for
                   "[STATUS] == 400"
                   "[BODY] == pat(*Missing request header \"token\"*)"
+                ];
+              };
+              "side-projects" = mkEndpoints {
+                garage-web-devlootbox = mkUrl' "https://media-cdn.devlootbox.on.lunya.cc/" [
+                  "[STATUS] == 404"
+                  "[BODY] == pat(*NoSuchKey*)"
                 ];
               };
             });
