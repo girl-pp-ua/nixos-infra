@@ -279,6 +279,7 @@ in
         '';
       };
       "http://${cfg.intraDomain}" = {
+        listenAddresses = config.polaris.services.caddy.internalListenAddresses;
         extraConfig = ''
           import encode
           reverse_proxy localhost:${toString cfg.port}

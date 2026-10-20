@@ -174,6 +174,7 @@ in
       };
 
     services.caddy.virtualHosts."http://${cfg.intraDomain}" = {
+      listenAddresses = config.polaris.services.caddy.internalListenAddresses;
       serverAliases = [
         "http://${cfg.domain}"
       ];

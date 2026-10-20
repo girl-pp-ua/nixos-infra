@@ -21,6 +21,17 @@ in
       type = lib.types.port;
       default = 9180;
     };
+    # (only listen on loopback and this host's tailnet addresses)
+    internalListenAddresses = lib.mkOption {
+      type = with lib.types; listOf str;
+      readOnly = true;
+      default = with config.polaris.hosts.${config.networking.hostName}.internal; [
+        "127.0.0.1"
+        "::1"
+        ipv4
+        ipv6
+      ];
+    };
 
     plugins = {
       enable = lib.mkEnableOption "plugins" // {
@@ -86,6 +97,12 @@ in
         443
       ];
       allowedUDPPorts = [ 443 ];
+    };
+
+    # caddy may start before tailscale brings up its addresses
+    boot.kernel.sysctl = {
+      "net.ipv4.ip_nonlocal_bind" = 1;
+      "net.ipv6.ip_nonlocal_bind" = 1;
     };
 
     # force nginx off

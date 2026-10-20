@@ -384,9 +384,12 @@ in
         respond /metrics 404
         reverse_proxy localhost:${toString cfg.port}
       '';
-      "http://${cfg.intraDomain}".extraConfig = ''
-        redir https://${cfg.domain}{uri} temporary
-      '';
+      "http://${cfg.intraDomain}" = {
+        listenAddresses = config.polaris.services.caddy.internalListenAddresses;
+        extraConfig = ''
+          redir https://${cfg.domain}{uri} temporary
+        '';
+      };
     };
 
     sops.secrets =
