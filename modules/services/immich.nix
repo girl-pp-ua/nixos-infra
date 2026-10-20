@@ -102,6 +102,7 @@ in
           enabled = true;
           autoLaunch = true;
           issuerUrl = idp.oidc_discovery;
+          accountManagementUrl = "https://${config.polaris.services.kanidm.domain}/ui/profile";
           clientId = "immich";
           clientSecret = config.sops.placeholder."immich/clientSecret";
           signingAlgorithm = "ES256";
