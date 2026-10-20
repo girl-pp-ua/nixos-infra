@@ -124,7 +124,7 @@ in
       };
 
     # TODO move this to gateway node on oci2
-    services.caddy.virtualHosts."media-cdn.devlootbox.com" = {
+    services.caddy.virtualHosts."media-cdn.devlootbox.on.lunya.cc" = {
       extraConfig = ''
         import encode
         import norobot
@@ -133,5 +133,9 @@ in
         }
       '';
     };
+    # TODO remove once the old domain dies
+    services.caddy.virtualHosts."media-cdn.devlootbox.com".extraConfig = ''
+      redir https://media-cdn.devlootbox.on.lunya.cc{uri} permanent
+    '';
   };
 }

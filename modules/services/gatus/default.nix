@@ -134,7 +134,7 @@ in
                   "[STATUS] == 403"
                   "[BODY] == pat(*<Region>garage</Region>*)"
                 ];
-                garage-web-devlootbox = mkUrl' "https://media-cdn.devlootbox.com/" [
+                garage-web-devlootbox = mkUrl' "https://media-cdn.devlootbox.on.lunya.cc/" [
                   "[STATUS] == 404"
                   "[BODY] == pat(*NoSuchKey*)"
                 ];
