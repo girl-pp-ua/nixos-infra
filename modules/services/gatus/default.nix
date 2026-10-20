@@ -87,7 +87,7 @@ in
             metrics = true;
             ui = {
               title = "🏳️‍⚧️ Status";
-              # default-sort-by = "group";
+              default-sort-by = "group";
               # TODO custom-css
             };
             storage = {
@@ -192,6 +192,7 @@ in
           port = 16041;
           settings = {
             metrics = true;
+            ui.default-sort-by = "group";
             storage = {
               type = "sqlite";
               path = "/var/lib/gatus/data-nyanbinary-rs.db";
@@ -234,14 +235,35 @@ in
 
     services.caddy.virtualHosts =
       let
-        mkVirtualHost = name: {
-          extraConfig = ''
-            import encode
-            import norobot
-            respond /metrics 404
-            reverse_proxy http://localhost:${toString config.services.gatus.instances.${name}.port}
-          '';
-        };
+        mkVirtualHost =
+          name:
+          let
+            instance = config.services.gatus.instances.${name};
+            groups = builtins.toJSON (lib.unique (map (e: e.group) instance.settings.endpoints));
+            # default all groups to expanded unless user chooses otherwise >:3 mwahaha
+            expandNewGroups = ''<script>(()=>{const all=${groups},k="gatus:uncollapsed-groups",s="gatus:seen-groups";const seen=new Set(JSON.parse(localStorage.getItem(s)||"[]")),open=new Set(JSON.parse(localStorage.getItem(k)||"[]"));for(const g of all)if(!seen.has(g))open.add(g);localStorage.setItem(k,JSON.stringify([...open]));localStorage.setItem(s,JSON.stringify(all))})()</script>'';
+          in
+          {
+            extraConfig = ''
+              import encode
+              import norobot
+              respond /metrics 404
+
+              @page {
+                path / /endpoints/* /suites/*
+                not header Caddy-Templates-Include *
+              }
+              handle @page {
+                header Content-Type "text/html; charset=utf-8"
+                templates
+                respond <<HTML
+                  {{ httpInclude .OriginalReq.RequestURI | replace "<head>" `<head>${expandNewGroups}` }}
+                  HTML 200
+              }
+
+              reverse_proxy http://localhost:${toString instance.port}
+            '';
+          };
       in
       {
         "status.lunya.cc" = mkVirtualHost "girl-pp-ua";
