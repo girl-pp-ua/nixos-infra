@@ -12,6 +12,14 @@ let
     domain = config.polaris.services.kanidm.domain;
     inherit (cfg) client_id;
   };
+  # the official victoria* dashboards find their job by the "victoria-<product>-" version
+  # prefix... which the nixpkgs builds don't use; so match the job name
+  patchVictoriaDashboard =
+    src: product: job:
+    pkgs.runCommand "${product}-dashboard.json" { } ''
+      substitute ${src} $out \
+        --replace-fail 'version=~\"${product}-.*\"' 'job=\"${job}\"'
+    '';
 in
 {
   options.polaris.services.monitoring.server = {
@@ -168,14 +176,14 @@ in
                 url = "https://grafana.com/api/dashboards/1860/revisions/45/download";
                 hash = "sha256-GExrdAnzBtp1Ul13cvcZRbEM6iOtFrXXjEaY6g6lGYY=";
               };
-              "victoriametrics.json" = pkgs.fetchurl {
+              "victoriametrics.json" = patchVictoriaDashboard (pkgs.fetchurl {
                 url = "https://grafana.com/api/dashboards/10229/revisions/60/download";
                 hash = "sha256-DaucJDJektHb8h+mtRwkpbO97c5YIqh+KzXWK2dTPkM=";
-              };
-              "victorialogs.json" = pkgs.fetchurl {
+              }) "victoria-metrics" "victoria-metrics";
+              "victorialogs.json" = patchVictoriaDashboard (pkgs.fetchurl {
                 url = "https://grafana.com/api/dashboards/22084/revisions/12/download";
                 hash = "sha256-7ZwB8CrnE8T5GXGY7rDlXFxkrJvxYclBBQbA2TwswUs=";
-              };
+              }) "victoria-logs" "victorialogs";
             };
           }
         ];
