@@ -78,6 +78,7 @@ in
         passwordLogin.enabled = false;
         oauth = {
           enabled = true;
+          autoLaunch = true;
           issuerUrl = idp.oidc_discovery;
           clientId = "immich";
           clientSecret = config.sops.placeholder."immich/clientSecret";
