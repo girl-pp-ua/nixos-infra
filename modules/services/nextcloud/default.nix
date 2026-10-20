@@ -96,10 +96,15 @@ in
         "opcache.revalidate_freq" = "60";
         "opcache.validate_timestamps" = "0";
         # "opcache.optimization_level" =
-        "pm.max_children" = "192";
-        "pm.start_servers" = "48";
-        "pm.min_spare_servers" = "48";
-        "pm.max_spare_servers" = "144";
+      };
+      poolSettings = {
+        "pm" = "dynamic";
+        "pm.max_children" = "120";
+        "pm.start_servers" = "24";
+        "pm.min_spare_servers" = "24";
+        "pm.max_spare_servers" = "48";
+        "pm.max_requests" = "500";
+        "pm.status_path" = "/status";
       };
       phpExtraExtensions =
         ext: with ext; [

@@ -21,11 +21,19 @@ in
       settings = {
         enable_previews = true;
 
+        # cap preview resolution (default: 4096)
+        preview_max_x = 2048;
+        preview_max_y = 2048;
+
         preview_ffmpeg_path = "${pkgs.ffmpeg}/bin/ffmpeg";
         # broken: cannot create directory '/run/user/989': Permission denied
         # preview_libreoffice_path = "${pkgs.libreoffice}/bin/libreoffice";
 
         enabledPreviewProviders = [
+          # Imaginary (libvips)
+          "OC\\Preview\\Imaginary"
+          "OC\\Preview\\ImaginaryPDF"
+
           # Misc
           "OC\\Preview\\RIFF"
 
@@ -69,6 +77,20 @@ in
           # Additional Providers
           "OC\\Preview\\WebP" # Requires PHP support for WebP images (php-gd)
         ];
+      };
+    };
+
+    # pre-generate previews for new files in the background
+    systemd.services.nextcloud-preview-pregenerate = {
+      after = [ "nextcloud-setup.service" ];
+      startAt = "*:0/10";
+      serviceConfig = {
+        Type = "oneshot";
+        ExecStart = "${lib.getExe config.services.nextcloud.occ} preview:pre-generate";
+        User = "nextcloud";
+        inherit (config.systemd.services.nextcloud-cron.serviceConfig) LoadCredential;
+        Nice = 10;
+        IOSchedulingClass = "idle";
       };
     };
   };
