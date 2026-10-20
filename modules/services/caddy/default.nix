@@ -37,10 +37,10 @@ in
         if cfg.plugins.enable then
           pkgs.caddy.withPlugins {
             plugins = [
-              "github.com/mholt/caddy-webdav@v0.0.0-20250805175825-7a5c90d8bf90"
+              "github.com/mholt/caddy-webdav@v0.0.0-20260127042217-fa2f366b0d75"
               # "github.com/corazawaf/coraza-caddy/v2@v2.1.0"
             ];
-            hash = "sha256-1yIfI4I01V5usfTgxR1y3y+5jgeI6SUFa3+nYKDB690=";
+            hash = "sha256-+Nm1wgpU06cpG40Or1WqK5gjbjHe7cNyTIiXleq9Bs8=";
           }
         else
           pkgs.caddy;
