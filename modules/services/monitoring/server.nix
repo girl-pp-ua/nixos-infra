@@ -382,7 +382,7 @@ in
         import encode
         import norobot
         respond /metrics 404
-        reverse_proxy localhost:${toString cfg.port}
+        reverse_proxy 127.0.0.1:${toString cfg.port}
       '';
       "http://${cfg.intraDomain}" = {
         listenAddresses = config.polaris.services.caddy.internalListenAddresses;
