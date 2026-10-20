@@ -286,6 +286,7 @@ in
         groups."home-assistant.admin" = { };
         systems.oauth2.${cfg-svc.home-assistant.client_id} = {
           displayName = "Home Assistant";
+          imageFile = "${root}/assets/sso-images/home-assistant.svg";
           originLanding = "https://${cfg-svc.home-assistant.domain}/auth/oidc/welcome";
 
           preferShortUsername = true;
@@ -311,6 +312,7 @@ in
         groups."grafana.admin" = { };
         systems.oauth2.${cfg-svc.monitoring.server.client_id} = {
           displayName = "Grafana";
+          imageFile = "${root}/assets/sso-images/grafana.svg";
           originLanding = "https://${cfg-svc.monitoring.server.domain}/";
 
           preferShortUsername = true;
