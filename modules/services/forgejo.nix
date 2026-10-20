@@ -316,7 +316,7 @@ in
 
         @admin path /admin /admin/* /api/v1/admin/*
         handle @admin {
-          import oauth2_proxy_secure "forgejo_admin"
+          import oauth2_proxy_secure_external "forgejo_admin"
           reverse_proxy unix/${config.services.forgejo.settings.server.HTTP_ADDR}
         }
 

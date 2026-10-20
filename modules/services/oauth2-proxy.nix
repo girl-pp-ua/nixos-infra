@@ -7,6 +7,16 @@
 let
   cfg = config.polaris.services.oauth2_proxy;
   cookieExpire = 3600; # (in seconds)
+  forwardAuth = ''
+    forward_auth http://127.0.0.1:${toString cfg.port} {
+      uri ${cfg.urlPrefix}/auth?allowed_groups={args[0]}
+      header_up X-Real-IP {remote_host}
+      @error status 401
+      handle_response @error {
+        redir * ${cfg.urlPrefix}/sign_in?rd={uri}
+      }
+    }
+  '';
   idp = libx.idp {
     inherit (config.polaris.services.kanidm) domain;
     inherit (cfg) client_id;
@@ -91,14 +101,14 @@ in
       }
       (oauth2_proxy_secure) {
         handle {
-          forward_auth http://127.0.0.1:${toString cfg.port} {
-            uri ${cfg.urlPrefix}/auth?allowed_groups={args[0]}
-            header_up X-Real-IP {remote_host}
-            @error status 401
-            handle_response @error {
-              redir * ${cfg.urlPrefix}/sign_in?rd={uri}
-            }
-          }
+          ${forwardAuth}
+        }
+      }
+      # (implicitly trust requests from inside tailnet)
+      (oauth2_proxy_secure_external) {
+        @oauth2_proxy_external_{args[0]} not client_ip ${lib.concatStringsSep " " config.polaris.trustedNetworks}
+        handle @oauth2_proxy_external_{args[0]} {
+          ${forwardAuth}
         }
       }
     '';

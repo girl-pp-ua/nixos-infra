@@ -148,7 +148,7 @@ in
           not path /api/admin/maintenance/status /api/admin/maintenance/login
         }
         handle @admin {
-          import oauth2_proxy_secure "immich_admin"
+          import oauth2_proxy_secure_external "immich_admin"
           reverse_proxy http://localhost:${toString config.services.immich.port}
         }
 

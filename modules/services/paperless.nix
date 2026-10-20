@@ -184,7 +184,7 @@ in
         import oauth2_proxy_handle
 
         handle /admin/* {
-          import oauth2_proxy_secure "paperless_django_admin"
+          import oauth2_proxy_secure_external "paperless_django_admin"
           reverse_proxy http://127.0.0.1:${toString cfg.port}
         }
 
