@@ -259,6 +259,15 @@ in
             keyFile = config.sops.secrets."forgejo/codeberg/clientId".path;
             secretFile = config.sops.secrets."forgejo/codeberg/clientSecret".path;
           }
+          {
+            args = {
+              provider = "gitlab";
+              name = "gitlab";
+              scopes = "read_user";
+            };
+            keyFile = config.sops.secrets."forgejo/gitlab/clientId".path;
+            secretFile = config.sops.secrets."forgejo/gitlab/clientSecret".path;
+          }
         ];
         customConf = "--work-path ${config.services.forgejo.stateDir} --config ${config.services.forgejo.customDir}/conf/app.ini";
         provision =
@@ -328,6 +337,8 @@ in
           "forgejo/github/clientSecret"
           "forgejo/codeberg/clientId"
           "forgejo/codeberg/clientSecret"
+          "forgejo/gitlab/clientId"
+          "forgejo/gitlab/clientSecret"
         ]
         (_: {
           owner = config.services.forgejo.user;
