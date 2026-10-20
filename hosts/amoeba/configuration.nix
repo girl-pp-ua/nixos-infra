@@ -1,4 +1,4 @@
-{ ... }:
+{ config, ... }:
 {
   imports = [
     # Include the results of the hardware scan.
@@ -10,6 +10,30 @@
 
   networking.hostName = "amoeba";
   networking.domain = "polaris";
+
+  networking.interfaces.eth0 = {
+    useDHCP = false;
+    ipv4.addresses = [
+      {
+        address = config.polaris.hosts.amoeba.public.ipv4;
+        prefixLength = 22;
+      }
+    ];
+    ipv6.addresses = [
+      {
+        address = config.polaris.hosts.amoeba.public.ipv6;
+        prefixLength = 64;
+      }
+    ];
+  };
+  networking.defaultGateway = {
+    address = "152.53.92.1";
+    interface = "eth0";
+  };
+  networking.defaultGateway6 = {
+    address = "fe80::1";
+    interface = "eth0";
+  };
 
   fileSystems =
     let
