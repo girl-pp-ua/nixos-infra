@@ -24,8 +24,8 @@ in
 
   config = lib.mkIf cfg.enable {
     services.borgbackup.jobs = {
-      weekly = {
-        startAt = "weekly";
+      daily = {
+        startAt = "daily";
         repo = cfg.repo;
         paths = [
           "/home"
@@ -41,6 +41,7 @@ in
         ]
         ++ cfg.extraExclude;
         removableDevice = true;
+        prune.prefix = null;
         prune.keep = {
           within = "7d"; # keep everything from the last week
           weekly = 4; # then 1 per week going back 4 weeks
