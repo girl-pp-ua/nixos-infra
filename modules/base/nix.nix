@@ -1,7 +1,8 @@
 { pkgs, pkgs-stable, ... }:
 {
   nix = {
-    package = pkgs.lixPackageSets.git.lix;
+    # lixPackageSets.git is broken as of nixpkgs 09063bd
+    package = pkgs.lixPackageSets.latest.lix;
     # package = pkgs.lix;
     settings = {
       experimental-features = [
