@@ -1,0 +1,10 @@
+{
+    "name": "gatus-snapshot",
+    "version": "0.0.0",
+    "private": true,
+    "type": "module",
+    "dependencies": {
+        "jsdom": "^26.1.0",
+        "svgcanvas": "2.6.0"
+    }
+}

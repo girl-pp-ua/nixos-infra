@@ -65,6 +65,7 @@ in
 {
   imports = [
     ./gatus-multi-instance.nix
+    ./snapshot.nix
   ];
 
   options = {
@@ -239,15 +240,24 @@ in
           name:
           let
             instance = config.services.gatus.instances.${name};
+            cfg-snapshot = config.polaris.services.gatus.snapshot;
+            snapshotHost = config.polaris.hosts.${cfg-snapshot.renderer}.internal.ipv4;
             groups = builtins.toJSON (lib.unique (map (e: e.group) instance.settings.endpoints));
             # default all groups to expanded unless user chooses otherwise >:3 mwahaha
             expandNewGroups = ''<script>(()=>{const all=${groups},k="gatus:uncollapsed-groups",s="gatus:seen-groups";const seen=new Set(JSON.parse(localStorage.getItem(s)||"[]")),open=new Set(JSON.parse(localStorage.getItem(k)||"[]"));for(const g of all)if(!seen.has(g))open.add(g);localStorage.setItem(k,JSON.stringify([...open]));localStorage.setItem(s,JSON.stringify(all))})()</script>'';
+            showSnapshotWhileLoading = ''<style>html.gatus-snapshot-loading #app{display:none}#gatus-snapshot-loader{display:none;position:fixed;inset:0;align-items:center;justify-content:center;pointer-events:none;z-index:10000}html.gatus-snapshot-loading #gatus-snapshot-loader{display:flex}@keyframes gatus-snapshot-throbber{to{transform:rotate(360deg)}}</style><script defer src="/gatus-snapshot-loading.js"></script>'';
+            snapshotLoader = ''<div id="gatus-snapshot-loader" role="status" aria-label="Loading live status"><img src="/img/logo.svg" alt="" style="width:4rem;height:4rem;border-radius:50%;opacity:.6;filter:grayscale(1);animation:gatus-snapshot-throbber 1s linear infinite"></div>'';
           in
           {
             extraConfig = ''
               import encode
               import norobot
               respond /metrics 404
+
+              handle /gatus-snapshot-loading.js {
+                root * ${./.}
+                file_server
+              }
 
               @page {
                 path / /endpoints/* /suites/*
@@ -257,8 +267,41 @@ in
                 header Content-Type "text/html; charset=utf-8"
                 templates
                 respond <<HTML
-                  {{ httpInclude .OriginalReq.RequestURI | replace "<head>" `<head>${expandNewGroups}` }}
+                  {{ $path := .OriginalReq.URL.Path }}
+                  {{ $file := "" }}
+                  {{ if eq $path "/" }}
+                    {{ $file = "${name}/index.html" }}
+                  {{ else if hasPrefix "/endpoints/" $path }}
+                    {{ $file = print "${name}" $path ".html" }}
+                  {{ end }}
+                  {{ $snapshot := "" }}
+                  {{ if $file }}
+                    {{ $snapshot = httpInclude (print "/__snapshot/" $file) }}
+                  {{ end }}
+                  {{ $livePage := httpInclude .OriginalReq.RequestURI }}
+                  {{ $livePage = replace "<head>" `<head>${expandNewGroups}${showSnapshotWhileLoading}` $livePage }}
+                  {{ $livePage = replace `<div id="app"></div>` (print `<div id="gatus-snapshot">` $snapshot `${snapshotLoader}</div><div id="app"></div>`) $livePage }}
+                  {{ $livePage = replace "Enable JavaScript to view this page." "This is a static snapshot, enable JavaScript for live updates." $livePage }}
+                  {{ $livePage }}
                   HTML 200
+              }
+
+              handle /__snapshot/* {
+                uri strip_prefix /__snapshot
+                reverse_proxy http://${snapshotHost}:${toString cfg-snapshot.port} {
+                  transport http {
+                    dial_timeout 2s
+                    response_header_timeout 3s
+                  }
+                  @failed status 4xx 5xx
+                  handle_response @failed {
+                    respond "" 200
+                  }
+                }
+              }
+              handle_errors {
+                @snapshot path /__snapshot/*
+                respond @snapshot "" 200
               }
 
               reverse_proxy http://localhost:${toString instance.port}
