@@ -89,7 +89,7 @@
                 ) enabled
               )
           else
-            super.php84;
+            lib.warn "nixpkgs php84 is already ${super.php84.version} (>= 8.4.27)" super.php84;
       })
     ];
   };
