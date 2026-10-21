@@ -68,6 +68,8 @@ in
         skip-provider-button = true;
         prompt = "login"; # force-reauthenticate if session expires
         code-challenge-method = "S256";
+        cookie-csrf-per-request = true;
+        cookie-csrf-per-request-limit = 10;
         set-authorization-header = true;
         pass-access-token = true;
         skip-jwt-bearer-tokens = true;
