@@ -76,6 +76,8 @@ in
           {
             patches = (old.patches or [ ]) ++ patches;
             inherit (pkgs.karakeep) pnpmDeps;
+            dontStrip = true;
+            doInstallCheck = false;
             buildPhase = lib.replaceStrings (map (step: step.from) reuseDeps) (map (
               step: step.to
             ) reuseDeps) old.buildPhase;
