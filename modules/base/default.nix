@@ -1,4 +1,4 @@
-{ ... }:
+{ lib, ... }:
 {
   imports = [
     ./sops.nix
@@ -35,8 +35,8 @@
 
   # disable fontconfig
   fonts = {
-    fontconfig.enable = false;
-    enableDefaultPackages = false;
+    fontconfig.enable = lib.mkDefault false;
+    enableDefaultPackages = lib.mkDefault false;
   };
 
   # disable xdg desktop stuff

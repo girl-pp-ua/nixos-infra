@@ -98,7 +98,6 @@ in
               in
               (old.postPatch or "")
               + ''
-                cat ${./catppuccin-mocha.css} >> tooling/tailwind/globals.css
                 substituteInPlace apps/web/app/layout.tsx \
                   --replace-fail ${lib.escapeShellArg body} ${lib.escapeShellArg (body + adminReload)}
               '';
@@ -168,6 +167,14 @@ in
     };
 
     systemd.services.karakeep-web.environment.HOSTNAME = "127.0.0.1";
+
+    # headless chromium requires fonts/fontconfig
+    fonts = {
+      fontconfig.enable = true;
+      enableDefaultPackages = true;
+      packages = [ pkgs.noto-fonts ];
+    };
+
     # (tesseract downloads language data on first use)
     systemd.services.karakeep-workers.serviceConfig.CacheDirectory = "karakeep-ocr";
 
