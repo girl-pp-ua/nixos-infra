@@ -249,19 +249,12 @@ in
             groups = builtins.toJSON (lib.unique (map (e: e.group) instance.settings.endpoints));
             # default all groups to expanded unless user chooses otherwise >:3 mwahaha
             expandNewGroups = ''<script>(()=>{const all=${groups},k="gatus:uncollapsed-groups",s="gatus:seen-groups";const seen=new Set(JSON.parse(localStorage.getItem(s)||"[]")),open=new Set(JSON.parse(localStorage.getItem(k)||"[]"));for(const g of all)if(!seen.has(g))open.add(g);localStorage.setItem(k,JSON.stringify([...open]));localStorage.setItem(s,JSON.stringify(all))})()</script>'';
-            showSnapshotWhileLoading = ''<style>html.gatus-snapshot-loading #app{display:none}#gatus-snapshot-loader{display:none;position:fixed;inset:0;align-items:center;justify-content:center;pointer-events:none;z-index:10000}html.gatus-snapshot-loading #gatus-snapshot-loader{display:flex}@keyframes gatus-snapshot-throbber{to{transform:rotate(360deg)}}</style><script defer src="/gatus-snapshot-loading.js"></script>'';
-            snapshotLoader = ''<div id="gatus-snapshot-loader" role="status" aria-label="Loading live status"><img src="/img/logo.svg" alt="" style="width:4rem;height:4rem;border-radius:50%;opacity:.6;filter:grayscale(1);animation:gatus-snapshot-throbber 1s linear infinite"></div>'';
           in
           {
             extraConfig = ''
               import encode
               import norobot
               respond /metrics 404
-
-              handle /gatus-snapshot-loading.js {
-                root * ${./.}
-                file_server
-              }
 
               @page {
                 path / /endpoints/* /suites/*
@@ -283,8 +276,8 @@ in
                     {{ $snapshot = httpInclude (print "/__snapshot/" $file) }}
                   {{ end }}
                   {{ $livePage := httpInclude .OriginalReq.RequestURI }}
-                  {{ $livePage = replace "<head>" `<head>${expandNewGroups}${showSnapshotWhileLoading}` $livePage }}
-                  {{ $livePage = replace `<div id="app"></div>` (print `<div id="gatus-snapshot">` $snapshot `${snapshotLoader}</div><div id="app"></div>`) $livePage }}
+                  {{ $livePage = replace "<head>" `<head>${expandNewGroups}` $livePage }}
+                  {{ $livePage = replace `<div id="app"></div>` (print `<div id="app">` $snapshot `</div>`) $livePage }}
                   {{ $livePage = replace "Enable JavaScript to view this page." "This is a static snapshot, enable JavaScript for live updates." $livePage }}
                   {{ $livePage }}
                   HTML 200

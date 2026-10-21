@@ -1,5 +1,5 @@
 import { createRequire } from "node:module";
-import { mkdir, writeFile, rename, rm } from "node:fs/promises";
+import { mkdir, writeFile, rename } from "node:fs/promises";
 const requireDep = createRequire(process.env.JSDOM_PATH + "/");
 const { JSDOM, ResourceLoader, VirtualConsole } = requireDep("jsdom");
 const { Context: SvgContext } = requireDep("svgcanvas");
@@ -173,11 +173,11 @@ const capture = (fix) => {
   return app.innerHTML.replaceAll("{", "&#123;");
 };
 
-const endpointsDir = `${out}/endpoints`;
-await mkdir(out, { recursive: true });
-await mkdir(endpointsDir, { recursive: true });
-await rm(`${endpointsDir}.new`, { recursive: true, force: true });
-await mkdir(`${endpointsDir}.new`);
+await mkdir(`${out}/endpoints`, { recursive: true });
+const save = async (file, html) => {
+  await writeFile(`${out}/${file}.tmp`, html);
+  await rename(`${out}/${file}.tmp`, `${out}/${file}`);
+};
 
 await waitFor(() => document.querySelector(".endpoint-group-content"), "the dashboard");
 const keys = new Map(endpoints.map((e) => [`${e.group ?? ""}\n${e.name}`, e.key]));
@@ -188,8 +188,7 @@ const linkEndpoints = (app) => {
     if (key) toLink(span, `/endpoints/${encodeURIComponent(key)}`);
   }
 };
-await writeFile(`${out}/index.html.tmp`, capture(linkEndpoints));
-await rename(`${out}/index.html.tmp`, `${out}/index.html`);
+await save("index.html", capture(linkEndpoints));
 
 for (const { key, name } of endpoints) {
   try {
@@ -208,11 +207,6 @@ for (const { key, name } of endpoints) {
     const back = app.querySelector(".dashboard-container button");
     if (back) toLink(back, "/");
   };
-  await writeFile(`${endpointsDir}.new/${key}.html`, capture(linkBack));
+  await save(`endpoints/${key}.html`, capture(linkBack));
 }
-
-await rm(`${endpointsDir}.old`, { recursive: true, force: true });
-await rename(endpointsDir, `${endpointsDir}.old`);
-await rename(`${endpointsDir}.new`, endpointsDir);
-await rm(`${endpointsDir}.old`, { recursive: true, force: true });
 window.close();
