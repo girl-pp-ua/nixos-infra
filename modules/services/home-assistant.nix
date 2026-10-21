@@ -33,10 +33,6 @@ in
       type = lib.types.int;
       default = 8123;
     };
-    metricsPort = lib.mkOption {
-      type = lib.types.port;
-      default = 16131;
-    };
   };
 
   config = lib.mkIf cfg.enable {
@@ -119,12 +115,11 @@ in
       ];
       config = {
         homeassistant = {
-          auth_providers = [ ];
+          auth_providers = [ ]; # nuke passwd
           time_zone = lib.mkForce null;
         };
         default_config = { };
-        # only reachable through the collector port below
-        prometheus.requires_auth = false;
+        prometheus.requires_auth = true;
         # XXX: http settings wont actually be respected, except first launch
         # womp womp
         http = {
@@ -170,9 +165,12 @@ in
       };
     };
 
-    # set external_url in the stored core config instead of yaml
-    # (prevent lock on the whole "general" settings page in the ui)
+    systemd.services.home-assistant.path = [
+      pkgs.openssl
+    ];
     systemd.services.home-assistant.preStart = lib.mkAfter ''
+      # set external_url (in the stored core config instead of yaml cause otherwise it locks manual edits)
+      #
       f=${hass.configDir}/.storage/core.config
       if [ -f "$f" ]; then
         ${lib.getExe pkgs.jq} --arg url "https://${cfg.domain}" \
@@ -180,6 +178,26 @@ in
         chmod 600 "$f.tmp"
         mv "$f.tmp" "$f"
       fi
+
+      # seed a long-lived access token for prometheus into the auth store
+      #
+      f=${hass.configDir}/.storage/auth
+      id=prometheus
+      [ -f "$f" ] || echo '{"version":1,"minor_version":1,"key":"auth","data":{"users":[],"groups":[],"credentials":[],"refresh_tokens":[]}}' > "$f"
+      key=$(cat ${config.sops.secrets."home-assistant/metricsJwtKey".path})
+      ${lib.getExe pkgs.jq} --arg id "$id" --arg key "$key" --arg token "$(openssl rand -hex 64)" --arg now "$(date -Iseconds)" '
+        .data.users |= map(select(.id != $id)) + [{
+          id: $id, name: "Prometheus", group_ids: ["system-read-only"],
+          is_owner: false, is_active: true, system_generated: true, local_only: false
+        }]
+        | .data.refresh_tokens |= map(select(.id != $id)) + [{
+          id: $id, user_id: $id, client_id: null, client_name: "Prometheus", client_icon: null,
+          token_type: "long_lived_access_token", created_at: $now, access_token_expiration: 315360000,
+          token: $token, jwt_key: $key, last_used_at: null, last_used_ip: null, expire_at: null, credential_id: null
+        }]
+      ' "$f" > "$f.tmp"
+      chmod 600 "$f.tmp"
+      mv "$f.tmp" "$f"
     '';
 
     # required by the matter integration (ws://localhost:5580/ws)
@@ -224,19 +242,19 @@ in
     # direct lan access, on the same port hass advertises over mdns
     networking.firewall.allowedTCPPorts = [ cfg.port ];
 
-    services.caddy.virtualHosts."http://:${toString cfg.metricsPort}".extraConfig = ''
-      handle /api/prometheus {
-        reverse_proxy http://127.0.0.1:${toString cfg.port}
-      }
-      respond 403
-    '';
+    # metricsToken: a jwt signed with metricsJwtKey, with iss = "prometheus"
     polaris.services.monitoring.exports.home-assistant = {
-      port = cfg.metricsPort;
+      inherit (cfg) port;
       path = "/api/prometheus";
+      bearerTokenSecret = "home-assistant/metricsToken";
     };
 
     sops = {
       secrets."home-assistant/clientSecret" = { };
+      secrets."home-assistant/metricsJwtKey" = {
+        owner = "hass";
+        restartUnits = [ "home-assistant.service" ];
+      };
       templates."home-assistant.secrets.yaml" = {
         path = "${hass.configDir}/secrets.yaml";
         owner = "hass";
