@@ -96,6 +96,10 @@ in
         "opcache.revalidate_freq" = "60";
         "opcache.validate_timestamps" = "0";
         # "opcache.optimization_level" =
+        # interim mitigation for CVE-2026-109618/CVE-2026-109619
+        # TODO: remove once php >= 8.4.27
+        "session.upload_progress.enabled" = "0";
+        "session.use_strict_mode" = "1";
       };
       poolSettings = {
         "pm" = "dynamic";
