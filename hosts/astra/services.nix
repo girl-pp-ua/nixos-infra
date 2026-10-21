@@ -8,6 +8,7 @@
     dns-server.enable = true;
 
     dashy.enable = true;
+    karakeep.enable = true;
 
     experimental = {
       svn.enable = true;

@@ -156,6 +156,10 @@ in
                   "[STATUS] == 200"
                   "[BODY].status == ok"
                 ];
+                karakeep = mkUrl' "https://${cfg-svc.karakeep.domain}/api/health" [
+                  "[STATUS] == 200"
+                  "[BODY].status == ok"
+                ];
                 grafana = mkUrl' "https://${cfg-svc.monitoring.server.domain}/api/health" [
                   "[STATUS] == 200"
                   "[BODY].database == ok"

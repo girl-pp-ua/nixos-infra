@@ -1,0 +1,17 @@
+--- a/apps/web/server/auth.ts
++++ b/apps/web/server/auth.ts
+@@ -278,7 +278,13 @@
+ 
+       return true;
+     },
+-    async jwt({ token, user }) {
++    async jwt({ token, user, profile }) {
++      const roleClaim = process.env.OAUTH_ROLE_CLAIM;
++      if (user && profile && roleClaim) {
++        const roles = (profile as Record<string, unknown>)[roleClaim];
++        user.role = Array.isArray(roles) && roles.includes("admin") ? "admin" : "user";
++        await db.update(users).set({ role: user.role }).where(eq(users.id, user.id));
++      }
+       if (user) {
+         token.user = {
+           id: user.id,

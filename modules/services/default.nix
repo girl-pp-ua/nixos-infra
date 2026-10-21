@@ -15,6 +15,7 @@
     ./home-assistant.nix
     ./garage.nix
     ./immich.nix
+    ./karakeep
     ./kanidm.nix
     ./monitoring
     ./ntfy.nix

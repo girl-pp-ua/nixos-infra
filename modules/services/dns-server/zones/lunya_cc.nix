@@ -10,7 +10,7 @@ in
     SOA = {
       nameServer = "ns1.${name}.";
       adminEmail = "hostmaster@${name}";
-      serial = 2026102004; # YYYYMMDDNN
+      serial = 2026102101; # YYYYMMDDNN
     };
 
     NS = [
@@ -56,6 +56,7 @@ in
       # docs.CNAME = [ "dell-sv-proxy" ];
       svn.CNAME = [ "astra" ];
       dash.CNAME = [ "astra" ];
+      keep.CNAME = [ "astra" ];
       on.subdomains.devlootbox.subdomains.media-cdn.CNAME = [ "oci1" ]; # garage web
 
       _atproto.TXT = [ "did=did:plc:wvftnj7awmh4gwf3pt5mlvwq" ];

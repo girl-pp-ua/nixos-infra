@@ -2,7 +2,6 @@
 {
   polaris.services = {
     caddy.enable = true;
-    oauth2_proxy.enable = true;
     dns-server.enable = true; # (for the .polaris zone)
     nextcloud.enable = true;
     paperless.enable = true;

@@ -35,6 +35,8 @@ in
   };
 
   config = lib.mkIf cfg.enable {
+    polaris.services.oauth2_proxy.enable = true;
+
     services.paperless = {
       enable = true;
 

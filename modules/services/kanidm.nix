@@ -72,6 +72,7 @@ in
               "forgejo.access"
               "forgejo.admin"
               "bookorbit.admin"
+              "karakeep.admin"
               "home-assistant.admin"
               "grafana.admin"
             ];
@@ -96,6 +97,7 @@ in
               "paperless.access"
               "home-assistant.admin" # :3
               "grafana.access"
+              "karakeep.access"
             ];
           };
 
@@ -121,11 +123,15 @@ in
         groups."oauth2_proxy.forgejo_admin".members = [
           "forgejo.admin"
         ];
+        groups."oauth2_proxy.karakeep_admin".members = [
+          "karakeep.admin"
+        ];
         groups."oauth2_proxy.access".members = [
           "oauth2_proxy.authtest_access"
           "oauth2_proxy.paperless_django_admin"
           "oauth2_proxy.immich_admin"
           "oauth2_proxy.forgejo_admin"
+          "oauth2_proxy.karakeep_admin"
         ];
         systems.oauth2.${cfg-svc.oauth2_proxy.client_id} = {
           displayName = "oauth2-proxy";
@@ -141,6 +147,7 @@ in
             cfg-svc.paperless.intraDomain
             cfg-svc.immich.domain
             cfg-svc.forgejo.domain
+            cfg-svc.karakeep.domain
           ];
 
           scopeMaps."oauth2_proxy.access" = [
@@ -155,6 +162,7 @@ in
             "oauth2_proxy.paperless_django_admin" = [ "paperless_django_admin" ];
             "oauth2_proxy.immich_admin" = [ "immich_admin" ];
             "oauth2_proxy.forgejo_admin" = [ "forgejo_admin" ];
+            "oauth2_proxy.karakeep_admin" = [ "karakeep_admin" ];
           };
         };
 
@@ -294,6 +302,28 @@ in
             cfg-svc.bookorbit.sso.permissions;
         };
 
+        groups."karakeep.access".members = [ "karakeep.admin" ];
+        groups."karakeep.admin" = { };
+        systems.oauth2.${cfg-svc.karakeep.client_id} = {
+          displayName = "Karakeep";
+          imageFile = "${root + "/assets/sso-images/karakeep.svg"}";
+          originLanding = "https://${cfg-svc.karakeep.domain}/";
+
+          preferShortUsername = true;
+
+          basicSecretFile = config.sops.secrets."kanidm.karakeep/clientSecret".path;
+          originUrl = [
+            "https://${cfg-svc.karakeep.domain}/api/auth/callback/custom"
+          ];
+
+          scopeMaps."karakeep.access" = [
+            "openid"
+            "email"
+            "profile"
+          ];
+          claimMaps.${cfg-svc.karakeep.roleClaim}.valuesByGroup."karakeep.admin" = [ "admin" ];
+        };
+
         groups."home-assistant.access".members = [ "home-assistant.admin" ];
         groups."home-assistant.admin" = { };
         systems.oauth2.${cfg-svc.home-assistant.client_id} = {
@@ -418,6 +448,9 @@ in
         "kanidm.bookorbit/clientSecret" = kanidmSecret // {
           key = "bookorbit/clientSecret";
         };
+        "kanidm.karakeep/clientSecret" = kanidmSecret // {
+          key = "karakeep/clientSecret";
+        };
         "kanidm.home-assistant/clientSecret" = kanidmSecret // {
           key = "home-assistant/clientSecret";
         };
@@ -425,15 +458,24 @@ in
           key = "grafana/clientSecret";
         };
         "kanidm_tls_key" = kanidmSecret // {
-          sopsFile = builtins.path { path = "${inputs.secrets}/certs/tls_key.sops.pem"; name = "tls_key.sops.pem"; };
+          sopsFile = builtins.path {
+            path = "${inputs.secrets}/certs/tls_key.sops.pem";
+            name = "tls_key.sops.pem";
+          };
           format = "binary";
         };
         "kanidm_tls_chain" = kanidmSecret // {
-          sopsFile = builtins.path { path = "${inputs.secrets}/certs/tls_chain.sops.pem"; name = "tls_chain.sops.pem"; };
+          sopsFile = builtins.path {
+            path = "${inputs.secrets}/certs/tls_chain.sops.pem";
+            name = "tls_chain.sops.pem";
+          };
           format = "binary";
         };
         "kanidm_caddy_tls_chain" = {
-          sopsFile = builtins.path { path = "${inputs.secrets}/certs/tls_chain.sops.pem"; name = "tls_chain.sops.pem"; };
+          sopsFile = builtins.path {
+            path = "${inputs.secrets}/certs/tls_chain.sops.pem";
+            name = "tls_chain.sops.pem";
+          };
           format = "binary";
           mode = "0400";
           owner = "caddy";
