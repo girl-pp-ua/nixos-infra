@@ -38,12 +38,50 @@ in
 
     services.karakeep = {
       enable = true;
-      package = pkgs.karakeep.overrideAttrs (old: {
-        patches = (old.patches or [ ]) ++ [
-          # sync user role from an oidc claim login
-          ./oidc-role-claim.patch
-        ];
-      });
+
+      package =
+        let
+          patches = [
+            # sync user role from an oidc claim on login
+            ./oidc-role-claim.patch
+          ];
+        in
+        # this insanity is needed to avoid rebuilding all of the deps from source
+        # (better-sqlite3 pulls in entire sqlite3 built-from-source like wtf)
+        pkgs.karakeep.overrideAttrs (
+          old:
+          let
+            cached = "${pkgs.karakeep}/lib/karakeep";
+            reuseDeps = [
+              {
+                from = ''npm run build-release --offline "--nodedir=${pkgs.srcOnly pkgs.nodejs_22}"'';
+                to = "cp -r --no-preserve=mode ${cached}/node_modules/better-sqlite3/build .";
+              }
+              {
+                from = "pushd apps/cli\npnpm run build\npopd";
+                to = "cp -r --no-preserve=mode ${cached}/apps/cli/dist apps/cli/";
+              }
+              {
+                from = "pushd apps/workers\npnpm run build\npopd";
+                to = "cp -r --no-preserve=mode ${cached}/apps/workers/dist apps/workers/";
+              }
+            ];
+          in
+          assert lib.all (
+            step:
+            lib.hasInfix (builtins.unsafeDiscardStringContext step.from) (
+              builtins.unsafeDiscardStringContext old.buildPhase
+            )
+          ) reuseDeps;
+          {
+            patches = (old.patches or [ ]) ++ patches;
+            inherit (pkgs.karakeep) pnpmDeps;
+            buildPhase = lib.replaceStrings (map (step: step.from) reuseDeps) (map (
+              step: step.to
+            ) reuseDeps) old.buildPhase;
+          }
+        );
+
       extraEnvironment = {
         PORT = toString cfg.port;
         NEXTAUTH_URL = "https://${cfg.domain}";
