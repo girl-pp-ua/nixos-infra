@@ -189,10 +189,7 @@ in
 
         import oauth2_proxy_handle
 
-        @admin {
-          path /admin /admin/* /api/v1/admin/*
-          path_regexp ^/api/trpc/(.*,)?(admin\.[^,]+|users\.(list|delete)|invites\.(create|list|revoke|resend))(,|$)
-        }
+        @admin expression `path('/admin', '/admin/*', '/api/v1/admin/*') || path_regexp('^/api/trpc/(.*,)?(admin[.][^,]+|users[.](list|delete)|invites[.](create|list|revoke|resend))(,|$)')`
         handle @admin {
           import oauth2_proxy_secure_external "karakeep_admin"
           reverse_proxy 127.0.0.1:${toString cfg.port}
