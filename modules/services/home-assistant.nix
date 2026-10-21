@@ -129,12 +129,22 @@ in
         # womp womp
         http = {
           server_host = [
-            "127.0.0.1"
-            "::1"
+            "0.0.0.0"
+            "::"
           ];
           server_port = cfg.port;
           use_x_forwarded_for = true;
-          trusted_proxies = config.polaris.trustedNetworks;
+          trusted_proxies = [
+            "127.0.0.1"
+            "::1"
+          ]
+          ++ lib.concatMap (
+            host:
+            lib.optionals (host ? internal) [
+              host.internal.ipv4
+              host.internal.ipv6
+            ]
+          ) (lib.attrValues config.polaris.hosts);
           ip_ban_enabled = true;
           login_attempts_threshold = 5;
         };
@@ -210,6 +220,10 @@ in
         reverse_proxy http://127.0.0.1:${toString cfg.port}
       '';
     };
+
+    # direct lan access, on the same port hass advertises over mdns
+    networking.firewall.allowedTCPPorts = [ cfg.port ];
+
     services.caddy.virtualHosts."http://:${toString cfg.metricsPort}".extraConfig = ''
       handle /api/prometheus {
         reverse_proxy http://127.0.0.1:${toString cfg.port}
