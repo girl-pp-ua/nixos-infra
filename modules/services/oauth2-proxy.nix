@@ -13,7 +13,13 @@ let
       header_up X-Real-IP {remote_host}
       @error status 401
       handle_response @error {
-        redir * ${cfg.urlPrefix}/sign_in?rd={uri}
+        @oauth2_proxy_background_{args[0]} header_regexp Sec-Fetch-Mode ^(cors|no-cors|same-origin|websocket)$
+        handle @oauth2_proxy_background_{args[0]} {
+          respond 401
+        }
+        handle {
+          redir * ${cfg.urlPrefix}/sign_in?rd={uri}
+        }
       }
     }
   '';
