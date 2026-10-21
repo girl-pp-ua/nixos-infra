@@ -79,10 +79,34 @@ in
           ) reuseDeps;
           {
             patches = (old.patches or [ ]) ++ patches;
-            postPatch = (old.postPatch or "") + ''
-              cat ${./catppuccin-mocha.css} >> tooling/tailwind/globals.css
-            '';
+            postPatch =
+              let
+                body = "<body className={inter.className}>";
+                # if navigating to any admin page and not re-authenticated...
+                # ...force a full page load so the oauth2-proxy redirect properly takes over
+                script = ''
+                  document.addEventListener('click', (e) => {
+                    const a = e.target.closest?.('a[href="/admin"], a[href^="/admin/"]');
+                    if (a && !document.cookie.includes('_oauth2_proxy_pass=')) {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      location.assign(a.href);
+                    }
+                  }, true);
+                '';
+                adminReload = "<script dangerouslySetInnerHTML={{ __html: ${builtins.toJSON script} }} />";
+              in
+              (old.postPatch or "")
+              + ''
+                cat ${./catppuccin-mocha.css} >> tooling/tailwind/globals.css
+                substituteInPlace apps/web/app/layout.tsx \
+                  --replace-fail ${lib.escapeShellArg body} ${lib.escapeShellArg (body + adminReload)}
+              '';
             inherit (pkgs.karakeep) pnpmDeps;
+            postFixup = (old.postFixup or "") + ''
+              rm -rf $out/lib/karakeep/node_modules
+              ln -s ${cached}/node_modules $out/lib/karakeep/node_modules
+            '';
             dontStrip = true;
             dontPatchELF = true;
             doInstallCheck = false;
