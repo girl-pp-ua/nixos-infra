@@ -335,11 +335,11 @@
     "secrets": {
       "flake": false,
       "locked": {
-        "lastModified": 1792571288,
-        "narHash": "sha256-tMuUkNmW3qspf8A00fyLGQnW82bc+JyjNCeIcuQQu3A=",
+        "lastModified": 1792614147,
+        "narHash": "sha256-sfHEgRsSjIrObCIUvBmBkXwihWE6DyIZsRbx7gYy9Mc=",
         "ref": "refs/heads/master",
-        "rev": "5e488210041808caddea545e5c5d0cccf4a0177a",
-        "revCount": 58,
+        "rev": "9fd06ce3e0222f7b9240e0710762c6553a13aeb0",
+        "revCount": 59,
         "type": "git",
         "url": "file:./submodules/secrets"
       },

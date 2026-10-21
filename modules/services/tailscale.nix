@@ -7,6 +7,14 @@ in
     enable = lib.mkEnableOption "tailscale" // {
       default = true;
     };
+    tags = lib.mkOption {
+      type = lib.types.listOf lib.types.str;
+      default = config.polaris.hosts.${config.networking.hostName}.internal.tags or [
+        "tag:nix-infra"
+        "tag:server"
+      ];
+      defaultText = lib.literalExpression "config.polaris.hosts.\${config.networking.hostName}.internal.tags";
+    };
   };
   config = lib.mkIf cfg.enable {
     services.tailscale =
@@ -23,8 +31,14 @@ in
         useRoutingFeatures = "server";
         disableTaildrop = true;
         extraSetFlags = commonFlags;
-        extraUpFlags = commonFlags;
+        extraUpFlags = commonFlags ++ [
+          "--advertise-tags=${lib.concatStringsSep "," cfg.tags}"
+        ];
         authKeyFile = config.sops.secrets."tailscale/authKey".path;
+        authKeyParameters = {
+          ephemeral = false;
+          preauthorized = true;
+        };
       };
 
     # make sure our tailnet addresses are only reachable through the tailnet/loopback
