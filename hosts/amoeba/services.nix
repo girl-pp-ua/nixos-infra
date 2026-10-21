@@ -5,6 +5,7 @@
     dns-server.enable = true; # (for the .polaris zone)
 
     bookorbit.enable = true;
+    karakeep.enable = true;
 
     monitoring.server.enable = true;
 
