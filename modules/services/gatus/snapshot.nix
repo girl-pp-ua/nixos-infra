@@ -51,7 +51,7 @@ in
 
       systemd.services.gatus-snapshot = {
         description = "render gatus snapshot";
-        startAt = "*:0/5";
+        startAt = "*:0/15";
         restartIfChanged = false;
         environment = {
           JSDOM_PATH = "${nodeModules}/node_modules/jsdom";
@@ -75,7 +75,6 @@ in
           CPUWeight = 20;
           Nice = 10;
 
-          # Use a fixed user so Caddy can read this directory.
           User = "gatus-snapshot";
           Group = "gatus-snapshot";
           PrivateUsers = true;
@@ -132,7 +131,10 @@ in
           }
         '';
       };
-      networking.firewall.interfaces.tailscale0.allowedTCPPorts = [ cfg.port ];
+
+      networking.firewall.interfaces.tailscale0.allowedTCPPorts = [
+        cfg.port
+      ];
     })
   ];
 }

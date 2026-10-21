@@ -278,7 +278,6 @@ in
                   {{ $livePage := httpInclude .OriginalReq.RequestURI }}
                   {{ $livePage = replace "<head>" `<head>${expandNewGroups}` $livePage }}
                   {{ $livePage = replace `<div id="app"></div>` (print `<div id="app">` $snapshot `</div>`) $livePage }}
-                  {{ $livePage = replace "Enable JavaScript to view this page." "This is a static snapshot, enable JavaScript for live updates." $livePage }}
                   {{ $livePage }}
                   HTML 200
               }
