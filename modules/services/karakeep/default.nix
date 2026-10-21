@@ -31,6 +31,10 @@ in
       type = lib.types.str;
       default = "karakeep_role";
     };
+    embeddingModel = lib.mkOption {
+      type = lib.types.str;
+      default = "bge-m3"; # (multilingual)
+    };
   };
 
   config = lib.mkIf cfg.enable {
@@ -114,10 +118,29 @@ in
         OCR_LANGS = "eng,ukr,pol";
         OCR_CACHE_DIR = "/var/cache/karakeep-ocr";
 
+        # semantic search
+        EMBEDDING_OPENAI_BASE_URL = "http://127.0.0.1:${toString config.services.ollama.port}/v1";
+        EMBEDDING_OPENAI_API_KEY = "ollama"; # (required; but ignored by ollama)
+        EMBEDDING_TEXT_MODEL = cfg.embeddingModel;
+        EMBEDDING_DIMENSIONS = "1024";
+        EMBEDDING_CONTEXT_LENGTH = "4096";
+        EMBEDDING_ENABLE_AUTO_INDEXING = "true";
+
         LOG_LEVEL = "info";
         NO_COLOR = "true";
       };
       environmentFile = config.sops.templates."karakeep.env".path;
+    };
+
+    services.ollama = {
+      enable = true;
+      loadModels = [
+        cfg.embeddingModel
+      ];
+    };
+    systemd.services.karakeep-workers = {
+      after = [ "ollama-model-loader.service" ];
+      wants = [ "ollama-model-loader.service" ];
     };
 
     systemd.services.karakeep-web.environment.HOSTNAME = "127.0.0.1";
