@@ -99,11 +99,30 @@ in
         OAUTH_CLIENT_ID = cfg.client_id;
         OAUTH_ID_TOKEN_SIGNED_RESPONSE_ALG = "ES256";
         OAUTH_ROLE_CLAIM = cfg.roleClaim;
+
+        # crawl offline copies of webpages
+        CRAWLER_FULL_PAGE_ARCHIVE = "true";
+        CRAWLER_MONOLITH_TIMEOUT_SEC = "30";
+
+        # save videos via yt-dlp
+        CRAWLER_VIDEO_DOWNLOAD = "true";
+        CRAWLER_VIDEO_DOWNLOAD_MAX_SIZE = "250";
+        CRAWLER_NUM_WORKERS = "2";
+
+        MAX_ASSET_SIZE_MB = "250";
+
+        OCR_LANGS = "eng,ukr,pol";
+        OCR_CACHE_DIR = "/var/cache/karakeep-ocr";
+
+        LOG_LEVEL = "info";
+        NO_COLOR = "true";
       };
       environmentFile = config.sops.templates."karakeep.env".path;
     };
 
     systemd.services.karakeep-web.environment.HOSTNAME = "127.0.0.1";
+    # (tesseract downloads language data on first use)
+    systemd.services.karakeep-workers.serviceConfig.CacheDirectory = "karakeep-ocr";
 
     sops.secrets."karakeep/clientSecret" = { };
     sops.templates."karakeep.env" = {
