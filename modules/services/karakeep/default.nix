@@ -80,6 +80,7 @@ in
             '';
             inherit (pkgs.karakeep) pnpmDeps;
             dontStrip = true;
+            dontPatchELF = true;
             doInstallCheck = false;
             buildPhase = lib.replaceStrings (map (step: step.from) reuseDeps) (map (
               step: step.to
