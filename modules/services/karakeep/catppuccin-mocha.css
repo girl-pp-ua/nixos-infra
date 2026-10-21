@@ -1,0 +1,32 @@
+/* catppuccin mocha pink :3 */
+@layer base {
+  .dark {
+    --background: 240 21.1% 14.9%; /* base */
+    --foreground: 226.2 63.9% 88%; /* text */
+
+    --card: 240 21.3% 12%; /* mantle */
+    --card-foreground: 226.2 63.9% 88%;
+
+    --popover: 240 21.3% 12%;
+    --popover-foreground: 226.2 63.9% 88%;
+
+    --primary: 316.5 71.8% 86.1%; /* pink */
+    --primary-foreground: 240 22.7% 8.6%; /* crust */
+
+    --secondary: 236.8 16.2% 22.9%; /* surface0 */
+    --secondary-foreground: 226.2 63.9% 88%;
+
+    --muted: 236.8 16.2% 22.9%;
+    --muted-foreground: 227.6 23.6% 71.8%; /* subtext0 */
+
+    --accent: 236.8 16.2% 22.9%;
+    --accent-foreground: 226.2 63.9% 88%;
+
+    --destructive: 343.3 81.2% 74.9%; /* red */
+    --destructive-foreground: 240 22.7% 8.6%;
+
+    --border: 236.8 16.2% 22.9%;
+    --input: 234.3 13.2% 31.2%; /* surface1 */
+    --ring: 316.5 71.8% 86.1%;
+  }
+}

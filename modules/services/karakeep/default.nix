@@ -75,6 +75,9 @@ in
           ) reuseDeps;
           {
             patches = (old.patches or [ ]) ++ patches;
+            postPatch = (old.postPatch or "") + ''
+              cat ${./catppuccin-mocha.css} >> tooling/tailwind/globals.css
+            '';
             inherit (pkgs.karakeep) pnpmDeps;
             dontStrip = true;
             doInstallCheck = false;
