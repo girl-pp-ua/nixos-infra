@@ -317,6 +317,13 @@ in
 
         import oauth2_proxy_handle
 
+        # force interactive login on session expiry
+        @kanidm_silent {
+          path /user/oauth2/kanidm_internal
+          query prompt=none
+        }
+        redir @kanidm_silent /user/oauth2/kanidm_internal
+
         @admin path /admin /admin/* /api/v1/admin/*
         handle @admin {
           import oauth2_proxy_secure_external "forgejo_admin"
