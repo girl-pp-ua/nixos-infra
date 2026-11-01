@@ -57,7 +57,12 @@ in
       svn.CNAME = [ "astra" ];
       dash.CNAME = [ "astra" ];
       keep.CNAME = [ "amoeba" ];
-      on.subdomains.devlootbox.subdomains.media-cdn.CNAME = [ "oci1" ]; # garage web
+
+      # garage web
+      on.subdomains.devlootbox.subdomains.media-cdn = {
+        CNAME = [ "t.sni.global.fastly.net." ];
+        subdomains._acme-challenge.CNAME = [ "nctt1lrellffmz7wiv.fastly-validations.com." ];
+      };
 
       _atproto.TXT = [ "did=did:plc:wvftnj7awmh4gwf3pt5mlvwq" ];
     };
