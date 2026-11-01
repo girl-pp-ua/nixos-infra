@@ -4,7 +4,7 @@
 {
   boot = rec {
     # systemd-in-initrd is not supported by NIXOS_LUSTRATE
-    initrd.systemd.enable = lib.mkOverride 99 false;
+    # initrd.systemd.enable = lib.mkOverride 99 false;
     initrd.availableKernelModules = [
       "virtio_scsi"
       "ata_piix"

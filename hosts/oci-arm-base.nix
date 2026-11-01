@@ -3,7 +3,7 @@
 { lib, ... }:
 {
   boot = {
-    initrd.systemd.enable = lib.mkOverride 99 false;
+    # initrd.systemd.enable = lib.mkOverride 99 false;
     kernelParams = [
       "console=tty1"
       "console=ttyAMA0"
