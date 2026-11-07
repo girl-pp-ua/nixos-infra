@@ -33,6 +33,17 @@ in
       type = lib.types.int;
       default = 8123;
     };
+    thread = {
+      radio = lib.mkOption {
+        type = lib.types.nullOr lib.types.str;
+        default = null;
+        description = "serial device of a radio running openthread rcp firmware, enables the border router";
+      };
+      backboneInterface = lib.mkOption {
+        type = lib.types.str;
+        default = "eth0";
+      };
+    };
   };
 
   config = lib.mkIf cfg.enable {
@@ -74,6 +85,7 @@ in
         "broadlink"
         "xiaomi_miio"
         "xiaomi_ble"
+        "ibeacon"
         # media
         "cast"
         "spotify"
@@ -202,6 +214,18 @@ in
 
     # required by the matter integration (ws://localhost:5580/ws)
     services.matter-server.enable = true;
+
+    # thread border router, add to hass via the otbr integration at http://127.0.0.1:8081
+    services.openthread-border-router = lib.mkIf (cfg.thread.radio != null) {
+      enable = true;
+      backboneInterfaces = [ cfg.thread.backboneInterface ];
+      radio = {
+        device = cfg.thread.radio;
+        # (zbt-1 openthread rcp firmware)
+        baudRate = 460800;
+        flowControl = true;
+      };
+    };
 
     # mdns, used for local discovery (hue, cast, homekit, matter, etc.)
     networking.firewall.allowedUDPPorts = [ 5353 ];

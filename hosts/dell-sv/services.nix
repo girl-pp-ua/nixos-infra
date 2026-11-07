@@ -7,7 +7,11 @@
     paperless.enable = true;
     immich.enable = true;
     forgejo.enable = true;
-    home-assistant.enable = true;
+    home-assistant = {
+      enable = true;
+      # zbt-1, flashed with openthread rcp firmware
+      thread.radio = "/dev/serial/by-id/usb-Nabu_Casa_SkyConnect_v1.0_ec9d0ed490e5ed119ed6646262c613ac-if00-port0";
+    };
 
     backup = {
       enable = true;
