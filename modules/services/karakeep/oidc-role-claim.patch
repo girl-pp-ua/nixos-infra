@@ -1,17 +1,77 @@
 --- a/apps/web/server/auth.ts
 +++ b/apps/web/server/auth.ts
-@@ -278,7 +278,13 @@
+@@ -1,7 +1,7 @@
+ import { cache } from "react";
+ import { TURNSTILE_TOKEN_HEADER } from "@/lib/auth/constants";
+ import { createId } from "@paralleldrive/cuid2";
+-import { count } from "drizzle-orm";
++import { and, count, eq, inArray } from "drizzle-orm";
+ import { headers } from "next/headers";
+ import requestIp from "request-ip";
+ import { z } from "zod";
+@@ -342,6 +342,38 @@
+   return verificationUrl.toString();
+ }
  
-       return true;
++// Sync the user's role from an OIDC claim on every login
++const OAUTH_ROLE_CLAIM = process.env.OAUTH_ROLE_CLAIM;
++// Roles for accounts that don't exist yet, applied once the account is created
++const pendingOAuthRoles = new Map<string, "admin" | "user">();
++
++async function syncOAuthRole(profile: Record<string, unknown>) {
++  if (!OAUTH_ROLE_CLAIM || getReadOnlyModeError(serverConfig)) {
++    return;
++  }
++  const subject = String(profile.sub ?? profile.id ?? "");
++  const roles = profile[OAUTH_ROLE_CLAIM];
++  const role =
++    Array.isArray(roles) && roles.includes("admin") ? "admin" : "user";
++  const linkedUser = db
++    .select({ id: accounts.userId })
++    .from(accounts)
++    .where(
++      and(
++        eq(accounts.providerId, CUSTOM_OAUTH_PROVIDER_ID),
++        eq(accounts.accountId, subject),
++      ),
++    );
++  const updated = await db
++    .update(users)
++    .set({ role })
++    .where(inArray(users.id, linkedUser))
++    .returning({ id: users.id });
++  if (updated.length === 0) {
++    pendingOAuthRoles.set(subject, role);
++  }
++}
++
+ function createOAuthConfig(): GenericOAuthConfig | null {
+   const oauth = serverConfig.auth.oauth;
+   if (!oauth.wellKnownUrl || !oauth.clientId) {
+@@ -366,7 +398,8 @@
+     // Existing accounts were linked by this id, so keep deriving it the same
+     // way rather than relying on better-auth's default (`sub` only).
+     accountSubject: ({ profile }) => String(profile.sub ?? profile.id ?? ""),
+-    mapProfileToUser(profile) {
++    async mapProfileToUser(profile) {
++      await syncOAuthRole(profile);
+       return {
+         name: normalizeSafeDisplayName(
+           typeof profile.name === "string" ? profile.name : null,
+@@ -535,6 +568,16 @@
+         before: async () => {
+           assertWritesAllowed();
+         },
++        after: async (account) => {
++          const role = pendingOAuthRoles.get(account.accountId);
++          if (account.providerId === CUSTOM_OAUTH_PROVIDER_ID && role) {
++            pendingOAuthRoles.delete(account.accountId);
++            await db
++              .update(users)
++              .set({ role })
++              .where(eq(users.id, account.userId));
++          }
++        },
+       },
      },
--    async jwt({ token, user }) {
-+    async jwt({ token, user, profile }) {
-+      const roleClaim = process.env.OAUTH_ROLE_CLAIM;
-+      if (user && profile && roleClaim) {
-+        const roles = (profile as Record<string, unknown>)[roleClaim];
-+        user.role = Array.isArray(roles) && roles.includes("admin") ? "admin" : "user";
-+        await db.update(users).set({ role: user.role }).where(eq(users.id, user.id));
-+      }
-       if (user) {
-         token.user = {
-           id: user.id,
+     session: {
