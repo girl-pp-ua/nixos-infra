@@ -213,7 +213,7 @@ in
     '';
 
     # required by the matter integration (ws://localhost:5580/ws)
-    services.matter-server.enable = true;
+    services.matterjs-server.enable = true;
 
     # thread border router, add to hass via the otbr integration at http://127.0.0.1:8081
     services.openthread-border-router = lib.mkIf (cfg.thread.radio != null) {
