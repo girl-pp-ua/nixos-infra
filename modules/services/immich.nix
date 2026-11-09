@@ -49,6 +49,16 @@ in
       type = lib.types.str;
       default = "immich.polaris";
     };
+    metrics = {
+      apiPort = lib.mkOption {
+        type = lib.types.port;
+        default = 16150;
+      };
+      microservicesPort = lib.mkOption {
+        type = lib.types.port;
+        default = 16151;
+      };
+    };
   };
 
   config = lib.mkIf cfg.enable {
@@ -66,8 +76,8 @@ in
         IMMICH_ALLOW_SETUP = "false";
         IMMICH_CONFIG_FILE = config.sops.templates."immich.json".path;
         IMMICH_TELEMETRY_INCLUDE = "all";
-        IMMICH_API_METRICS_PORT = "8081";
-        IMMICH_MICROSERVICES_METRICS_PORT = "8082";
+        IMMICH_API_METRICS_PORT = toString cfg.metrics.apiPort;
+        IMMICH_MICROSERVICES_METRICS_PORT = toString cfg.metrics.microservicesPort;
         XDG_CACHE_HOME = "/var/cache/immich"; # (for mesa shader cache)
       };
       machine-learning.environment = {
@@ -77,8 +87,8 @@ in
       };
     };
     polaris.services.monitoring.exports = {
-      immich-api.port = 8081;
-      immich-microservices.port = 8082;
+      immich-api.port = cfg.metrics.apiPort;
+      immich-microservices.port = cfg.metrics.microservicesPort;
     };
 
     systemd.services.immich-server.serviceConfig = {

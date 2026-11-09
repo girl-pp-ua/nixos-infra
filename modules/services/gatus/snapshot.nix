@@ -37,9 +37,9 @@ in
 
   config = lib.mkMerge [
     (lib.mkIf (hostName == cfg.source) {
-      networking.firewall.interfaces.tailscale0.allowedTCPPorts = lib.mapAttrsToList (
-        _: instance: instance.port
-      ) instances;
+      networking.firewall.interfaces.${config.services.tailscale.interfaceName}.allowedTCPPorts =
+        lib.mapAttrsToList (_: instance: instance.port)
+          instances;
     })
 
     (lib.mkIf (hostName == cfg.renderer) {
@@ -132,7 +132,7 @@ in
         '';
       };
 
-      networking.firewall.interfaces.tailscale0.allowedTCPPorts = [
+      networking.firewall.interfaces.${config.services.tailscale.interfaceName}.allowedTCPPorts = [
         cfg.port
       ];
     })

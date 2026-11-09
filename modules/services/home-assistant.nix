@@ -33,15 +33,19 @@ in
       type = lib.types.int;
       default = 8123;
     };
-    thread = {
-      radio = lib.mkOption {
+    lanInterface = lib.mkOption {
+      type = lib.types.str;
+      default = "eth0";
+    };
+    matter = {
+      port = lib.mkOption {
+        type = lib.types.port;
+        default = 5580;
+      };
+      threadRadio = lib.mkOption {
         type = lib.types.nullOr lib.types.str;
         default = null;
-        description = "serial device of a radio running openthread rcp firmware, enables the border router";
-      };
-      backboneInterface = lib.mkOption {
-        type = lib.types.str;
-        default = "eth0";
+        description = "serial device of a radio running openthread rcp firmware";
       };
     };
   };
@@ -212,23 +216,45 @@ in
       mv "$f.tmp" "$f"
     '';
 
-    # required by the matter integration (ws://localhost:5580/ws)
-    services.matterjs-server.enable = true;
-
-    # thread border router, add to hass via the otbr integration at http://127.0.0.1:8081
-    services.openthread-border-router = lib.mkIf (cfg.thread.radio != null) {
+    # required by the matter integration (ws://localhost:<matter.port>/ws)
+    services.matterjs-server = {
       enable = true;
-      backboneInterfaces = [ cfg.thread.backboneInterface ];
+      port = cfg.matter.port;
+    };
+
+    # thread border router, required by the otbr integration (http://127.0.0.1:8081)
+    services.openthread-border-router = lib.mkIf (cfg.matter.threadRadio != null) {
+      enable = true;
+      backboneInterfaces = [
+        cfg.lanInterface
+      ];
       radio = {
-        device = cfg.thread.radio;
-        # (zbt-1 openthread rcp firmware)
-        baudRate = 460800;
+        device = cfg.matter.threadRadio;
+        baudRate = 460800; # (zbt-1 openthread rcp firmware)
         flowControl = true;
       };
     };
 
-    # mdns, used for local discovery (hue, cast, homekit, matter, etc.)
-    networking.firewall.allowedUDPPorts = [ 5353 ];
+    # route between lan and thread mesh
+    networking.firewall.extraForwardRules =
+      let
+        wpan = config.services.openthread-border-router.interfaceName;
+      in
+      lib.mkIf (cfg.matter.threadRadio != null) ''
+        iifname "${cfg.lanInterface}" oifname "${wpan}" accept
+        iifname "${wpan}" oifname "${cfg.lanInterface}" accept
+      '';
+
+    networking.firewall.interfaces.${cfg.lanInterface} = {
+      allowedUDPPorts = [
+        # mdns, used for local discovery (hue, cast, homekit, matter, etc.)
+        5353
+      ];
+      allowedTCPPorts = [
+        # direct lan accesss
+        cfg.port
+      ];
+    };
 
     systemd.tmpfiles.rules = [
       "d ${hass.configDir}/.storage 0700 hass hass - -"
@@ -262,9 +288,6 @@ in
         reverse_proxy http://127.0.0.1:${toString cfg.port}
       '';
     };
-
-    # direct lan access, on the same port hass advertises over mdns
-    networking.firewall.allowedTCPPorts = [ cfg.port ];
 
     # metricsToken: a jwt signed with metricsJwtKey, with iss = "prometheus"
     polaris.services.monitoring.exports.home-assistant = {

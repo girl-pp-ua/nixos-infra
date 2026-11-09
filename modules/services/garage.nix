@@ -96,7 +96,7 @@ in
       bearerTokenSecret = "garage/metrics_token";
     };
 
-    networking.firewall.interfaces.tailscale0 = {
+    networking.firewall.interfaces.${config.services.tailscale.interfaceName} = {
       allowedTCPPorts = [
         cfg.s3_port
         cfg.rpc_port

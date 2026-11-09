@@ -40,7 +40,7 @@ in
     };
 
     # see forwardPorts below
-    networking.firewall.interfaces.tailscale0 = {
+    networking.firewall.interfaces.${config.services.tailscale.interfaceName} = {
       allowedTCPPorts = [
         48010
         27036
