@@ -72,25 +72,6 @@
       (self: super: {
         inherit (pkgs-stable) caddy;
       })
-
-      # CVE-2026-109618/CVE-2026-109619 (php2shell)
-      (self: super: {
-        php84 =
-          if lib.versionOlder super.php84.version "8.4.27" then
-            (super.php84.override {
-              version = "8.4.27";
-              hash = "sha256-slMKh3xyL0sIyeF0owywi6wrfhkD7m6eMV8KqfX4LCQ=";
-            }).withExtensions
-              (
-                { enabled, ... }:
-                # oom_filter_* tests fail in the sandbox
-                map (
-                  ext: if ext.extensionName == "filter" then ext.overrideAttrs { doCheck = false; } else ext
-                ) enabled
-              )
-          else
-            lib.warn "nixpkgs php84 is already ${super.php84.version} (>= 8.4.27)" super.php84;
-      })
     ];
   };
 
