@@ -58,7 +58,10 @@ in
             cached = "${pkgs.karakeep}/lib/karakeep";
             reuseDeps = [
               {
-                from = ''npm run build-release --offline "--nodedir=${pkgs.srcOnly pkgs.nodejs_22}"'';
+                from =
+                  lib.findFirst (lib.hasPrefix "npm run build-release --offline ")
+                    (throw "karakeep: better-sqlite3 build step not found in buildPhase")
+                    (lib.splitString "\n" old.buildPhase);
                 to = "cp -r --no-preserve=mode ${cached}/node_modules/better-sqlite3/build .";
               }
               {
