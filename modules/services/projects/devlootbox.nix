@@ -1,6 +1,7 @@
 {
   inputs,
   config,
+  pkgs,
   lib,
   ...
 }:
@@ -20,7 +21,14 @@ in
 
       database = {
         setupPostgres = true;
-        sqlxMigrations.enable = true;
+        sqlxMigrations = {
+          enable = true;
+          # XXX: remove once nixpkgs fixes it (NixOS/nixpkgs#570940)
+          # cargoSetupHook now forces system sqlite, but sqlx-cli doesn't have it in buildInputs
+          package = pkgs.sqlx-cli.overrideAttrs (old: {
+            buildInputs = (old.buildInputs or [ ]) ++ [ pkgs.sqlite ];
+          });
+        };
       };
 
       aws = {
