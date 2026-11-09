@@ -128,6 +128,18 @@ in
       customComponents = [
         pkgs.home-assistant-custom-components.auth_oidc
         pkgs.home-assistant-custom-components.scene_presets
+        # ikea bilresa
+        (pkgs.buildHomeAssistantComponent rec {
+          owner = "Vituhlos";
+          domain = "ikea_bilresa";
+          version = "0.6.1";
+          src = pkgs.fetchFromGitHub {
+            inherit owner;
+            repo = "ha-ikea-bilresa";
+            tag = "v${version}";
+            hash = "sha256-NEZrbT4AJQnp3QD/nYor0YA+hE8CdIUu+VKxXExTbzQ=";
+          };
+        })
       ];
       config = {
         homeassistant = {
