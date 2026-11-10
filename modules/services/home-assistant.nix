@@ -124,6 +124,11 @@ in
         "google_mail"
         "google_translate"
         "google_generative_ai_conversation"
+        "google_sheets"
+        "google_cloud" # tts/stt
+        "google_air_quality"
+        "google_weather"
+        "google_travel_time"
         "youtube"
         # ai
         "anthropic"
