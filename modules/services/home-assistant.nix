@@ -59,6 +59,16 @@ in
   config = lib.mkIf cfg.enable {
     services.home-assistant = {
       enable = true;
+      package =
+        (pkgs.home-assistant.override {
+          packageOverrides = _: super: {
+            # XXX: mtls endpoint mock tests fail
+            google-cloud-texttospeech = super.google-cloud-texttospeech.overridePythonAttrs (old: {
+              disabledTests = (old.disabledTests or [ ]) ++ [ "get_mtls_endpoint_and_cert_source" ];
+            });
+          };
+        }).overrideAttrs
+          { doInstallCheck = false; }; # (same as the module default)
       extraComponents = [
         "default_config"
         "prometheus"
@@ -78,6 +88,43 @@ in
         "homekit_controller"
         "upnp"
         "dlna_dmr"
+        "ffmpeg"
+        # helpers / building blocks (the dependency-free ones like template, tod, moon work regardless)
+        "local_calendar"
+        "local_todo"
+        "workday"
+        "holiday"
+        "season"
+        "utility_meter"
+        "rest"
+        "command_line"
+        "scrape"
+        "sql"
+        "feedreader"
+        "generic" # generic/rtsp cameras
+        "wake_on_lan"
+        "ping"
+        # presence / ble
+        "bthome"
+        "private_ble_device"
+        # local voice (whisper/piper/openwakeword)
+        "wyoming"
+        # weather (nl)
+        "buienradar"
+        # monitoring
+        "gatus"
+        "version"
+        "systemmonitor"
+        "fastdotcom"
+        "tailscale"
+        "github"
+        # self-hosted services
+        "nextcloud"
+        "caldav"
+        "webdav" # backup target
+        "immich"
+        "paperless_ngx"
+        "ntfy"
         # lights
         "hue"
         "tradfri"
@@ -104,6 +151,10 @@ in
         "spotify"
         "apple_tv"
         "androidtv_remote"
+        "androidtv" # adb/fire tv
+        "nfandroidtv" # notifications
+        # android
+        "android_ip_webcam"
         "samsungtv"
         "webostv"
         # transport
