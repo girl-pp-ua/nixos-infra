@@ -277,6 +277,45 @@ in
             "vacuum"
           ];
         };
+        rest = [
+          {
+            resource = "https://danbooru.donmai.us/posts/random.json";
+            params.tags = "yuri girls_kissing rating:safe";
+            headers.User-Agent = "lunya-home-assistant/1.0";
+            scan_interval = 300;
+            sensor = [
+              {
+                name = "Danbooru random post";
+                unique_id = "danbooru_random_post";
+                # (danbooru answers with an html maintenance page when down)
+                value_template = "{{ value_json.id if value_json is defined and value_json.id is defined else none }}";
+                json_attributes = [
+                  "file_ext"
+                  "large_file_url"
+                  "preview_file_url"
+                  "rating"
+                  "tag_string_artist"
+                  "tag_string_character"
+                  "source"
+                ];
+              }
+            ];
+          }
+        ];
+        template = [
+          {
+            image = [
+              {
+                name = "Danbooru random";
+                unique_id = "danbooru_random_image";
+                url = ''
+                  {% set p = 'sensor.danbooru_random_post' %}
+                  {% if state_attr(p, 'file_ext') in ['jpg', 'jpeg', 'png', 'webp', 'gif'] %}{{ state_attr(p, 'large_file_url') }}{% else %}{{ state_attr(p, 'preview_file_url') }}{% endif %}
+                '';
+              }
+            ];
+          }
+        ];
         # XXX: http settings wont actually be respected, except first launch
         # womp womp
         http = {
