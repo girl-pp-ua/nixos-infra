@@ -277,25 +277,35 @@ in
             "vacuum"
           ];
         };
+        # random safebooru.org post for the dashboard picture frame
+        # (no booru integration exists, so: rest sensor -> template image)
         rest = [
           {
-            resource = "https://danbooru.donmai.us/posts/random.json";
-            params.tags = "yuri girls_kissing rating:safe";
+            resource = "https://safebooru.org/index.php";
+            params = {
+              page = "dapi";
+              s = "post";
+              q = "index";
+              json = "1";
+              limit = "1";
+              tags = "yuri kiss sort:random";
+            };
             headers.User-Agent = "lunya-home-assistant/1.0";
             scan_interval = 300;
             sensor = [
               {
-                name = "Danbooru random post";
-                unique_id = "danbooru_random_post";
-                # (danbooru answers with an html maintenance page when down)
-                value_template = "{{ value_json.id if value_json is defined and value_json.id is defined else none }}";
+                name = "Safebooru random post";
+                unique_id = "safebooru_random_post";
+                # (an empty body or html error page instead of a json list on failure)
+                value_template = "{{ value_json[0].id if value_json is defined and value_json is list and value_json else none }}";
+                json_attributes_path = "$[0]";
                 json_attributes = [
-                  "file_ext"
-                  "large_file_url"
-                  "preview_file_url"
+                  "directory"
+                  "image"
+                  "sample"
+                  "file_url"
                   "rating"
-                  "tag_string_artist"
-                  "tag_string_character"
+                  "tags"
                   "source"
                 ];
               }
@@ -306,11 +316,17 @@ in
           {
             image = [
               {
-                name = "Danbooru random";
-                unique_id = "danbooru_random_image";
+                name = "Safebooru random";
+                unique_id = "safebooru_random_image";
+                # sample (~850px jpg) if there is one, else the original; videos only have a thumbnail
                 url = ''
-                  {% set p = 'sensor.danbooru_random_post' %}
-                  {% if state_attr(p, 'file_ext') in ['jpg', 'jpeg', 'png', 'webp', 'gif'] %}{{ state_attr(p, 'large_file_url') }}{% else %}{{ state_attr(p, 'preview_file_url') }}{% endif %}
+                  {% set p = "sensor.safebooru_random_post" %}
+                  {% set dir = state_attr(p, "directory") %}
+                  {% set img = state_attr(p, "image") or "" %}
+                  {% set stem = img | regex_replace("[.][^.]+$", "") %}
+                  {% if img | regex_search("[.](mp4|webm)$") %}https://safebooru.org/thumbnails/{{ dir }}/thumbnail_{{ stem }}.jpg
+                  {%- elif state_attr(p, "sample") %}https://safebooru.org/samples/{{ dir }}/sample_{{ stem }}.jpg
+                  {%- else %}{{ state_attr(p, "file_url") }}{% endif %}
                 '';
               }
             ];
