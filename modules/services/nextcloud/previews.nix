@@ -82,7 +82,9 @@ in
 
     # pre-generate previews for new files in the background
     systemd.services.nextcloud-preview-pregenerate = {
-      after = [ "nextcloud-setup.service" ];
+      # (nextcloud-setup is long done by the time this runs, so it doesn't order us after the db)
+      after = [ "nextcloud-setup.service" ] ++ lib.optional config.services.postgresql.enable "postgresql.target";
+      requires = lib.optional config.services.postgresql.enable "postgresql.target";
       startAt = "*:0/10";
       serviceConfig = {
         Type = "oneshot";
