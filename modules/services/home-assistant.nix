@@ -13,6 +13,12 @@ let
     inherit (cfg-svc.kanidm) domain;
     inherit (cfg) client_id;
   };
+  catppuccin = pkgs.fetchFromGitHub {
+    owner = "catppuccin";
+    repo = "home-assistant";
+    tag = "v2.1.3";
+    hash = "sha256-+m6lWer9a4AwmTgckhSHOKd0Oo6x9N0jjza4/F0ye3E=";
+  };
 in
 {
   options.polaris.services.home-assistant = {
@@ -147,6 +153,7 @@ in
           time_zone = lib.mkForce null;
         };
         default_config = { };
+        frontend.themes = "!include_dir_merge_named themes";
         prometheus.requires_auth = true;
         # XXX: http settings wont actually be respected, except first launch
         # womp womp
@@ -316,6 +323,9 @@ in
       "f ${hass.configDir}/automations.yaml 0644 hass hass - []"
       "f ${hass.configDir}/scenes.yaml 0644 hass hass - []"
       "f ${hass.configDir}/scripts.yaml 0644 hass hass - {}"
+      # themes (see frontend.themes)
+      "d ${hass.configDir}/themes 0755 hass hass - -"
+      "L+ ${hass.configDir}/themes/catppuccin.yaml - - - - ${catppuccin}/themes/catppuccin.yaml"
     ];
 
     # confgure caddy
