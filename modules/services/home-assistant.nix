@@ -93,7 +93,10 @@ in
         "tuya"
         "switchbot"
         "broadlink"
-        "xiaomi_miio"
+        "unifi"
+        "unifiprotect"
+        "unifi_access"
+        # "xiaomi_miio"
         "xiaomi_ble"
         "ibeacon"
         # media
@@ -103,7 +106,9 @@ in
         "androidtv_remote"
         "samsungtv"
         "webostv"
-        # appliances/climate/misc
+        # transport
+        "nederlandse_spoorwegen"
+        # appliances
         "smartthings"
         "ipp"
         "brother"
