@@ -1,0 +1,45 @@
+--- a/custom_components/ikea_bilresa/frontend/ikea_bilresa_panel.js	2026-11-10 20:20:08.622540435 +0100
++++ b/custom_components/ikea_bilresa/frontend/ikea_bilresa_panel.js	2026-11-10 20:20:08.637417987 +0100
+@@ -1692,6 +1692,34 @@
+     this._panel = panel;
+   }
+ 
++  // Opening the panel again from a dashboard link only changes the route.
++  set route(route) {
++    this._route = route;
++    if (this._snapshot) this._openFromUrl();
++  }
++
++  // ?entity=<entity_id> opens the wheel that entity's device belongs to, so a
++  // dashboard tile can link straight to its remote. The parameter is consumed,
++  // so later navigation inside the panel isn't overridden.
++  _openFromUrl() {
++    const params = new URLSearchParams(window.location.search);
++    const entityId = params.get("entity");
++    if (!entityId || !this._snapshot) return;
++    params.delete("entity");
++    const query = params.toString();
++    window.history.replaceState(
++      window.history.state,
++      "",
++      window.location.pathname + (query ? `?${query}` : ""),
++    );
++    const deviceId = this._hass?.entities?.[entityId]?.device_id;
++    const device = deviceId ? this._hass?.devices?.[deviceId] : undefined;
++    if (!device) return;
++    const names = [device.name_by_user, device.name].filter(Boolean);
++    const wheel = this._snapshot.wheels.find((item) => names.includes(item.name));
++    if (wheel) this._openWheel(wheel.key);
++  }
++
+   // The viewing user's language, matched to one the panel speaks: "en-GB"
+   // falls back to "en", and a language it does not speak to the instance's.
+   _lang() {
+@@ -1754,6 +1782,7 @@
+       });
+       if (stale()) return;
+       this._snapshot = snapshot;
++      this._openFromUrl();
+       this._render();
+     } catch (err) {
+       if (!stale()) this._fail(err);

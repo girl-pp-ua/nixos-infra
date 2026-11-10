@@ -209,6 +209,15 @@ in
             tag = "v${version}";
             hash = "sha256-NEZrbT4AJQnp3QD/nYor0YA+hE8CdIUu+VKxXExTbzQ=";
           };
+          patches = [
+            # panel: /ikea-bilresa?entity=<entity_id> opens that entity
+            ./ikea-bilresa-deeplink.patch
+          ];
+          nativeBuildInputs = [ pkgs.jq ];
+          postPatch = ''
+            jq '.version = "${version}.1"' custom_components/ikea_bilresa/manifest.json > m
+            mv m custom_components/ikea_bilresa/manifest.json
+          '';
         })
         # XXX: backport of the 2026.11 tailscale integration
         # drop once nixpkgs has home-assistant >= 2026.11 (NixOS/nixpkgs#583840)
