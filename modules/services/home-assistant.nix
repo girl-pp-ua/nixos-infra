@@ -331,9 +331,9 @@ in
       chmod 600 "$f.tmp"
       mv "$f.tmp" "$f"
 
-      # apply the declarative google credentials (see sops.templates."home-assistant.google.json")
-      #
-      g=${config.sops.templates."home-assistant.google.json".path}
+      # apply the declarative credentials
+      # (see sops.templates."home-assistant.credentials.json")
+      g=${config.sops.templates."home-assistant.credentials.json".path}
       f=${hass.configDir}/.storage/application_credentials
       [ -f "$f" ] || echo '{"version":1,"minor_version":1,"key":"application_credentials","data":{"items":[]}}' > "$f"
       # (same id as the ui creates, so existing config entries' auth_implementation keeps matching)
@@ -465,11 +465,24 @@ in
     };
 
     sops = {
-      secrets."home-assistant/clientSecret" = { };
-      secrets."home-assistant/metricsJwtKey" = {
-        owner = "hass";
-        restartUnits = [ "home-assistant.service" ];
+      secrets = {
+        "home-assistant/metricsJwtKey" = {
+          owner = "hass";
+          restartUnits = [ "home-assistant.service" ];
+        };
+        "home-assistant/clientSecret" = { };
+
+        # integration credentials (see home-assistant.credentials.json)
+        "home-assistant/google/healthClientId" = { };
+        "home-assistant/google/healthClientSecret" = { };
+        "home-assistant/google/assistantSdkClientId" = { };
+        "home-assistant/google/assistantSdkClientSecret" = { };
+        "home-assistant/google/geminiApiKey" = { };
+        "home-assistant/google/mapsApiKey" = { }; # maps platform (weather, air quality)
+        "home-assistant/tailscale/oauthClientId" = { };
+        "home-assistant/tailscale/oauthClientSecret" = { };
       };
+
       templates."home-assistant.secrets.yaml" = {
         path = "${hass.configDir}/secrets.yaml";
         owner = "hass";
@@ -480,20 +493,15 @@ in
         '';
       };
 
-      # google credentials
-      secrets."home-assistant/google/healthClientId" = { };
-      secrets."home-assistant/google/healthClientSecret" = { };
-      secrets."home-assistant/google/assistantSdkClientId" = { };
-      secrets."home-assistant/google/assistantSdkClientSecret" = { };
-      secrets."home-assistant/google/geminiApiKey" = { };
-      templates."home-assistant.google.json" = {
+      # applied to .storage in preStart
+      templates."home-assistant.credentials.json" = {
         owner = "hass";
         group = "hass";
         mode = "0400";
         restartUnits = [ "home-assistant.service" ];
         content =
           let
-            p = s: config.sops.placeholder."home-assistant/google/${s}";
+            p = s: config.sops.placeholder."home-assistant/${s}";
           in
           builtins.toJSON {
             # oauth clients (settings -> application credentials)
@@ -501,19 +509,25 @@ in
               {
                 domain = "google_health";
                 name = "Home Assistant Client";
-                client_id = p "healthClientId";
-                client_secret = p "healthClientSecret";
+                client_id = p "google/healthClientId";
+                client_secret = p "google/healthClientSecret";
               }
               {
                 domain = "google_assistant_sdk";
                 name = "Google Assistant";
-                client_id = p "assistantSdkClientId";
-                client_secret = p "assistantSdkClientSecret";
+                client_id = p "google/assistantSdkClientId";
+                client_secret = p "google/assistantSdkClientSecret";
               }
             ];
             # data fields merged into *existing* config entries of these domains
             config_entries = {
-              google_generative_ai_conversation.api_key = p "geminiApiKey";
+              google_generative_ai_conversation.api_key = p "google/geminiApiKey";
+              google_weather.api_key = p "google/mapsApiKey";
+              google_air_quality.api_key = p "google/mapsApiKey";
+              tailscale = {
+                oauth_client_id = p "tailscale/oauthClientId";
+                oauth_client_secret = p "tailscale/oauthClientSecret";
+              };
             };
           };
       };
