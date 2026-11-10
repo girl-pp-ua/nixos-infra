@@ -207,6 +207,38 @@ in
             hash = "sha256-NEZrbT4AJQnp3QD/nYor0YA+hE8CdIUu+VKxXExTbzQ=";
           };
         })
+        # XXX: backport of the 2026.11 tailscale integration
+        # drop once nixpkgs has home-assistant >= 2026.11 (NixOS/nixpkgs#583840)
+        (pkgs.buildHomeAssistantComponent rec {
+          owner = "home-assistant";
+          domain = "tailscale";
+          version = "2026.11.1";
+          src = pkgs.fetchFromGitHub {
+            inherit owner;
+            repo = "core";
+            tag = version;
+            sparseCheckout = [ "homeassistant/components/tailscale" ];
+            hash = "sha256-WjLkobiOM11UQEtasLo82yQig3t+HJxj+bqzWZE7tRY=";
+          };
+          sourceRoot = "${src.name}/homeassistant/components/tailscale";
+          dependencies = [ pkgs.home-assistant.python3Packages.tailscale ];
+          nativeBuildInputs = [ pkgs.jq ];
+          postPatch = ''
+            # 2026.11 setup/unload return None (and use the new *_or_raise helper), 2026.10 wants a bool
+            substituteInPlace __init__.py \
+              --replace-fail "    await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)" \
+                             "    await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
+                return True" \
+              --replace-fail "await hass.config_entries.async_unload_platforms_or_raise(entry, PLATFORMS)" \
+                             "return await hass.config_entries.async_unload_platforms(entry, PLATFORMS)"
+            jq '. + {version: "${version}"}' manifest.json > m && mv m manifest.json
+            mkdir translations
+            jq '.config.step |= (.user.data |= (del(.api_key) + {oauth_client_id: "OAuth client ID", oauth_client_secret: "OAuth client secret"})
+                               | .reauth_confirm.data |= (del(.api_key) + {oauth_client_id: "OAuth client ID", oauth_client_secret: "OAuth client secret"}))' \
+              ${pkgs.home-assistant}/${pkgs.home-assistant.python3Packages.python.sitePackages}/homeassistant/components/tailscale/translations/en.json \
+              > translations/en.json
+          '';
+        })
       ];
       config = {
         homeassistant = {
