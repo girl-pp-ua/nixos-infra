@@ -248,6 +248,23 @@ in
         default_config = { };
         frontend.themes = "!include_dir_merge_named themes";
         prometheus.requires_auth = true;
+        # google home (cloud-to-cloud)
+        google_assistant = {
+          project_id = "homeassistantlunyacc";
+          service_account = "!include google_service_account.json";
+          report_state = true;
+          exposed_domains = [
+            "light"
+            "switch"
+            "fan"
+            "climate"
+            "cover"
+            "lock"
+            "media_player"
+            "scene"
+            "vacuum"
+          ];
+        };
         # XXX: http settings wont actually be respected, except first launch
         # womp womp
         http = {
@@ -471,6 +488,12 @@ in
           restartUnits = [ "home-assistant.service" ];
         };
         "home-assistant/clientSecret" = { };
+        "home-assistant/google/homeServiceAccount" = {
+          path = "${hass.configDir}/google_service_account.json";
+          owner = "hass";
+          mode = "0400";
+          restartUnits = [ "home-assistant.service" ];
+        };
 
         # integration credentials (see home-assistant.credentials.json)
         "home-assistant/google/healthClientId" = { };
