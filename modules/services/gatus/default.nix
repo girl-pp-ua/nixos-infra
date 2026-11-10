@@ -130,11 +130,6 @@ in
                   "[STATUS] == 200"
                   "[BODY].healthy == true"
                 ];
-                garage-s3 = mkUrl' "http://${cfg-svc.garage.intraDomain}:3900/" [
-                  # idk what else to check fo here
-                  "[STATUS] == 403"
-                  "[BODY] == pat(*<Region>garage</Region>*)"
-                ];
                 paperless = mkUrl' "https://${cfg-svc.paperless.domain}/" [
                   "[STATUS] == 200"
                 ];

@@ -122,20 +122,5 @@ in
         "garage/admin_token" = usr;
         "garage/metrics_token" = usr;
       };
-
-    # TODO move this to gateway node on oci2
-    services.caddy.virtualHosts."media-cdn.devlootbox.on.lunya.cc" = {
-      extraConfig = ''
-        import encode
-        import norobot
-        reverse_proxy localhost:${toString cfg.s3_web_port} {
-          header_up Host "svc-media.web.garage"
-        }
-      '';
-    };
-    # TODO remove once the old domain dies
-    services.caddy.virtualHosts."media-cdn.devlootbox.com".extraConfig = ''
-      redir https://media-cdn.devlootbox.on.lunya.cc{uri} permanent
-    '';
   };
 }

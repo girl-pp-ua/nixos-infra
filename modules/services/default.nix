@@ -7,7 +7,6 @@
     ./experimental
     ./gatus
     ./nextcloud
-    ./projects
     ./backup.nix
     ./bookorbit.nix
     ./dashy.nix
@@ -17,6 +16,7 @@
     ./immich.nix
     ./karakeep
     ./kanidm.nix
+    ./legacy01
     ./monitoring
     ./ntfy.nix
     ./oauth2-proxy.nix

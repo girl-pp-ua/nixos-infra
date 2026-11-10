@@ -20,7 +20,6 @@ in
       astra = with hosts.astra.internal; host ipv4 ipv6;
       amoeba = with hosts.amoeba.internal; host ipv4 ipv6;
 
-      garage.CNAME = [ "oci1" ];
       nextcloud.CNAME = [ "dell-sv" ];
       paperless.CNAME = [ "dell-sv" ];
       immich.CNAME = [ "dell-sv" ];
