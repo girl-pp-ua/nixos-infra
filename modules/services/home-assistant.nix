@@ -192,6 +192,9 @@ in
           zlib-ng
           isal
         ];
+      customLovelaceModules = with pkgs.home-assistant-custom-lovelace-modules; [
+        auto-entities
+      ];
       customComponents = [
         pkgs.home-assistant-custom-components.auth_oidc
         pkgs.home-assistant-custom-components.scene_presets
