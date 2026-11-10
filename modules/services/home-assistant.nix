@@ -238,9 +238,32 @@ in
       chmod 600 "$f.tmp"
       mv "$f.tmp" "$f"
 
+      # apply the declarative google credentials (see sops.templates."home-assistant.google.json")
+      #
+      g=${config.sops.templates."home-assistant.google.json".path}
+      f=${hass.configDir}/.storage/application_credentials
+      [ -f "$f" ] || echo '{"version":1,"minor_version":1,"key":"application_credentials","data":{"items":[]}}' > "$f"
+      # (same id as the ui creates, so existing config entries' auth_implementation keeps matching)
+      ${lib.getExe pkgs.jq} --slurpfile g "$g" '
+        def cred_id: (.domain + "." + .client_id) | ascii_downcase | gsub("[^a-z0-9]+"; "_") | ltrimstr("_") | rtrimstr("_");
+        ($g[0].application_credentials | map(. + {id: cred_id})) as $creds
+        | .data.items |= (map(select(.id as $id | $creds | map(.id) | index($id) | not)) + $creds)
+      ' "$f" > "$f.tmp"
+      chmod 600 "$f.tmp"
+      mv "$f.tmp" "$f"
+      f=${hass.configDir}/.storage/core.config_entries
+      if [ -f "$f" ]; then
+        ${lib.getExe pkgs.jq} --slurpfile g "$g" '
+          $g[0].config_entries as $ce
+          | .data.entries |= map(if $ce[.domain] then .data += $ce[.domain] else . end)
+        ' "$f" > "$f.tmp"
+        chmod 600 "$f.tmp"
+        mv "$f.tmp" "$f"
+      fi
+
       # default every user's profile to en-GB with a 24h clock
       # (only fields the user hasn't picked themselves; the frontend applies each field separately)
-      for id in $(${lib.getExe pkgs.jq} -r '.data.users[] | select((.system_generated | not) and .is_active) | .id' "$f"); do
+      for id in $(${lib.getExe pkgs.jq} -r '.data.users[] | select((.system_generated | not) and .is_active) | .id' ${hass.configDir}/.storage/auth); do
         u=${hass.configDir}/.storage/frontend.user_data_$id
         [ -f "$u" ] || echo "{\"version\":1,\"minor_version\":1,\"key\":\"frontend.user_data_$id\",\"data\":{}}" > "$u"
         ${lib.getExe pkgs.jq} '
@@ -362,6 +385,44 @@ in
         content = ''
           oidc_client_secret: "${config.sops.placeholder."home-assistant/clientSecret"}"
         '';
+      };
+
+      # google credentials
+      secrets."home-assistant/google/healthClientId" = { };
+      secrets."home-assistant/google/healthClientSecret" = { };
+      secrets."home-assistant/google/assistantSdkClientId" = { };
+      secrets."home-assistant/google/assistantSdkClientSecret" = { };
+      secrets."home-assistant/google/geminiApiKey" = { };
+      templates."home-assistant.google.json" = {
+        owner = "hass";
+        group = "hass";
+        mode = "0400";
+        restartUnits = [ "home-assistant.service" ];
+        content =
+          let
+            p = s: config.sops.placeholder."home-assistant/google/${s}";
+          in
+          builtins.toJSON {
+            # oauth clients (settings -> application credentials)
+            application_credentials = [
+              {
+                domain = "google_health";
+                name = "Home Assistant Client";
+                client_id = p "healthClientId";
+                client_secret = p "healthClientSecret";
+              }
+              {
+                domain = "google_assistant_sdk";
+                name = "Google Assistant";
+                client_id = p "assistantSdkClientId";
+                client_secret = p "assistantSdkClientSecret";
+              }
+            ];
+            # data fields merged into *existing* config entries of these domains
+            config_entries = {
+              google_generative_ai_conversation.api_key = p "geminiApiKey";
+            };
+          };
       };
     };
   };
