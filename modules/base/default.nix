@@ -13,7 +13,9 @@
     ./usb.nix
   ];
 
-  i18n.defaultLocale = "en_US.UTF-8";
+  # "european english": english, euro, metric, a4, 24h clock, dd/mm dates
+  # (glibc has no country-agnostic en_EU/en_150)
+  i18n.defaultLocale = "en_IE.UTF-8";
   time.timeZone = "UTC";
 
   # disable command-not-found

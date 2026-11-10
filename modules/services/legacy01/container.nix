@@ -23,6 +23,7 @@ in
   ];
 
   system.stateVersion = "26.11";
+  i18n.defaultLocale = "en_IE.UTF-8"; # (keep in sync with modules/base/default.nix)
 
   networking.useHostResolvConf = false;
   networking.nameservers = [

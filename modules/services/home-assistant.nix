@@ -197,12 +197,16 @@ in
       pkgs.openssl
     ];
     systemd.services.home-assistant.preStart = lib.mkAfter ''
-      # set external_url (in the stored core config instead of yaml cause otherwise it locks manual edits)
+      # set default external_url and locale
       #
       f=${hass.configDir}/.storage/core.config
       if [ -f "$f" ]; then
-        ${lib.getExe pkgs.jq} --arg url "https://${cfg.domain}" \
-          '.data.external_url = $url' "$f" > "$f.tmp"
+        ${lib.getExe pkgs.jq} --arg url "https://${cfg.domain}" '
+          .data.external_url = $url
+          | .data.language = "en-GB"
+          | .data.unit_system_v2 = "metric"
+          | .data.currency = "EUR"
+        ' "$f" > "$f.tmp"
         chmod 600 "$f.tmp"
         mv "$f.tmp" "$f"
       fi
@@ -226,6 +230,20 @@ in
       ' "$f" > "$f.tmp"
       chmod 600 "$f.tmp"
       mv "$f.tmp" "$f"
+
+      # default every user's profile to en-GB with a 24h clock
+      # (only fields the user hasn't picked themselves; the frontend applies each field separately)
+      for id in $(${lib.getExe pkgs.jq} -r '.data.users[] | select((.system_generated | not) and .is_active) | .id' "$f"); do
+        u=${hass.configDir}/.storage/frontend.user_data_$id
+        [ -f "$u" ] || echo "{\"version\":1,\"minor_version\":1,\"key\":\"frontend.user_data_$id\",\"data\":{}}" > "$u"
+        ${lib.getExe pkgs.jq} '
+          .data.language = ((.data.language // {})
+            | if (.language // "") == "" then .language = "en-GB" else . end
+            | if (.time_format // "language") == "language" then .time_format = "24" else . end)
+        ' "$u" > "$u.tmp"
+        chmod 600 "$u.tmp"
+        mv "$u.tmp" "$u"
+      done
     '';
 
     # required by the matter integration (ws://localhost:<matter.port>/ws)
