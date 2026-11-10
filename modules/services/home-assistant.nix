@@ -257,6 +257,18 @@ in
         iifname "${wpan}" oifname "${cfg.lanInterface}" accept
       '';
 
+    # let thread devices reach the matter controller
+    networking.firewall.interfaces.${config.services.openthread-border-router.interfaceName} =
+      lib.mkIf (cfg.matter.threadRadio != null)
+        {
+          allowedUDPPortRanges = [
+            {
+              from = 1024;
+              to = 65535;
+            }
+          ];
+        };
+
     networking.firewall.interfaces.${cfg.lanInterface} = {
       allowedUDPPorts = [
         # mdns, used for local discovery (hue, cast, homekit, matter, etc.)
