@@ -75,6 +75,11 @@ in
   };
 
   config = lib.mkIf cfg.enable {
+    # (uptime history)
+    polaris.backup2.sqlite = lib.mapAttrsToList (
+      _: instance: instance.settings.storage.path
+    ) config.services.gatus.instances;
+
     polaris.services.monitoring.exports = lib.mapAttrs' (
       name: instance: lib.nameValuePair "gatus-${name}" { inherit (instance) port; }
     ) config.services.gatus.instances;

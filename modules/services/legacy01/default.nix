@@ -81,6 +81,10 @@ in
           hostPath = "${stateDir}/devlootbox";
           isReadOnly = false;
         };
+        "/var/backup/postgresql" = {
+          hostPath = "${stateDir}/postgresql-dumps";
+          isReadOnly = false;
+        };
       };
 
       extraFlags = lib.mapAttrsToList (
@@ -94,9 +98,21 @@ in
       config = ./container.nix;
     };
 
+    polaris.backup2 = {
+      paths = [
+        "${stateDir}/postgresql-dumps"
+        "${stateDir}/garage"
+        "${stateDir}/devlootbox"
+      ];
+      prepare = [
+        "systemctl --machine=${name} start postgresqlBackup.service"
+      ];
+    };
+
     systemd.tmpfiles.rules = [
       "d ${stateDir} 0700 root root -"
       "d ${stateDir}/postgresql 0750 71 71 -" # postgres uid/gid are static (71)
+      "d ${stateDir}/postgresql-dumps 0700 71 71 -"
       "d ${stateDir}/garage 0750 ${toString cfg.garage.uid} ${toString cfg.garage.uid} -"
       "d ${stateDir}/devlootbox 0755 root root -" # chowned by systemd StateDirectory= in the container
     ];

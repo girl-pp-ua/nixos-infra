@@ -39,6 +39,13 @@ in
     package = pkgs.postgresql_18;
     enableJIT = true;
   };
+  # (started by the host's backup-prepare.service, see default.nix)
+  services.postgresqlBackup = {
+    enable = true;
+    backupAll = true;
+    compression = "none";
+    startAt = [ ];
+  };
 
   services.devlootbox-bot = {
     enable = true;

@@ -158,6 +158,12 @@ in
       environmentFile = config.sops.templates."karakeep.env".path;
     };
 
+    polaris.backup2 = {
+      paths = [ "/var/lib/karakeep" ];
+      exclude = [ "/var/lib/karakeep/queue.db*" ];
+      sqlite = [ "/var/lib/karakeep/db.db" ];
+    };
+
     services.ollama = {
       enable = true;
       loadModels = [

@@ -41,6 +41,18 @@ in
   config = lib.mkIf cfg.enable {
     polaris.services.oauth2_proxy.enable = true;
 
+    polaris.backup2 = {
+      paths = [ config.services.forgejo.stateDir ];
+      # (skip forgejo's own dumps)
+      exclude = [
+        config.services.forgejo.dump.backupDir
+        "${config.services.forgejo.stateDir}/log"
+      ];
+      postgresql.databases = [
+        config.services.forgejo.database.name
+      ];
+    };
+
     services.forgejo = {
       enable = true;
       package = pkgs.forgejo;

@@ -45,6 +45,12 @@ in
   };
 
   config = lib.mkIf cfg.enable {
+    polaris.backup2 = {
+      paths = [ config.services.nextcloud.datadir ];
+      exclude = [ "${config.services.nextcloud.datadir}/data/appdata_*/preview" ];
+      postgresql.databases = [ config.services.nextcloud.config.dbname ];
+    };
+
     services.nextcloud = {
       enable = true;
       inherit (cfg) package;

@@ -177,6 +177,20 @@ in
   };
 
   config = lib.mkIf cfg.enable {
+    polaris.backup2 = {
+      paths = [
+        "/var/lib/bookorbit"
+        cfg.booksDir
+      ];
+      exclude = [
+        "/var/lib/bookorbit/tmp"
+        "/var/lib/bookorbit/upload-sessions"
+      ];
+      postgresql.databases = [
+        "bookorbit"
+      ];
+    };
+
     services.bookorbit = {
       enable = true;
       createDatabaseLocally = true;

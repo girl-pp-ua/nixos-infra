@@ -16,6 +16,10 @@ in
     };
   };
   config = lib.mkIf cfg.enable {
+    polaris.backup2.paths = [
+      "/var/lib/svn"
+    ];
+
     systemd.services.svnserve = {
       after = [ "network.target" ];
       wantedBy = [ "multi-user.target" ];

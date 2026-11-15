@@ -453,6 +453,24 @@ in
       done
     '';
 
+    polaris.backup2 = {
+      paths = [
+        hass.configDir
+        "/var/lib/private/matterjs-server" # matter fabric/device creds
+      ]
+      ++ lib.optional (cfg.matter.threadRadio != null) "/var/lib/thread"; # thread network dataset
+      exclude = [
+        "${hass.configDir}/deps"
+        "${hass.configDir}/tts"
+        "${hass.configDir}/backups" # (hass on-site backups)
+        "${hass.configDir}/home-assistant.log*"
+      ];
+      sqlite = [
+        "${hass.configDir}/home-assistant_v2.db"
+        "${hass.configDir}/zigbee.db"
+      ];
+    };
+
     # required by the matter integration (ws://localhost:<matter.port>/ws)
     services.matterjs-server = {
       enable = true;

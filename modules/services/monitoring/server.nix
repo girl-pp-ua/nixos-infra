@@ -355,6 +355,10 @@ in
       };
     };
 
+    polaris.backup2.postgresql.databases = [
+      "grafana"
+    ];
+
     services.postgresql = {
       enable = true;
       ensureDatabases = [ "grafana" ];

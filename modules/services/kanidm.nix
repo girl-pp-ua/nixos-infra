@@ -24,6 +24,11 @@ in
     };
   };
   config = lib.mkIf cfg.enable {
+    polaris.backup2.paths = [
+      # kanidm online backups
+      config.services.kanidm.server.settings.online_backup.path
+    ];
+
     services.kanidm = {
       package = pkgs.kanidmWithSecretProvisioning_1_11;
       server = {

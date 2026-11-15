@@ -64,6 +64,16 @@ in
   config = lib.mkIf cfg.enable {
     polaris.services.oauth2_proxy.enable = true;
 
+    polaris.backup2 = {
+      paths = [ config.services.immich.mediaLocation ];
+      # (regenerated from the originals)
+      exclude = [
+        "${config.services.immich.mediaLocation}/thumbs"
+        "${config.services.immich.mediaLocation}/encoded-video"
+      ];
+      postgresql.databases = [ config.services.immich.database.name ];
+    };
+
     services.immich = {
       enable = true;
       host = "localhost";

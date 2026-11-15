@@ -12,6 +12,10 @@ in
     enable = lib.mkEnableOption "caddy webdav endpoint";
   };
   config = lib.mkIf cfg.enable {
+    polaris.backup2.paths = [
+      "/data/files"
+    ];
+
     polaris.services.caddy.plugins.webdav = true;
     services.caddy.virtualHosts = {
       "webdav.girl.pp.ua" = {

@@ -37,6 +37,16 @@ in
   config = lib.mkIf cfg.enable {
     polaris.services.oauth2_proxy.enable = true;
 
+    polaris.backup2 = {
+      paths = [
+        config.services.paperless.dataDir
+        config.services.paperless.mediaDir
+      ];
+      postgresql.databases = [
+        "paperless"
+      ];
+    };
+
     services.paperless = {
       enable = true;
 

@@ -19,6 +19,11 @@ in
     };
   };
   config = lib.mkIf cfg.enable {
+    # users/acl/tokens
+    polaris.backup2.sqlite = [
+      config.services.ntfy-sh.settings.auth-file
+    ];
+
     services.ntfy-sh = {
       enable = true;
       settings = {
