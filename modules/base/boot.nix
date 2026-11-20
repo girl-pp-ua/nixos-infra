@@ -17,7 +17,7 @@
     systemd-boot = {
       enable = true;
       netbootxyz.enable = true; # (for troubleshooting)
-      configurationLimit = 10;
+      configurationLimit = lib.mkDefault 10;
     };
   };
 

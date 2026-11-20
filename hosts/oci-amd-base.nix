@@ -30,6 +30,7 @@
     loader = {
       efi.efiSysMountPoint = "/boot/efi";
       systemd-boot.graceful = true;
+      systemd-boot.configurationLimit = 2;
     };
     growPartition = true;
     tmp.useTmpfs = lib.mkOverride 99 false;
