@@ -306,6 +306,20 @@ in
       in
       lib.concatMapStrings provision providers;
 
+    # anyone with a github/codeberg/gitlab account can sign up, and forgejo's webhook/migration
+    # "external host" checks treat tailscale's cgnat range as public, so keep forgejo itself
+    # off the tailnet and private networks (it only talks over unix sockets locally)
+    systemd.services.forgejo.serviceConfig.IPAddressDeny = [
+      "100.64.0.0/10"
+      "fd7a:115c:a1e0::/48"
+      "10.0.0.0/8"
+      "172.16.0.0/12"
+      "192.168.0.0/16"
+      "169.254.0.0/16"
+      "fc00::/7"
+      "fe80::/10"
+    ];
+
     # specify secrets explicitly
     systemd.services.forgejo-secrets.script = lib.mkForce "${pkgs.coreutils}/bin/true";
 

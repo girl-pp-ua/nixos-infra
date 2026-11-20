@@ -11,6 +11,17 @@ let
     inherit (config.polaris.services.kanidm) domain;
     inherit (cfg) client_id;
   };
+  # prevent usage of karakeep to leak internal stuff
+  crawlerDeny = [
+    "100.64.0.0/10"
+    "fd7a:115c:a1e0::/48"
+    "10.0.0.0/8"
+    "172.16.0.0/12"
+    "192.168.0.0/16"
+    "169.254.0.0/16"
+    "fc00::/7"
+    "fe80::/10"
+  ];
 in
 {
   options.polaris.services.karakeep = {
@@ -176,6 +187,10 @@ in
     };
 
     systemd.services.karakeep-web.environment.HOSTNAME = "127.0.0.1";
+
+    # prevent usage of karakeep to leak internal stuff
+    systemd.services.karakeep-workers.serviceConfig.IPAddressDeny = crawlerDeny;
+    systemd.services.karakeep-browser.serviceConfig.IPAddressDeny = crawlerDeny;
 
     # headless chromium requires fonts/fontconfig
     fonts = {

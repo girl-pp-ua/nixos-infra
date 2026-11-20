@@ -39,6 +39,16 @@ in
       enableIPv6 = true;
     };
 
+    networking.nftables.tables.gayming-guard = {
+      family = "inet";
+      content = ''
+        chain forward {
+          type filter hook forward priority filter - 1; policy accept;
+          oifname "ve-gayming" ct status dnat iifname != "${config.services.tailscale.interfaceName}" drop
+        }
+      '';
+    };
+
     # see forwardPorts below
     networking.firewall.interfaces.${config.services.tailscale.interfaceName} = {
       allowedTCPPorts = [

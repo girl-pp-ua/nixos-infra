@@ -67,7 +67,7 @@ in
         }
         ${lib.optionalString cfg.plugins.webdav "order webdav before file_server"}
         servers {
-          trusted_proxies static private_ranges ${lib.concatStringsSep " " config.polaris.trustedNetworks}
+          trusted_proxies static ${lib.concatStringsSep " " config.polaris.trustedNetworks}
           trusted_proxies_strict
           enable_full_duplex
         }
