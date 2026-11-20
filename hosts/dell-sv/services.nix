@@ -19,12 +19,12 @@
     };
 
     # experimental stuff:
-    experimental = {
-      gayming-nixos = {
-        enable = true;
-        # vuinputd.enable = true;
-      };
-      # hydra.enable = true;
-    };
+    # experimental = {
+    #   gayming-nixos = {
+    #     enable = true;
+    #     # vuinputd.enable = true;
+    #   };
+    #   # hydra.enable = true;
+    # };
   };
 }
