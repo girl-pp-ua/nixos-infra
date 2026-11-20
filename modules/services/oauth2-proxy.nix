@@ -94,7 +94,10 @@ in
       environment = {
         GODEBUG = "netdns=cgo";
       };
+      # oidc discovery fails if sso doesn't resolve, keep retrying
+      startLimitIntervalSec = 0;
       serviceConfig = {
+        RestartSec = "5s";
         ProtectSystem = "strict";
         ProtectHome = true;
         PrivateTmp = true;

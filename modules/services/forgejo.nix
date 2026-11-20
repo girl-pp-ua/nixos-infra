@@ -320,6 +320,10 @@ in
       in
       lib.concatMapStrings provision providers;
 
+    # sso doesn't resolve, keep retrying
+    systemd.services.forgejo.startLimitIntervalSec = 0;
+    systemd.services.forgejo.serviceConfig.RestartSec = "5s";
+
     # anyone with a github/codeberg/gitlab account can sign up, and forgejo's webhook/migration
     # "external host" checks treat tailscale's cgnat range as public, so keep forgejo itself
     # off the tailnet and private networks (it only talks over unix sockets locally)
