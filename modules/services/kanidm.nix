@@ -402,6 +402,11 @@ in
             "profile"
             "groups"
           ];
+          # -> forgejo quota group (see quota-group-map in forgejo.nix)
+          claimMaps.forgejo_quota = {
+            joinType = "csv";
+            valuesByGroup."forgejo.access" = [ "internal" ];
+          };
         };
       };
     };

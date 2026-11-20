@@ -96,7 +96,17 @@ in
           ENABLE_INTERNAL_SIGNIN = false;
           ENABLE_BASIC_AUTHENTICATION = false;
           USERNAME_COOLDOWN_PERIOD = 365; # days
+          DEFAULT_KEEP_EMAIL_PRIVATE = true;
         };
+        # NOTE: only register runners scoped to an org/user/repo
+        actions.ENABLED = true;
+        packages.ENABLED = true;
+        # users without a quota group (= external signups) use this budget
+        quota.ENABLED = true;
+        "quota.default".TOTAL = "1G";
+        migrations.ALLOW_LOCALNETWORKS = false;
+        webhook.ALLOWED_HOST_LIST = "external";
+        moderation.ENABLED = true;
         session = {
           DOMAIN = cfg.domain;
           COOKIE_SECURE = true;
@@ -248,6 +258,10 @@ in
               allow-username-change = true;
               group-claim-name = "groups";
               admin-group = "forgejo.admin@sso.girl.pp.ua";
+              # internal users -> unlimited quota group (outsiders stay on [quota.default])
+              quota-group-claim-name = "forgejo_quota";
+              quota-group-map = builtins.toJSON { internal = [ "internal" ]; };
+              quota-group-map-removal = true;
             };
             secretFile = config.sops.secrets."forgejo/clientSecret".path;
           }
@@ -319,6 +333,76 @@ in
       "fc00::/7"
       "fe80::/10"
     ];
+
+    # quota groups can only be managed through the api, so this uses a temp local admin account
+    systemd.services.forgejo-quota-groups =
+      let
+        fj = config.services.forgejo;
+        bot = "quota-provisioner";
+      in
+      {
+        description = "Provision forgejo quota groups";
+        after = [ "forgejo.service" ];
+        requires = [ "forgejo.service" ];
+        wantedBy = [ "forgejo.service" ];
+        path = [
+          pkgs.curl
+          pkgs.jq
+        ];
+        serviceConfig = {
+          Type = "oneshot";
+          User = fj.user;
+          Group = fj.group;
+          # (forgejo may not be listening yet right after it starts)
+          Restart = "on-failure";
+          RestartSec = "10s";
+        };
+        script = ''
+          set -euo pipefail
+
+          fj() { ${lib.getExe fj.package} --work-path ${fj.stateDir} --config ${fj.customDir}/conf/app.ini "$@"; }
+          tokenFile=${fj.stateDir}/${bot}.token
+          if [[ ! -s $tokenFile ]]; then
+            if ! fj admin user list --admin | grep -qw ${bot}; then
+              fj admin user create --admin --username ${bot} --email ${bot}@localhost \
+                --random-password --must-change-password=false >/dev/null
+            fi
+            (umask 077; fj admin user generate-access-token --username ${bot} \
+              --token-name "provisioning-$(date +%s)" --scopes write:admin --raw > "$tokenFile.tmp")
+            mv "$tokenFile.tmp" "$tokenFile"
+          fi
+          curl_api() {
+            curl -sS --unix-socket ${fj.settings.server.HTTP_ADDR} \
+              -H "Authorization: token $(<"$tokenFile")" -H 'Content-Type: application/json' "$@"
+          }
+          api() { curl_api -o /dev/null -w '%{http_code}' "$@"; }
+          api_base=http://localhost/api/v1
+          base=$api_base/admin/quota/groups
+
+          code=$(api "$base/internal")
+          if [[ $code == 404 ]]; then
+            code=$(api -X POST "$base" -d '{"name":"internal","rules":[{"name":"internal-unlimited","limit":-1,"subjects":["size:all"]}]}')
+            [[ $code == 2* ]] || { echo "creating quota group 'internal' failed: HTTP $code" >&2; exit 1; }
+          elif [[ $code != 2* ]]; then
+            echo "checking quota group 'internal' failed: HTTP $code" >&2; exit 1
+          fi
+
+          # existing users of the kanidm source
+          source_id=$(fj admin auth list | grep -w kanidm_internal | cut -f1)
+          [[ -n $source_id ]] || { echo "auth source kanidm_internal not found" >&2; exit 1; }
+          page=1
+          while :; do
+            users=$(curl_api -f "$api_base/admin/users?source_id=$source_id&limit=50&page=$page" | jq -r '.[].login')
+            [[ -n $users ]] || break
+            for user in $users; do
+              code=$(api -X PUT "$base/internal/users/$user")
+              # (409 = already a member)
+              [[ $code == 2* || $code == 409 ]] || echo "adding $user to quota group 'internal' failed: HTTP $code" >&2
+            done
+            page=$((page + 1))
+          done
+        '';
+      };
 
     # specify secrets explicitly
     systemd.services.forgejo-secrets.script = lib.mkForce "${pkgs.coreutils}/bin/true";
