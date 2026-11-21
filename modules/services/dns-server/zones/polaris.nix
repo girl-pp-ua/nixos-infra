@@ -27,6 +27,7 @@ in
       home-assistant.CNAME = [ "dell-sv" ];
       hydra.CNAME = [ "amoeba" ];
       grafana.CNAME = [ "amoeba" ];
+      cache.CNAME = [ "amoeba" ];
       svn.CNAME = [ "astra" ];
     };
   };

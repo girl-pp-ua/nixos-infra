@@ -6,6 +6,7 @@
 
     bookorbit.enable = true;
     karakeep.enable = true;
+    attic.enable = true;
 
     legacy01.enable = true; # devlootbox
 

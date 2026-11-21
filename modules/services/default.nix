@@ -7,6 +7,7 @@
     ./experimental
     ./gatus
     ./nextcloud
+    ./attic.nix
     ./backup.nix
     ./bookorbit.nix
     ./dashy.nix

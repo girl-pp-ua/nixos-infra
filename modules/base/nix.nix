@@ -1,5 +1,5 @@
 {
-  lib,
+  config,
   pkgs,
   pkgs-stable,
   ...
@@ -43,10 +43,13 @@
       use-cgroups = true;
       use-xdg-base-directories = true;
       builders-use-substitutes = true;
+      # pull token for the private attic cache
+      netrc-file = config.security.nix-secrets.secrets."attic/netrc".path;
       extra-substituters = [
         "https://nixpkgs-update-cache.nixos.org/"
         "https://nix-community.cachix.org"
         "https://nix-secrets.cachix.org"
+        "https://cache.lunya.cc/main"
       ];
       extra-trusted-substituters = [
         "https://cache.flakehub.com"
@@ -55,6 +58,7 @@
         "nixpkgs-update-cache.nixos.org-1:U8d6wiQecHUPJFSqHN9GSSmNkmdiFW7GW7WNAnHW0SM="
         "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
         "nix-secrets.cachix.org-1:NSwybk1LexO4kPH755itLM1t2NGegVq9YR22KlG8Vp0="
+        "cache.lunya.cc-main:yJSPsDsyHG+MCBJ4KwHpMVheme11WjGH4p12HoJKOd8="
         "cache.flakehub.com-3:hJuILl5sVK4iKm86JzgdXW12Y2Hwd5G07qKtHTOcDCM="
         "cache.flakehub.com-4:Asi8qIv291s0aYLyH6IOnr5Kf6+OF14WVjkE6t3xMio="
         "cache.flakehub.com-5:zB96CRlL7tiPtzA9/WKyPkp3A2vqxqgdgyTVNGShPDU="
@@ -94,6 +98,11 @@
         inherit (pkgs-stable) caddy;
       })
     ];
+  };
+
+  security.nix-secrets.secrets."attic/netrc".generator.attic-token = {
+    sub = "nix-hosts";
+    pull = [ "main" ];
   };
 
   # default is 100, so puts it at 1:10 weight with other tasks under contention

@@ -57,6 +57,7 @@ in
       svn.CNAME = [ "astra" ];
       dash.CNAME = [ "astra" ];
       keep.CNAME = [ "amoeba" ];
+      cache.CNAME = [ "amoeba" ];
 
       # garage web
       on.subdomains.devlootbox.subdomains.media-cdn = {

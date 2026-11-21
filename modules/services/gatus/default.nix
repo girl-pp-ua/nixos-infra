@@ -160,6 +160,9 @@ in
                   "[STATUS] == 200"
                   "[BODY].status == ok"
                 ];
+                attic = mkUrl' "https://${cfg-svc.attic.domain}/" [
+                  "[STATUS] == 200"
+                ];
                 grafana = mkUrl' "https://${cfg-svc.monitoring.server.domain}/api/health" [
                   "[STATUS] == 200"
                   "[BODY].database == ok"
