@@ -17,7 +17,7 @@
 
     nix-secrets = {
       url = "github:unnamed-systems/nix-secrets";
-      inputs.nixpkgs.follows = "nixpkgs";
+      # inputs.nixpkgs.follows = "nixpkgs";
     };
     deploy-rs = {
       # fork (with https://github.com/serokell/deploy-rs/pull/271 merged)
