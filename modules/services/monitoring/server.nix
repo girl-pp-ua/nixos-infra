@@ -666,12 +666,15 @@ in
     ];
 
     services.caddy.virtualHosts = {
-      "http://:${toString cfg.ingestPort}".extraConfig = ''
-        handle /insert/* {
-          reverse_proxy localhost:${toString cfg.victorialogsPort}
-        }
-        respond 403
-      '';
+      "http://:${toString cfg.ingestPort}" = {
+        listenAddresses = config.polaris.services.caddy.internalListenAddresses;
+        extraConfig = ''
+          handle /insert/* {
+            reverse_proxy localhost:${toString cfg.victorialogsPort}
+          }
+          respond 403
+        '';
+      };
       ${cfg.domain}.extraConfig = ''
         import encode
         import norobot

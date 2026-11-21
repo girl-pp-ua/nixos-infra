@@ -139,6 +139,7 @@ in
 
     # expose only garage metrics (not the rest of the admin api) for scraping
     services.caddy.virtualHosts."http://:${toString cfg.garage.adminPort}" = {
+      listenAddresses = config.polaris.services.caddy.internalListenAddresses;
       extraConfig = ''
         handle /metrics {
           reverse_proxy ${cfg.localAddress}:${toString cfg.garage.adminPort}

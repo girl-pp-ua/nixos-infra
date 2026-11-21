@@ -395,8 +395,10 @@ in
       f=${hass.configDir}/.storage/auth
       id=prometheus
       [ -f "$f" ] || echo '{"version":1,"minor_version":1,"key":"auth","data":{"users":[],"groups":[],"credentials":[],"refresh_tokens":[]}}' > "$f"
-      key=$(cat ${config.security.nix-secrets.secrets."home-assistant/metricsJwtKey".path})
-      ${lib.getExe pkgs.jq} --arg id "$id" --arg key "$key" --arg token "$(openssl rand -hex 64)" --arg now "$(date -Iseconds)" '
+      # key and token go through the env, argv is world-readable in /proc
+      HASS_JWT_KEY=$(cat ${config.security.nix-secrets.secrets."home-assistant/metricsJwtKey".path}) \
+      HASS_TOKEN=$(openssl rand -hex 64) \
+      ${lib.getExe pkgs.jq} --arg id "$id" --arg now "$(date -Iseconds)" '
         .data.users |= map(select(.id != $id)) + [{
           id: $id, name: "Prometheus", group_ids: ["system-read-only"],
           is_owner: false, is_active: true, system_generated: true, local_only: false
@@ -404,7 +406,7 @@ in
         | .data.refresh_tokens |= map(select(.id != $id)) + [{
           id: $id, user_id: $id, client_id: null, client_name: "Prometheus", client_icon: null,
           token_type: "long_lived_access_token", created_at: $now, access_token_expiration: 315360000,
-          token: $token, jwt_key: $key, last_used_at: null, last_used_ip: null, expire_at: null, credential_id: null
+          token: $ENV.HASS_TOKEN, jwt_key: $ENV.HASS_JWT_KEY, last_used_at: null, last_used_ip: null, expire_at: null, credential_id: null
         }]
       ' "$f" > "$f.tmp"
       chmod 600 "$f.tmp"

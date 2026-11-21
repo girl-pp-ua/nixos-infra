@@ -486,12 +486,15 @@ in
     ];
 
     # forgejo only listens on a unix socket, so give the collector its own port
-    services.caddy.virtualHosts."http://:${toString cfg.metricsPort}".extraConfig = ''
-      handle /metrics {
-        reverse_proxy unix/${config.services.forgejo.settings.server.HTTP_ADDR}
-      }
-      respond 403
-    '';
+    services.caddy.virtualHosts."http://:${toString cfg.metricsPort}" = {
+      listenAddresses = config.polaris.services.caddy.internalListenAddresses;
+      extraConfig = ''
+        handle /metrics {
+          reverse_proxy unix/${config.services.forgejo.settings.server.HTTP_ADDR}
+        }
+        respond 403
+      '';
+    };
     polaris.services.monitoring.exports.forgejo.port = cfg.metricsPort;
 
     security.nix-secrets.secrets = {

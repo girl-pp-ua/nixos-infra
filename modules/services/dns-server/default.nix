@@ -43,6 +43,7 @@ in
       serverCount = 1;
       reuseport = serverCount > 1;
       roundRobin = true;
+      ratelimit.enable = true;
       extraConfig = ''
         server:
           refuse-any: yes

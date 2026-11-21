@@ -88,7 +88,10 @@ in
         }
       '';
     };
-    services.caddy.virtualHosts."http://:${toString cfg.metricsPort}".extraConfig = "metrics";
+    services.caddy.virtualHosts."http://:${toString cfg.metricsPort}" = {
+      listenAddresses = config.polaris.services.caddy.internalListenAddresses;
+      extraConfig = "metrics";
+    };
     polaris.services.monitoring.exports.caddy.port = cfg.metricsPort;
 
     networking.firewall = {
