@@ -36,6 +36,7 @@ in
         exclude = [
           "/home/*/.cache"
           "/root/.cache"
+          "/root/.config/borg" # nonce
           "/root/.nix-channels"
           "/nix"
         ]
