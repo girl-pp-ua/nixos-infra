@@ -99,6 +99,15 @@ in
         topic = "nixbot";
       };
 
+      prApproval = {
+        enable = true;
+        trustedAssociations = [
+          "OWNER"
+          "MEMBER"
+          "COLLABORATOR"
+        ];
+      };
+
       uploaders = [
         {
           name = "attic";
@@ -111,9 +120,30 @@ in
 
     # upstream binds the port on every interface, caddy is the only client
     systemd.sockets.nixbot.socketConfig.ListenStream = lib.mkForce "127.0.0.1:${toString cfg.port}";
-    systemd.services.nixbot.serviceConfig.LoadCredential = [
-      "attic-token:${secrets'."nixbot/attic_token".path}"
-    ];
+    systemd.services.nixbot.serviceConfig = {
+      LoadCredential = [
+        "attic-token:${secrets'."nixbot/attic_token".path}"
+      ];
+      # nixbot fetches submodules without credentials and ignores ~/.gitconfig,
+      # but passes GIT_CONFIG_* through; scoped to the two private submodules
+      EnvironmentFile = config.security.nix-secrets.templates."nixbot-git.env".path;
+    };
+    security.nix-secrets.templates."nixbot-git.env".content =
+      let
+        submodules = {
+          "https://github.com/girl-pp-ua/secrets" = "nixbot/github/secrets_token";
+          "https://github.com/ProjectLootBox/DevLootBox-bot" = "nixbot/github/devlootbox_token";
+        };
+      in
+      lib.concatStrings (
+        lib.imap0 (i: url: ''
+          GIT_CONFIG_KEY_${toString i}=url.https://x-access-token:${
+            secrets'.${submodules.${url}}.templateKey
+          }@${lib.removePrefix "https://" url}.insteadOf
+          GIT_CONFIG_VALUE_${toString i}=${url}
+        '') (lib.attrNames submodules)
+      )
+      + "GIT_CONFIG_COUNT=${toString (lib.length (lib.attrNames submodules))}\n";
 
     security.nix-secrets.secrets = {
       "nixbot/clientSecret" = { };
@@ -127,6 +157,8 @@ in
     }
     // {
       "nixbot/github/webhook_secret".generator.alphanumeric.length = 64;
+      "nixbot/github/secrets_token" = { };
+      "nixbot/github/devlootbox_token" = { };
     }
     // lib.optionalAttrs (cfg.github.appId != null) {
       "nixbot/github/app_key" = { };
