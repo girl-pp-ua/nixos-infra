@@ -149,7 +149,7 @@ in
                 home-assistant = mkUrl' "https://${cfg-svc.home-assistant.domain}/manifest.json" [
                   "[STATUS] == 200"
                 ];
-                hydra = mkUrl' "https://${cfg-svc.experimental.hydra.domain}/api/latestbuilds?nr=1" [
+                hydra = mkUrl' "https://${cfg-svc.hydra.domain}/api/latestbuilds?nr=1" [
                   "[STATUS] == 200"
                 ];
                 bookorbit = mkUrl' "https://${cfg-svc.bookorbit.domain}/api/v1/health" [

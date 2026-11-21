@@ -13,6 +13,7 @@
     ./dashy.nix
     ./forgejo.nix
     ./home-assistant.nix
+    ./hydra.nix
     ./garage.nix
     ./immich.nix
     ./karakeep

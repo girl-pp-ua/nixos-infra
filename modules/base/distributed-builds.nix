@@ -78,23 +78,10 @@ let
   };
   builderPubkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHVq+61zP0TvFXblmxghQ+5CHQ/H+BPbhfQLSlFfEC9G";
   isBuildMachine = machines ? ${config.networking.hostName};
-  dispatchesBuilds = config.services.hydra.enable;
 in
 {
+  # hydra builders dial in over grpc now (services/hydra.nix); this is for ad hoc ssh builds
   config = lib.mkMerge [
-    (lib.mkIf dispatchesBuilds {
-      nix = {
-        distributedBuilds = true;
-        buildMachines = builtins.attrValues machines;
-      };
-
-      security.nix-secrets.secrets."keys/builder" = {
-        mode = "0400";
-        owner = "hydra-queue-runner";
-        group = "hydra";
-      };
-    })
-
     (lib.mkIf isBuildMachine {
       users.users.builder = {
         isNormalUser = true;

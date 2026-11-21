@@ -25,6 +25,8 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    hydra.url = "github:NixOS/hydra";
+
     dns = {
       url = "github:nix-community/dns.nix";
       inputs.nixpkgs.follows = "nixpkgs";
