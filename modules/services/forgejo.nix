@@ -11,6 +11,15 @@ let
     domain = config.polaris.services.kanidm.domain;
     inherit (cfg) client_id;
   };
+  oauthSecrets = [
+    "forgejo/clientSecret"
+    "forgejo/github/clientId"
+    "forgejo/github/clientSecret"
+    "forgejo/codeberg/clientId"
+    "forgejo/codeberg/clientSecret"
+    "forgejo/gitlab/clientId"
+    "forgejo/gitlab/clientSecret"
+  ];
   catppuccin-gitea = pkgs.fetchzip {
     url = "https://github.com/griffi-gh/catppuccin-gitea/releases/download/v1.0.1/catppuccin-gitea.tar.gz";
     hash = "sha256-fpQM3ghvMOuzP6B9p0b0ogjkk6/KZVOc/5e65JJVSso=";
@@ -68,9 +77,13 @@ in
       useWizard = false;
       secrets = {
         security.SECRET_KEY = lib.mkForce config.security.nix-secrets.secrets."forgejo/secret_key".path;
-        security.INTERNAL_TOKEN = lib.mkForce config.security.nix-secrets.secrets."forgejo/internal_token".path;
+        security.INTERNAL_TOKEN =
+          lib.mkForce
+            config.security.nix-secrets.secrets."forgejo/internal_token".path;
         oauth2.JWT_SECRET = lib.mkForce config.security.nix-secrets.secrets."forgejo/jwt_secret".path;
-        server.LFS_JWT_SECRET = lib.mkForce config.security.nix-secrets.secrets."forgejo/lfs_jwt_secret".path;
+        server.LFS_JWT_SECRET =
+          lib.mkForce
+            config.security.nix-secrets.secrets."forgejo/lfs_jwt_secret".path;
       };
       settings = {
         server = {
@@ -244,7 +257,7 @@ in
     };
 
     # provision oauth providers
-    systemd.services.forgejo.postStart =
+    systemd.services.forgejo.preStart = lib.mkAfter (
       let
         exe = lib.getExe config.services.forgejo.package;
         providers = [
@@ -318,7 +331,11 @@ in
             fi
           '';
       in
-      lib.concatMapStrings provision providers;
+      lib.concatMapStrings provision providers
+    );
+    systemd.services.forgejo.restartTriggers = map (
+      name: builtins.hashFile "sha256" "${config.security.nix-secrets.storage}/${name}.enc"
+    ) oauthSecrets;
 
     # sso doesn't resolve, keep retrying
     systemd.services.forgejo.startLimitIntervalSec = 0;
@@ -462,21 +479,10 @@ in
       "forgejo/jwt_secret" = { };
       "forgejo/lfs_jwt_secret" = { };
     }
-    //
-      lib.genAttrs
-        [
-          "forgejo/clientSecret"
-          "forgejo/github/clientId"
-          "forgejo/github/clientSecret"
-          "forgejo/codeberg/clientId"
-          "forgejo/codeberg/clientSecret"
-          "forgejo/gitlab/clientId"
-          "forgejo/gitlab/clientSecret"
-        ]
-        (_: {
-          owner = config.services.forgejo.user;
-          group = config.services.forgejo.group;
-          mode = "0400";
-        });
+    // lib.genAttrs oauthSecrets (_: {
+      owner = config.services.forgejo.user;
+      group = config.services.forgejo.group;
+      mode = "0400";
+    });
   };
 }
