@@ -122,7 +122,11 @@ in
           port = grpcPort;
         };
         rest.port = restPort;
-        settings.tokenPaths = map (name: secrets'."hydra/builders/${name}".path) builderHosts;
+        settings = {
+          tokenPaths = map (name: secrets'."hydra/builders/${name}".path) builderHosts;
+          # fetch anything already in a cache instead of dispatching it as a build step
+          useSubstitutes = true;
+        };
       };
       # only builders on the tailnet, and they still need a token
       networking.firewall.interfaces.${config.services.tailscale.interfaceName}.allowedTCPPorts = [
