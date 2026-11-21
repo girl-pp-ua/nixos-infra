@@ -53,7 +53,7 @@ in
       extraOCCCommands = ''
         occ config:app:set richdocuments public_wopi_url --value "https://${cfg-nextcloud.domain}"
         occ config:app:set richdocuments wopi_callback_url --value "http://${cfg-nextcloud.intraDomain}"
-        occ config:app:set richdocuments wopi_url --value "http://[::1]:${cfg.port}"
+        occ config:app:set richdocuments wopi_url --value "http://[::1]:${toString cfg.port}"
         occ config:app:set richdocuments doc_format --value "" # use opendocument formats
         occ config:app:set richdocuments wopi_allowlist --value "${
           lib.concatStringsSep "," [
@@ -70,7 +70,7 @@ in
       extraConfig = lib.mkBefore ''
         @collabora-public path /hosting/capabilities /hosting/discovery /cool/* /browser/*
         handle @collabora-public {
-          reverse_proxy http://[::1]:${cfg.port}
+          reverse_proxy http://[::1]:${toString cfg.port}
         }
       '';
     };

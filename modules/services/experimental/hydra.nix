@@ -28,7 +28,7 @@ in
       enable = true;
       inherit (cfg) port;
       listenHost = "localhost";
-      hydraURL = "http://localhost:${cfg.port}";
+      hydraURL = "http://localhost:${toString cfg.port}";
       notificationSender = "hydra@localhost";
       useSubstitutes = true;
       extraConfig = ''
@@ -62,14 +62,14 @@ in
           @block path /nix-cache-info /nar/* *.narinfo /build/*/nix/* /build/*/download/* /build/*/output/* /channel/* /*/channel/*
           respond @block 403
 
-          reverse_proxy localhost:${cfg.port}
+          reverse_proxy localhost:${toString cfg.port}
         '';
       };
       "http://${cfg.intraDomain}" = {
         listenAddresses = config.polaris.services.caddy.internalListenAddresses;
         extraConfig = ''
           import encode
-          reverse_proxy localhost:${cfg.port}
+          reverse_proxy localhost:${toString cfg.port}
         '';
       };
     };
