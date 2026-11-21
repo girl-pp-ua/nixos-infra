@@ -31,8 +31,9 @@ let
     name: inputs.self.nixosConfigurations.${name}.config.polaris.services.hydra.enable
   ) null (lib.attrNames inputs.self.nixosConfigurations);
 
-  grpcPort = 50051;
-  wsPort = 9283;
+  grpcPort = 16113;
+  restPort = 16114;
+  wsPort = 16115;
 
   # the runner reads every builder's token, each builder only its own; both run as group hydra
   builderToken = name: {
@@ -86,7 +87,7 @@ in
       services.hydra-dev = {
         enable = true;
         inherit (cfg) port;
-        listenHost = "localhost";
+        listenHost = "127.0.0.1";
         hydraURL = "https://${cfg.domain}";
         notificationSender = "hydra@localhost";
         useSubstitutes = true;
@@ -102,6 +103,11 @@ in
       };
       services.postgresql.enable = true;
 
+      systemd.services.hydra-init = {
+        after = [ "postgresql.target" ];
+        requires = [ "postgresql.target" ];
+      };
+
       services.hydra-evaluator-dev.settings = {
         evaluator_workers = 8;
         evaluator_max_memory_size = 4096;
@@ -114,6 +120,7 @@ in
           address = "[::]";
           port = grpcPort;
         };
+        rest.port = restPort;
         settings.tokenPaths = map (name: secrets'."hydra/builders/${name}".path) (lib.attrNames builders);
       };
       # only builders on the tailnet, and they still need a token
@@ -175,14 +182,14 @@ in
             handle_path /ws* {
               reverse_proxy [::1]:${toString wsPort}
             }
-            reverse_proxy localhost:${toString cfg.port}
+            reverse_proxy 127.0.0.1:${toString cfg.port}
           '';
         };
         "http://${cfg.intraDomain}" = {
           listenAddresses = config.polaris.services.caddy.internalListenAddresses;
           extraConfig = ''
             import encode
-            reverse_proxy localhost:${toString cfg.port}
+            reverse_proxy 127.0.0.1:${toString cfg.port}
           '';
         };
       };
