@@ -39,10 +39,6 @@
       # url = "git+https://git.helsinki.tools/helsinki-systems/nc4nix.git/";
     };
 
-    nixbot = {
-      url = "github:Mic92/nixbot";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
   };
 
   outputs =
@@ -102,6 +98,10 @@
           astra = mkNixosSystem "aarch64-linux" [ ./hosts/astra/configuration.nix ];
           amoeba = mkNixosSystem "x86_64-linux" [ ./hosts/amoeba/configuration.nix ];
         };
+
+        flake.hydraJobs = inputs.nixpkgs.lib.mapAttrs (
+          _: host: host.config.system.build.toplevel
+        ) self.nixosConfigurations;
 
         flake.deploy.nodes = {
           oci1 = mkDeployNode {

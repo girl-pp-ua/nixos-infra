@@ -58,7 +58,6 @@ in
       dash.CNAME = [ "astra" ];
       keep.CNAME = [ "amoeba" ];
       cache.CNAME = [ "amoeba" ];
-      ci.CNAME = [ "amoeba" ];
 
       # garage web
       on.subdomains.devlootbox.subdomains.media-cdn = {

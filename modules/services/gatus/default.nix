@@ -149,12 +149,8 @@ in
                 home-assistant = mkUrl' "https://${cfg-svc.home-assistant.domain}/manifest.json" [
                   "[STATUS] == 200"
                 ];
-                # hydra = mkUrl' "https://${cfg-svc.experimental.hydra.domain}/api/latestbuilds?nr=1" [
-                #   "[STATUS] == 200"
-                # ];
-                nixbot = mkUrl' "https://${cfg-svc.nixbot.domain}/health" [
+                hydra = mkUrl' "https://${cfg-svc.experimental.hydra.domain}/api/latestbuilds?nr=1" [
                   "[STATUS] == 200"
-                  "[BODY] == ok"
                 ];
                 bookorbit = mkUrl' "https://${cfg-svc.bookorbit.domain}/api/v1/health" [
                   "[STATUS] == 200"

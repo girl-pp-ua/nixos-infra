@@ -8,8 +8,7 @@
     bookorbit.enable = true;
     karakeep.enable = true;
     attic.enable = true;
-    # experimental.hydra.enable = true;
-    nixbot.enable = true;
+    experimental.hydra.enable = true;
     monitoring.server.enable = true;
 
     legacy01.enable = true; # devlootbox
