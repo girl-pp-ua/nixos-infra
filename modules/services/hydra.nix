@@ -94,6 +94,7 @@ in
         extraConfig = ''
           max_output_size = ${toString (8 * 1024 * 1024 * 1024)}
           ws_endpoint = wss://${cfg.domain}/ws
+          queue_runner_endpoint = http://[::1]:${toString restPort}
 
           <runcommand>
             job = *:*:*
