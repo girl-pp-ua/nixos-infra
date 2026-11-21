@@ -35,6 +35,8 @@ let
   # RunCommand hook: push each successful build's outputs to attic
   atticPush = pkgs.writeShellScript "hydra-attic-push" ''
     set -euo pipefail
+    # hydra-notify runs with an empty PATH
+    PATH=${lib.makeBinPath [ pkgs.coreutils ]}
     [ "$(${lib.getExe pkgs.jq} -r .buildStatus "$HYDRA_JSON")" = 0 ] || exit 0
     umask 077
     XDG_CONFIG_HOME="$(mktemp -d)"
