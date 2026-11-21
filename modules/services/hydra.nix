@@ -19,6 +19,12 @@ let
     lib.attrNames hosts
   );
 
+  # local clone with bumped inputs
+  flakeUpdateDir = "/var/lib/hydra-flake-update";
+  flakeUpdateInputs = lib.subtractLists [ "secrets" "devlootbox" ] (
+    lib.attrNames (lib.importJSON "${inputs.self}/flake.lock").nodes.root.inputs
+  );
+
   grpcPort = 16113;
   restPort = 16114;
   wsPort = 16115;
@@ -150,6 +156,39 @@ in
           secrets'."ci/github/devlootbox_token".templateKey;
       };
 
+      systemd.services.hydra-flake-update = {
+        description = "Bump nixos-infra inputs for the flake-update jobset";
+        wants = [ "network-online.target" ];
+        after = [ "network-online.target" ];
+        path = [
+          pkgs.git
+          config.nix.package
+        ];
+        environment.HOME = flakeUpdateDir;
+        serviceConfig = {
+          Type = "oneshot";
+          User = "hydra";
+          Group = "hydra";
+          StateDirectory = "hydra-flake-update";
+          StateDirectoryMode = "0750";
+          # private submodules
+          EnvironmentFile = config.security.nix-secrets.templates."hydra-git.env".path;
+        };
+        script = ''
+          repo=${flakeUpdateDir}/nixos-infra
+          [ -d "$repo/.git" ] || git clone --quiet https://github.com/girl-pp-ua/nixos-infra "$repo"
+          cd "$repo"
+          git fetch --quiet origin master
+          git checkout --quiet --force -B auto FETCH_HEAD
+          git submodule --quiet update --init --recursive
+          nix --extra-experimental-features "nix-command flakes" flake update ${lib.escapeShellArgs flakeUpdateInputs}
+          git add flake.lock
+          git -c user.name=hydra -c user.email=hydra@localhost commit --quiet -m "flake.lock: weekly update" || true
+        '';
+        startAt = "weekly";
+      };
+      systemd.timers.hydra-flake-update.timerConfig.Persistent = true;
+
       systemd.tmpfiles.rules = lib.mkBefore [
         "d /var/lib/hydra/runcommand-logs 0750 hydra-queue-runner hydra -"
       ];
@@ -174,6 +213,8 @@ in
       nix.settings.keep-derivations = lib.mkForce true;
       nix.settings.keep-outputs = lib.mkForce true;
       nix.settings.allowed-uris = [
+        "git+file://${flakeUpdateDir}/"
+        "file://${flakeUpdateDir}/"
         "https:"
         "git+https:"
         "git+ssh:"
