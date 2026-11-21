@@ -25,6 +25,26 @@ let
     lib.attrNames (lib.importJSON "${inputs.self}/flake.lock").nodes.root.inputs
   );
 
+  # same as what the web ui does when a declarative spec is set
+  provisionProjectSql = pkgs.writeText "hydra-provision-project.sql" ''
+    INSERT INTO projects (name, displayname, description, enabled, hidden, owner, declfile, decltype, declvalue)
+    VALUES (:'name', :'displayname', :'description', 1, 0, :'owner', :'declfile', :'decltype', :'declvalue')
+    ON CONFLICT (name) DO UPDATE SET
+      displayname = EXCLUDED.displayname,
+      description = EXCLUDED.description,
+      enabled = 1,
+      hidden = 0,
+      owner = EXCLUDED.owner,
+      declfile = EXCLUDED.declfile,
+      decltype = EXCLUDED.decltype,
+      declvalue = EXCLUDED.declvalue;
+
+    -- the evaluator fills this in from the spec file
+    INSERT INTO jobsets (project, name, nixexprinput, nixexprpath, emailoverride, triggertime)
+    VALUES (:'name', '.jobsets', ''', ''', ''', extract(epoch from now())::bigint)
+    ON CONFLICT (project, name) DO NOTHING;
+  '';
+
   grpcPort = 16113;
   restPort = 16114;
   wsPort = 16115;
@@ -75,6 +95,34 @@ in
     domain = lib.mkOption {
       type = lib.types.str;
       default = "hydra.lunya.cc";
+    };
+    projects = lib.mkOption {
+      description = "Declarative projects";
+      default = { };
+      type = lib.types.attrsOf (
+        lib.types.submodule {
+          options = {
+            displayName = lib.mkOption { type = lib.types.str; };
+            description = lib.mkOption {
+              type = lib.types.str;
+              default = "";
+            };
+            # has to exist as a hydra user
+            owner = lib.mkOption {
+              type = lib.types.str;
+              default = "luna";
+            };
+            spec = {
+              file = lib.mkOption { type = lib.types.str; };
+              type = lib.mkOption {
+                type = lib.types.str;
+                default = "git";
+              };
+              value = lib.mkOption { type = lib.types.str; };
+            };
+          };
+        }
+      );
     };
     # dials in to the queue runner over tailscale
     builder = {
@@ -154,6 +202,40 @@ in
         "https://github.com/girl-pp-ua/secrets" = secrets'."ci/github/secrets_token".templateKey;
         "https://github.com/ProjectLootBox/DevLootBox-bot" =
           secrets'."ci/github/devlootbox_token".templateKey;
+      };
+
+      polaris.services.hydra.projects.nixos-infra = {
+        displayName = "nixos-infra";
+        spec = {
+          file = "hydra/spec.json";
+          value = "https://github.com/girl-pp-ua/nixos-infra master";
+        };
+      };
+
+      systemd.services.hydra-provision-projects = {
+        description = "Provision declarative hydra projects";
+        requires = [ "hydra-init.service" ];
+        after = [ "hydra-init.service" ];
+        wantedBy = [ "multi-user.target" ];
+        path = [ config.services.postgresql.package ];
+        serviceConfig = {
+          Type = "oneshot";
+          RemainAfterExit = true;
+          User = "hydra";
+        };
+        script = lib.concatStrings (
+          lib.mapAttrsToList (name: p: ''
+            psql -d hydra -v ON_ERROR_STOP=1 --single-transaction \
+              --set=name=${lib.escapeShellArg name} \
+              --set=displayname=${lib.escapeShellArg p.displayName} \
+              --set=description=${lib.escapeShellArg p.description} \
+              --set=owner=${lib.escapeShellArg p.owner} \
+              --set=declfile=${lib.escapeShellArg p.spec.file} \
+              --set=decltype=${lib.escapeShellArg p.spec.type} \
+              --set=declvalue=${lib.escapeShellArg p.spec.value} \
+              -f ${provisionProjectSql}
+          '') cfg.projects
+        );
       };
 
       systemd.services.hydra-flake-update = {
