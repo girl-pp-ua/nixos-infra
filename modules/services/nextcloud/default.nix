@@ -37,7 +37,7 @@ in
       default = "nextcloud";
     };
 
-    package = lib.mkPackageOption pkgs "nextcloud34" { };
+    package = lib.mkPackageOption pkgs "nextcloud35" { };
 
     apps-packages = lib.mkOption {
       default = nc4nix."nextcloud-${lib.versions.major cfg.package.version}" // cfg.package.packages.apps;
@@ -157,7 +157,7 @@ in
           integration_immich
           # files_lock
           sketch_picker
-          markdownreadme
+          # markdownreadme # (no nextcloud35 support)
           # transfer
           # ak_language_switcher
           ;
