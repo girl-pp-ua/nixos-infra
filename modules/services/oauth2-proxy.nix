@@ -15,7 +15,7 @@ let
       handle_response @error {
         @oauth2_proxy_background_{args[0]} header_regexp Sec-Fetch-Mode ^(cors|no-cors|same-origin|websocket)$
         handle @oauth2_proxy_background_{args[0]} {
-          respond 401
+          respond 403
         }
         handle {
           redir * ${cfg.urlPrefix}/sign_in?rd={uri}
@@ -155,8 +155,12 @@ in
         secrets."oauth2_proxy/cookieSecret" = { };
         templates."oauth2_proxy.keyFile" = perms // {
           content = ''
-            OAUTH2_PROXY_CLIENT_SECRET=${config.security.nix-secrets.secrets."oauth2_proxy/clientSecret".templateKey}
-            OAUTH2_PROXY_COOKIE_SECRET=${config.security.nix-secrets.secrets."oauth2_proxy/cookieSecret".templateKey}
+            OAUTH2_PROXY_CLIENT_SECRET=${
+              config.security.nix-secrets.secrets."oauth2_proxy/clientSecret".templateKey
+            }
+            OAUTH2_PROXY_COOKIE_SECRET=${
+              config.security.nix-secrets.secrets."oauth2_proxy/cookieSecret".templateKey
+            }
           '';
         };
       };
