@@ -382,7 +382,7 @@ in
     ];
     # no restartUnits in nix-secrets, the .enc file changes along with the secret
     systemd.services.home-assistant.restartTriggers = lib.mapAttrsToList (
-      name: _: "${config.security.nix-secrets.storage}/${name}.enc"
+      name: _: builtins.hashFile "sha256" "${config.security.nix-secrets.storage}/${name}.enc"
     ) (lib.filterAttrs (name: _: lib.hasPrefix "home-assistant/" name) config.security.nix-secrets.secrets);
 
     systemd.services.home-assistant.preStart = lib.mkAfter ''
