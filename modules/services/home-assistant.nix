@@ -59,16 +59,6 @@ in
   config = lib.mkIf cfg.enable {
     services.home-assistant = {
       enable = true;
-      package =
-        (pkgs.home-assistant.override {
-          packageOverrides = _: super: {
-            # XXX: mtls endpoint mock tests fail
-            google-cloud-texttospeech = super.google-cloud-texttospeech.overridePythonAttrs (old: {
-              disabledTests = (old.disabledTests or [ ]) ++ [ "get_mtls_endpoint_and_cert_source" ];
-            });
-          };
-        }).overrideAttrs
-          { doInstallCheck = false; }; # (same as the module default)
       extraComponents = [
         "default_config"
         "prometheus"
