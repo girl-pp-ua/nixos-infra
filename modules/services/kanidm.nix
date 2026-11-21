@@ -79,6 +79,7 @@ in
               "karakeep.admin"
               "home-assistant.admin"
               "grafana.admin"
+              "nixbot.admin"
             ];
           };
 
@@ -380,6 +381,22 @@ in
           };
         };
 
+        groups."nixbot.access".members = [ "nixbot.admin" ];
+        groups."nixbot.admin" = { };
+        systems.oauth2.${cfg-svc.nixbot.client_id} = {
+          displayName = "Nixbot";
+          originLanding = "https://${cfg-svc.nixbot.domain}/";
+          preferShortUsername = true;
+          basicSecretFile = config.security.nix-secrets.templates."kanidm/nixbot/clientSecret".path;
+          originUrl = [ "https://${cfg-svc.nixbot.domain}/auth/oidc/callback" ];
+          allowInsecureClientDisablePkce = true; # nixbot doesn't send a code_challenge
+          scopeMaps."nixbot.access" = [
+            "openid"
+            "email"
+            "profile"
+          ];
+        };
+
         groups."forgejo.access".members = [ "forgejo.admin" ];
         groups."forgejo.admin" = { };
         systems.oauth2.${cfg-svc.forgejo.client_id} = {
@@ -446,6 +463,7 @@ in
           "karakeep"
           "home-assistant"
           "grafana"
+          "nixbot"
         ];
       in
       {

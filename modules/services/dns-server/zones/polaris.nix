@@ -10,7 +10,7 @@ in
     SOA = {
       nameServer = "localhost";
       adminEmail = "nobody@localhost";
-      serial = 2026102001; # YYYYMMDDNN
+      serial = 2026112101; # YYYYMMDDNN
     };
 
     subdomains = {

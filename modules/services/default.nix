@@ -19,6 +19,7 @@
     ./kanidm.nix
     ./legacy01
     ./monitoring
+    ./nixbot.nix
     ./ntfy.nix
     ./oauth2-proxy.nix
     ./paperless.nix

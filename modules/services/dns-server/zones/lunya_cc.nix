@@ -10,7 +10,7 @@ in
     SOA = {
       nameServer = "ns1.${name}.";
       adminEmail = "hostmaster@${name}";
-      serial = 2026102102; # YYYYMMDDNN
+      serial = 2026112101; # YYYYMMDDNN
     };
 
     NS = [
@@ -58,6 +58,7 @@ in
       dash.CNAME = [ "astra" ];
       keep.CNAME = [ "amoeba" ];
       cache.CNAME = [ "amoeba" ];
+      ci.CNAME = [ "amoeba" ];
 
       # garage web
       on.subdomains.devlootbox.subdomains.media-cdn = {

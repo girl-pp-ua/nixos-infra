@@ -56,6 +56,7 @@ in
           validity ? "10y",
           pull ? [ ],
           push ? [ ],
+          netrc ? true,
         }:
         let
           dummyConfig = (pkgs.formats.toml { }).generate "atticd-dummy.toml" {
@@ -87,7 +88,12 @@ in
                 ;
             }
           })"
-          printf 'machine ${cfg.domain}\npassword %s\n' "$token"
+          ${
+            if netrc then
+              "printf 'machine ${cfg.domain}\\npassword %s\\n' \"$token\""
+            else
+              "printf '%s' \"$token\""
+          }
         '';
     }
 

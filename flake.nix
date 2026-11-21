@@ -38,6 +38,11 @@
       flake = false;
       # url = "git+https://git.helsinki.tools/helsinki-systems/nc4nix.git/";
     };
+
+    nixbot = {
+      url = "github:Mic92/nixbot";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
