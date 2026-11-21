@@ -393,6 +393,7 @@ in
         groups."hydra.admin" = { };
         systems.oauth2.${cfg-svc.hydra.client_id} = {
           displayName = "Hydra";
+          imageFile = "${root + "/assets/sso-images/hydra.png"}";
           originLanding = "https://${cfg-svc.hydra.domain}/";
 
           basicSecretFile = config.security.nix-secrets.templates."kanidm/hydra/clientSecret".path;
