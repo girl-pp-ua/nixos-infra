@@ -79,6 +79,7 @@ in
               "karakeep.admin"
               "home-assistant.admin"
               "grafana.admin"
+              "hydra.downloads"
             ];
           };
 
@@ -130,12 +131,17 @@ in
         groups."oauth2_proxy.karakeep_admin".members = [
           "karakeep.admin"
         ];
+        groups."hydra.downloads" = { };
+        groups."oauth2_proxy.hydra_downloads".members = [
+          "hydra.downloads"
+        ];
         groups."oauth2_proxy.access".members = [
           "oauth2_proxy.authtest_access"
           "oauth2_proxy.paperless_django_admin"
           "oauth2_proxy.immich_admin"
           "oauth2_proxy.forgejo_admin"
           "oauth2_proxy.karakeep_admin"
+          "oauth2_proxy.hydra_downloads"
         ];
         systems.oauth2.${cfg-svc.oauth2_proxy.client_id} = {
           displayName = "oauth2-proxy";
@@ -152,6 +158,7 @@ in
             cfg-svc.immich.domain
             cfg-svc.forgejo.domain
             cfg-svc.karakeep.domain
+            cfg-svc.hydra.domain
           ];
 
           scopeMaps."oauth2_proxy.access" = [
@@ -167,6 +174,7 @@ in
             "oauth2_proxy.immich_admin" = [ "immich_admin" ];
             "oauth2_proxy.forgejo_admin" = [ "forgejo_admin" ];
             "oauth2_proxy.karakeep_admin" = [ "karakeep_admin" ];
+            "oauth2_proxy.hydra_downloads" = [ "hydra_downloads" ];
           };
         };
 

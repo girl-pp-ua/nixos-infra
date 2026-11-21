@@ -105,6 +105,7 @@ in
         '';
       };
       services.postgresql.enable = true;
+      polaris.services.oauth2_proxy.enable = true;
 
       systemd.services.hydra-init = {
         after = [ "postgresql.target" ];
@@ -187,8 +188,13 @@ in
             import encode
             import norobot
 
-            @block path /nix-cache-info /nar/* *.narinfo /build/*/nix/* /build/*/download/* /build/*/output/* /channel/* /*/channel/*
-            respond @block 403
+            import oauth2_proxy_handle
+
+            @downloads path_regexp hydra_downloads ^/(nix-cache-info|nar/.*|[0-9a-z]{32}\.narinfo|build/[0-9]+/(download|download-by-type|nix|output|contents|reproduce)(/.*)?|(.*/)?channel(/.*)?)$
+            handle @downloads {
+              import oauth2_proxy_secure_external "hydra_downloads"
+              reverse_proxy 127.0.0.1:${toString cfg.port}
+            }
 
             handle_path /ws* {
               reverse_proxy [::1]:${toString wsPort}
