@@ -32,128 +32,264 @@ let
         substitute ${src} $out ${lib.escapeShellArgs (lib.concatMap (r: [ "--replace-fail" ] ++ r) replace)}
       '';
 
-  dashboards = pkgs.linkFarm "grafana-dashboards" {
-    "Hosts/node-exporter-full.json" = fetchDashboard {
-      id = 1860;
-      rev = 45;
-      hash = "sha256-GExrdAnzBtp1Ul13cvcZRbEM6iOtFrXXjEaY6g6lGYY=";
-    };
-    "Hosts/fleet-overview.json" = fetchDashboard {
-      id = 11074;
-      rev = 9;
-      hash = "sha256-iT9AKe6bPgeX662YndR7jfUW7U0Hjyje0tbY33u9EGU=";
-      replace = [
-        [
-          "\${DS__VICTORIAMETRICS}"
-          "VictoriaMetrics"
-        ]
-      ];
-    };
-    "Monitoring/victoriametrics.json" = fetchDashboard {
-      id = 10229;
-      rev = 60;
-      hash = "sha256-DaucJDJektHb8h+mtRwkpbO97c5YIqh+KzXWK2dTPkM=";
-      replace = [
-        [
-          # the official victoria* dashboards find their job by the "victoria-<product>-" version
-          # prefix... which the nixpkgs builds don't use; so match the job name
-          ''version=~\"victoria-metrics-.*\"''
-          ''job=\"victoria-metrics\"''
-        ]
-      ];
-    };
-    "Monitoring/victorialogs.json" = fetchDashboard {
-      id = 22084;
-      rev = 12;
-      hash = "sha256-7ZwB8CrnE8T5GXGY7rDlXFxkrJvxYclBBQbA2TwswUs=";
-      replace = [
-        [
-          # the official victoria* dashboards find their job by the "victoria-<product>-" version
-          # prefix... which the nixpkgs builds don't use; so match the job name
-          ''version=~\"victoria-logs-.*\"''
-          ''job=\"victorialogs\"''
-        ]
-      ];
-    };
-    "Logs/log-insights.json" = fetchDashboard {
-      id = 24585;
-      rev = 1;
-      hash = "sha256-ok5td2ZNKtrSto9Lc9mazYTkhjIkMaUT6Fj1xpapieU=";
-    };
-    "Services/caddy.json" = fetchDashboard {
-      id = 24146;
-      rev = 1;
-      hash = "sha256-vw/O3bNKQ0tJwhsZKYvkMU6jeqkG+sfCtA7YT0vp3YY=";
-      replace = [
-        [
-          "\${DS_PROMETHEUS}"
-          "victoriametrics"
-        ]
-      ];
-    };
-    "Services/postgres.json" = fetchDashboard {
-      id = 24919;
-      rev = 1;
-      hash = "sha256-BHr2pJL7rZ4RCITh6pJOdwRenvIJNKJb5JGJjm6N5PU=";
-      replace = [
-        [
-          "\${DS_VICTORIAMETRICS}"
-          "victoriametrics"
-        ]
-      ];
-    };
-    "Services/unbound.json" = fetchDashboard {
-      id = 21006;
-      rev = 4;
-      hash = "sha256-Z+y+8MCIpjgPW12Q2jcbNhaL/WA00SL2uPT/7KKsOVw=";
-    };
-    "Services/ntfy.json" = fetchDashboard {
-      url = "https://raw.githubusercontent.com/binwiederhier/ntfy/v2.32.0/examples/grafana-dashboard/ntfy-grafana.json";
-      hash = "sha256-hSOr3TsDYsYLG13zvfzsXwDWk3b4f5ZoRPwg+B1vnqg=";
-      replace = [
-        [
-          "\${DS_PROMETHEUS}"
-          "victoriametrics"
-        ]
-      ];
-    };
-    "Services/garage.json" = fetchDashboard {
-      url = "https://git.deuxfleurs.fr/Deuxfleurs/garage/raw/tag/v2.4.1/script/telemetry/grafana-garage-dashboard-prometheus.json";
-      hash = "sha256-VUAheA6DTB8TWUhYOwH/O03XqmD7WAhEx5kF4R/Recs=";
-      replace = [
-        [
-          "\${DS_DS_PROMETHEUS}"
-          "victoriametrics"
-        ]
-      ];
-    };
-    "Services/gatus.json" = fetchDashboard {
-      url = "https://raw.githubusercontent.com/TwiN/gatus/v5.36.0/.examples/docker-compose-grafana-prometheus/grafana/provisioning/dashboards/gatus.json";
-      hash = "sha256-qXo73c9rR30nxjnnkh3e7gd3GKkMi0kaVxJFBHCDq1o=";
-      replace = [
-        [
-          ''"value": "cedv077q7bbwgd"''
-          ''"value": "victoriametrics"''
-        ]
-      ];
-    };
-    "Services/forgejo.json" = fetchDashboard {
-      # gitea dashboard; forgejo exports the same gitea_* metrics
-      id = 13192;
-      rev = 1;
-      hash = "sha256-IAaI/HvMxcWE3PGQFK8avNjgj88DgcDvkWRcDAWSejM=";
-      replace = [
-        [
-          "\${DS_PROMETHEUS}"
-          "VictoriaMetrics"
-        ]
-        [
-          ''job=\"gitea\"''
-          ''job=\"forgejo\"''
-        ]
-      ];
-    };
-  };
+  atticGrantsSql = pkgs.writeText "grafana-attic-grants.sql" ''
+    GRANT CONNECT ON DATABASE atticd TO grafana;
+    GRANT USAGE ON SCHEMA public TO grafana;
+    GRANT SELECT ON object, nar, chunk TO grafana;
+    GRANT SELECT (id, name, is_public, store_dir, priority, upstream_cache_key_names, created_at, deleted_at, retention_period) ON cache TO grafana;
+  '';
+
+  atticDashboard =
+    let
+      ds = {
+        type = "grafana-postgresql-datasource";
+        uid = "attic";
+      };
+      query = format: rawSql: {
+        datasource = ds;
+        inherit format rawSql;
+        rawQuery = true;
+        editorMode = "code";
+        refId = "A";
+      };
+      stat = x: title: unit: rawSql: {
+        type = "stat";
+        inherit title;
+        datasource = ds;
+        gridPos = {
+          inherit x;
+          y = 0;
+          w = 6;
+          h = 4;
+        };
+        targets = [ (query "table" rawSql) ];
+        fieldConfig.defaults.unit = unit;
+        options.reduceOptions.calcs = [ "lastNotNull" ];
+      };
+      table = x: title: rawSql: {
+        type = "table";
+        inherit title;
+        datasource = ds;
+        gridPos = {
+          inherit x;
+          y = 12;
+          w = 12;
+          h = 12;
+        };
+        targets = [ (query "table" rawSql) ];
+        fieldConfig.overrides = [
+          {
+            matcher = {
+              id = "byName";
+              options = "size";
+            };
+            properties = [
+              {
+                id = "unit";
+                value = "bytes";
+              }
+            ];
+          }
+        ];
+      };
+      shortPath = "regexp_replace(o.store_path, '^/nix/store/[a-z0-9]{32}-', '')";
+    in
+    pkgs.writeText "attic.json" (
+      builtins.toJSON {
+        uid = "attic";
+        title = "Attic";
+        tags = [ "attic" ];
+        schemaVersion = 39;
+        time = {
+          from = "now-30d";
+          to = "now";
+        };
+        panels = [
+          (stat 0 "Store paths" "short" "SELECT count(*) FROM object")
+          (stat 6 "Uncompressed" "bytes" "SELECT sum(nar_size) FROM nar")
+          (stat 12 "Stored" "bytes" "SELECT sum(file_size) FROM chunk")
+          (stat 18 "Stored / uncompressed" "percentunit"
+            "SELECT (SELECT sum(file_size) FROM chunk)::float / nullif((SELECT sum(nar_size) FROM nar), 0)"
+          )
+          {
+            type = "timeseries";
+            title = "Paths pushed per day";
+            datasource = ds;
+            gridPos = {
+              x = 0;
+              y = 4;
+              w = 12;
+              h = 8;
+            };
+            targets = [
+              (query "time_series" ''
+                SELECT date_trunc('day', created_at) AS time, count(*) AS pushed
+                FROM object WHERE $__timeFilter(created_at) GROUP BY 1 ORDER BY 1
+              '')
+            ];
+            fieldConfig.defaults.custom.drawStyle = "bars";
+          }
+          {
+            type = "timeseries";
+            title = "Free disk (${config.networking.hostName})";
+            datasource = {
+              type = "prometheus";
+              uid = "victoriametrics";
+            };
+            gridPos = {
+              x = 12;
+              y = 4;
+              w = 12;
+              h = 8;
+            };
+            targets = [
+              {
+                refId = "A";
+                expr = ''node_filesystem_avail_bytes{instance="${config.networking.hostName}",mountpoint="/"}'';
+                legendFormat = "free";
+              }
+            ];
+            fieldConfig.defaults.unit = "bytes";
+          }
+          (table 0 "Largest paths" ''
+            SELECT ${shortPath} AS path, n.nar_size AS size, o.created_at AS pushed
+            FROM object o JOIN nar n ON n.id = o.nar_id ORDER BY n.nar_size DESC LIMIT 25
+          '')
+          (table 12 "Latest pushes" ''
+            SELECT o.created_at AS pushed, ${shortPath} AS path, n.nar_size AS size
+            FROM object o JOIN nar n ON n.id = o.nar_id ORDER BY o.created_at DESC LIMIT 25
+          '')
+        ];
+      }
+    );
+
+  hasAttic = config.polaris.services.attic.enable;
+
+  dashboards = pkgs.linkFarm "grafana-dashboards" (
+    lib.optionalAttrs hasAttic { "Services/attic.json" = atticDashboard; }
+    // {
+      "Hosts/node-exporter-full.json" = fetchDashboard {
+        id = 1860;
+        rev = 45;
+        hash = "sha256-GExrdAnzBtp1Ul13cvcZRbEM6iOtFrXXjEaY6g6lGYY=";
+      };
+      "Hosts/fleet-overview.json" = fetchDashboard {
+        id = 11074;
+        rev = 9;
+        hash = "sha256-iT9AKe6bPgeX662YndR7jfUW7U0Hjyje0tbY33u9EGU=";
+        replace = [
+          [
+            "\${DS__VICTORIAMETRICS}"
+            "VictoriaMetrics"
+          ]
+        ];
+      };
+      "Monitoring/victoriametrics.json" = fetchDashboard {
+        id = 10229;
+        rev = 60;
+        hash = "sha256-DaucJDJektHb8h+mtRwkpbO97c5YIqh+KzXWK2dTPkM=";
+        replace = [
+          [
+            # the official victoria* dashboards find their job by the "victoria-<product>-" version
+            # prefix... which the nixpkgs builds don't use; so match the job name
+            ''version=~\"victoria-metrics-.*\"''
+            ''job=\"victoria-metrics\"''
+          ]
+        ];
+      };
+      "Monitoring/victorialogs.json" = fetchDashboard {
+        id = 22084;
+        rev = 12;
+        hash = "sha256-7ZwB8CrnE8T5GXGY7rDlXFxkrJvxYclBBQbA2TwswUs=";
+        replace = [
+          [
+            # the official victoria* dashboards find their job by the "victoria-<product>-" version
+            # prefix... which the nixpkgs builds don't use; so match the job name
+            ''version=~\"victoria-logs-.*\"''
+            ''job=\"victorialogs\"''
+          ]
+        ];
+      };
+      "Logs/log-insights.json" = fetchDashboard {
+        id = 24585;
+        rev = 1;
+        hash = "sha256-ok5td2ZNKtrSto9Lc9mazYTkhjIkMaUT6Fj1xpapieU=";
+      };
+      "Services/caddy.json" = fetchDashboard {
+        id = 24146;
+        rev = 1;
+        hash = "sha256-vw/O3bNKQ0tJwhsZKYvkMU6jeqkG+sfCtA7YT0vp3YY=";
+        replace = [
+          [
+            "\${DS_PROMETHEUS}"
+            "victoriametrics"
+          ]
+        ];
+      };
+      "Services/postgres.json" = fetchDashboard {
+        id = 24919;
+        rev = 1;
+        hash = "sha256-BHr2pJL7rZ4RCITh6pJOdwRenvIJNKJb5JGJjm6N5PU=";
+        replace = [
+          [
+            "\${DS_VICTORIAMETRICS}"
+            "victoriametrics"
+          ]
+        ];
+      };
+      "Services/unbound.json" = fetchDashboard {
+        id = 21006;
+        rev = 4;
+        hash = "sha256-Z+y+8MCIpjgPW12Q2jcbNhaL/WA00SL2uPT/7KKsOVw=";
+      };
+      "Services/ntfy.json" = fetchDashboard {
+        url = "https://raw.githubusercontent.com/binwiederhier/ntfy/v2.32.0/examples/grafana-dashboard/ntfy-grafana.json";
+        hash = "sha256-hSOr3TsDYsYLG13zvfzsXwDWk3b4f5ZoRPwg+B1vnqg=";
+        replace = [
+          [
+            "\${DS_PROMETHEUS}"
+            "victoriametrics"
+          ]
+        ];
+      };
+      "Services/garage.json" = fetchDashboard {
+        url = "https://git.deuxfleurs.fr/Deuxfleurs/garage/raw/tag/v2.4.1/script/telemetry/grafana-garage-dashboard-prometheus.json";
+        hash = "sha256-VUAheA6DTB8TWUhYOwH/O03XqmD7WAhEx5kF4R/Recs=";
+        replace = [
+          [
+            "\${DS_DS_PROMETHEUS}"
+            "victoriametrics"
+          ]
+        ];
+      };
+      "Services/gatus.json" = fetchDashboard {
+        url = "https://raw.githubusercontent.com/TwiN/gatus/v5.36.0/.examples/docker-compose-grafana-prometheus/grafana/provisioning/dashboards/gatus.json";
+        hash = "sha256-qXo73c9rR30nxjnnkh3e7gd3GKkMi0kaVxJFBHCDq1o=";
+        replace = [
+          [
+            ''"value": "cedv077q7bbwgd"''
+            ''"value": "victoriametrics"''
+          ]
+        ];
+      };
+      "Services/forgejo.json" = fetchDashboard {
+        # gitea dashboard; forgejo exports the same gitea_* metrics
+        id = 13192;
+        rev = 1;
+        hash = "sha256-IAaI/HvMxcWE3PGQFK8avNjgj88DgcDvkWRcDAWSejM=";
+        replace = [
+          [
+            "\${DS_PROMETHEUS}"
+            "VictoriaMetrics"
+          ]
+          [
+            ''job=\"gitea\"''
+            ''job=\"forgejo\"''
+          ]
+        ];
+      };
+    }
+  );
 
   # polaris.services.monitoring.exports of every host, grouped by job
   targets = lib.groupBy (t: t.job) (
@@ -342,7 +478,19 @@ in
             type = "victoriametrics-logs-datasource";
             url = "http://127.0.0.1:${toString cfg.victorialogsPort}";
           }
-        ];
+        ]
+        ++ lib.optional hasAttic {
+          name = "Attic";
+          uid = "attic";
+          type = "grafana-postgresql-datasource";
+          # peer auth over the socket, as the grafana role
+          url = "/run/postgresql";
+          user = "grafana";
+          jsonData = {
+            database = "atticd";
+            sslmode = "disable";
+          };
+        };
         dashboards.settings.providers = [
           {
             name = "polaris";
@@ -358,6 +506,20 @@ in
     polaris.backup2.postgresql.databases = [
       "grafana"
     ];
+
+    # after atticd-provision, which runs attic's migrations
+    systemd.services.grafana-attic-grants = lib.mkIf hasAttic {
+      description = "Read-only access to atticd for grafana";
+      requires = [ "atticd-provision.service" ];
+      after = [ "atticd-provision.service" ];
+      wantedBy = [ "multi-user.target" ];
+      serviceConfig = {
+        Type = "oneshot";
+        RemainAfterExit = true;
+        User = "postgres";
+      };
+      script = "${config.services.postgresql.package}/bin/psql -d atticd -v ON_ERROR_STOP=1 -f ${atticGrantsSql}";
+    };
 
     services.postgresql = {
       enable = true;
