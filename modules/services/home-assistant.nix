@@ -192,6 +192,17 @@ in
       customComponents = [
         pkgs.home-assistant-custom-components.auth_oidc
         pkgs.home-assistant-custom-components.scene_presets
+        (pkgs.buildHomeAssistantComponent rec {
+          owner = "owen282000";
+          domain = "life_dashboard";
+          version = "1.2.0";
+          src = pkgs.fetchFromGitHub {
+            inherit owner;
+            repo = "life-dashboard-ha";
+            tag = version;
+            hash = "sha256-Dn2fuwvzkXJoX+D8BgZxy+bjJaFkLI80CjNEyqQUoOA=";
+          };
+        })
         # ikea bilresa
         (pkgs.buildHomeAssistantComponent rec {
           owner = "Vituhlos";
@@ -375,9 +386,12 @@ in
       pkgs.openssl
     ];
     # no restartUnits in nix-secrets, the .enc file changes along with the secret
-    systemd.services.home-assistant.restartTriggers = lib.mapAttrsToList (
-      name: _: builtins.hashFile "sha256" "${config.security.nix-secrets.storage}/${name}.enc"
-    ) (lib.filterAttrs (name: _: lib.hasPrefix "home-assistant/" name) config.security.nix-secrets.secrets);
+    systemd.services.home-assistant.restartTriggers =
+      lib.mapAttrsToList
+        (name: _: builtins.hashFile "sha256" "${config.security.nix-secrets.storage}/${name}.enc")
+        (
+          lib.filterAttrs (name: _: lib.hasPrefix "home-assistant/" name) config.security.nix-secrets.secrets
+        );
 
     systemd.services.home-assistant.preStart = lib.mkAfter ''
       # set default external_url and locale
@@ -606,7 +620,9 @@ in
         group = "hass";
         mode = "0400";
         content = ''
-          oidc_client_secret: "${config.security.nix-secrets.secrets."home-assistant/clientSecret".templateKey}"
+          oidc_client_secret: "${
+            config.security.nix-secrets.secrets."home-assistant/clientSecret".templateKey
+          }"
         '';
       };
 
