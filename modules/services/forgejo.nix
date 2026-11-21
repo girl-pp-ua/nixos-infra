@@ -461,9 +461,30 @@ in
           reverse_proxy unix/${config.services.forgejo.settings.server.HTTP_ADDR}
         }
 
+        # outside web traffic gets anubis'd
+        @anubis {
+          not client_ip ${lib.concatStringsSep " " config.polaris.trustedNetworks}
+          not path /api/* /login/oauth/* /.well-known/*
+          not path_regexp ^/[^/]+/[^/]+/(info/refs|git-upload-pack|git-receive-pack|info/lfs/.*)$
+        }
+        handle @anubis {
+          reverse_proxy unix/${config.services.anubis.instances.forgejo.settings.BIND} {
+            header_up X-Real-IP {client_ip}
+          }
+        }
+
         reverse_proxy unix/${config.services.forgejo.settings.server.HTTP_ADDR}
       '';
     };
+    services.anubis.instances.forgejo.settings = {
+      TARGET = "unix://${config.services.forgejo.settings.server.HTTP_ADDR}";
+      SERVE_ROBOTS_TXT = true;
+    };
+    # to reach anubis' socket
+    users.users.caddy.extraGroups = [
+      config.services.anubis.instances.forgejo.group
+    ];
+
     # forgejo only listens on a unix socket, so give the collector its own port
     services.caddy.virtualHosts."http://:${toString cfg.metricsPort}".extraConfig = ''
       handle /metrics {
