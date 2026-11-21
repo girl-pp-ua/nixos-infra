@@ -380,6 +380,11 @@ in
     systemd.services.home-assistant.path = [
       pkgs.openssl
     ];
+    # no restartUnits in nix-secrets, the .enc file changes along with the secret
+    systemd.services.home-assistant.restartTriggers = lib.mapAttrsToList (
+      name: _: "${config.security.nix-secrets.storage}/${name}.enc"
+    ) (lib.filterAttrs (name: _: lib.hasPrefix "home-assistant/" name) config.security.nix-secrets.secrets);
+
     systemd.services.home-assistant.preStart = lib.mkAfter ''
       # set default external_url and locale
       #
@@ -400,7 +405,7 @@ in
       f=${hass.configDir}/.storage/auth
       id=prometheus
       [ -f "$f" ] || echo '{"version":1,"minor_version":1,"key":"auth","data":{"users":[],"groups":[],"credentials":[],"refresh_tokens":[]}}' > "$f"
-      key=$(cat ${config.sops.secrets."home-assistant/metricsJwtKey".path})
+      key=$(cat ${config.security.nix-secrets.secrets."home-assistant/metricsJwtKey".path})
       ${lib.getExe pkgs.jq} --arg id "$id" --arg key "$key" --arg token "$(openssl rand -hex 64)" --arg now "$(date -Iseconds)" '
         .data.users |= map(select(.id != $id)) + [{
           id: $id, name: "Prometheus", group_ids: ["system-read-only"],
@@ -416,8 +421,8 @@ in
       mv "$f.tmp" "$f"
 
       # apply the declarative credentials
-      # (see sops.templates."home-assistant.credentials.json")
-      g=${config.sops.templates."home-assistant.credentials.json".path}
+      # (see security.nix-secrets.templates."home-assistant.credentials.json")
+      g=${config.security.nix-secrets.templates."home-assistant.credentials.json".path}
       f=${hass.configDir}/.storage/application_credentials
       [ -f "$f" ] || echo '{"version":1,"minor_version":1,"key":"application_credentials","data":{"items":[]}}' > "$f"
       # (same id as the ui creates, so existing config entries' auth_implementation keeps matching)
@@ -566,18 +571,16 @@ in
       bearerTokenSecret = "home-assistant/metricsToken";
     };
 
-    sops = {
+    security.nix-secrets = {
       secrets = {
         "home-assistant/metricsJwtKey" = {
           owner = "hass";
-          restartUnits = [ "home-assistant.service" ];
         };
         "home-assistant/clientSecret" = { };
         "home-assistant/google/homeServiceAccount" = {
           path = "${hass.configDir}/google_service_account.json";
           owner = "hass";
           mode = "0400";
-          restartUnits = [ "home-assistant.service" ];
         };
 
         # integration credentials (see home-assistant.credentials.json)
@@ -597,7 +600,7 @@ in
         group = "hass";
         mode = "0400";
         content = ''
-          oidc_client_secret: "${config.sops.placeholder."home-assistant/clientSecret"}"
+          oidc_client_secret: "${config.security.nix-secrets.secrets."home-assistant/clientSecret".templateKey}"
         '';
       };
 
@@ -606,10 +609,9 @@ in
         owner = "hass";
         group = "hass";
         mode = "0400";
-        restartUnits = [ "home-assistant.service" ];
         content =
           let
-            p = s: config.sops.placeholder."home-assistant/${s}";
+            p = s: config.security.nix-secrets.secrets."home-assistant/${s}".templateKey;
           in
           builtins.toJSON {
             # oauth clients (settings -> application credentials)

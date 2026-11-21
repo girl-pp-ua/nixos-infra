@@ -71,7 +71,7 @@ in
       maxUploadSize = "16G";
       # config = {
       #   adminuser = "root";
-      #   adminpassFile = config.sops.secrets."nextcloud/adminpass".path;
+      #   adminpassFile = config.security.nix-secrets.secrets."nextcloud/adminpass".path;
       # };
       settings = {
         "overwrite.cli.url" = "https://${cfg.domain}";
@@ -205,7 +205,7 @@ in
       ];
     };
 
-    sops =
+    security.nix-secrets =
       let
         nextcloudSecret = {
           mode = "0400";

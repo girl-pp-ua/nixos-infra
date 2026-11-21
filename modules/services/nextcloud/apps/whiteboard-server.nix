@@ -22,7 +22,7 @@ in
         NEXTCLOUD_URL = "https://${cfg-nextcloud.domain}";
       };
       secrets = [
-        config.sops.templates."nextcloud_whiteboard_secretFile".path
+        config.security.nix-secrets.templates."nextcloud_whiteboard_secretFile".path
       ];
     };
 
@@ -33,7 +33,7 @@ in
       extraOCCCommands = ''
         occ config:app:set whiteboard collabBackendUrl --value="https://${cfg-nextcloud.domain}/whiteboard/"
         occ config:app:set whiteboard jwt_secret_key --value="$(cat ${
-          config.sops.secrets."nextcloud/whiteboard/jwt_secret_key".path
+          config.security.nix-secrets.secrets."nextcloud/whiteboard/jwt_secret_key".path
         })"
       '';
     };
@@ -46,9 +46,9 @@ in
       '';
     };
 
-    sops.secrets."nextcloud/whiteboard/jwt_secret_key" = { };
-    sops.templates."nextcloud_whiteboard_secretFile" = {
-      content = "JWT_SECRET_KEY = ${config.sops.placeholder."nextcloud/whiteboard/jwt_secret_key"}";
+    security.nix-secrets.secrets."nextcloud/whiteboard/jwt_secret_key" = { };
+    security.nix-secrets.templates."nextcloud_whiteboard_secretFile" = {
+      content = "JWT_SECRET_KEY = ${config.security.nix-secrets.secrets."nextcloud/whiteboard/jwt_secret_key".templateKey}";
     };
   };
 }

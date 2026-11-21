@@ -84,7 +84,7 @@ in
       ];
       environment = {
         IMMICH_ALLOW_SETUP = "false";
-        IMMICH_CONFIG_FILE = config.sops.templates."immich.json".path;
+        IMMICH_CONFIG_FILE = config.security.nix-secrets.templates."immich.json".path;
         IMMICH_TELEMETRY_INCLUDE = "all";
         IMMICH_API_METRICS_PORT = toString cfg.metrics.apiPort;
         IMMICH_MICROSERVICES_METRICS_PORT = toString cfg.metrics.microservicesPort;
@@ -111,8 +111,8 @@ in
       "render"
     ];
 
-    sops.secrets."immich/clientSecret" = { };
-    sops.templates."immich.json" = {
+    security.nix-secrets.secrets."immich/clientSecret" = { };
+    security.nix-secrets.templates."immich.json" = {
       mode = "0400";
       owner = config.services.immich.user;
       group = config.services.immich.group;
@@ -126,7 +126,7 @@ in
           issuerUrl = idp.oidc_discovery;
           accountManagementUrl = "https://${config.polaris.services.kanidm.domain}/ui/profile";
           clientId = "immich";
-          clientSecret = config.sops.placeholder."immich/clientSecret";
+          clientSecret = config.security.nix-secrets.secrets."immich/clientSecret".templateKey;
           signingAlgorithm = "ES256";
           # profileSigningAlgorithm = "ES256";
         };

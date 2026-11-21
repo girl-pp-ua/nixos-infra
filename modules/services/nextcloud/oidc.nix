@@ -40,7 +40,7 @@ in
         occ user_oidc:provider girlcock \
           --discoveryuri="${idp.oidc_discovery}" \
           --clientid="${cfg-nextcloud.client_id}" \
-          --clientsecret=$(cat "${config.sops.secrets."nextcloud/clientSecret".path}") \
+          --clientsecret=$(cat "${config.security.nix-secrets.secrets."nextcloud/clientSecret".path}") \
           --scope "profile email groups openid" \
           --unique-uid 0 \
           --group-provisioning 1 \

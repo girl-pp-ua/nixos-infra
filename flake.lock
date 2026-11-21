@@ -203,6 +203,26 @@
         "type": "github"
       }
     },
+    "nix-secrets": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1795253683,
+        "narHash": "sha256-PTuUfu1BmpLK5RvrmXKNK3oRk8nUv3sRps2eky0pArw=",
+        "owner": "unnamed-systems",
+        "repo": "nix-secrets",
+        "rev": "43f6910eadbb958abcfcea056f043c1a5f36e2af",
+        "type": "github"
+      },
+      "original": {
+        "owner": "unnamed-systems",
+        "repo": "nix-secrets",
+        "type": "github"
+      }
+    },
     "nixpkgs": {
       "locked": {
         "lastModified": 1781607440,
@@ -304,10 +324,10 @@
         "flake-parts": "flake-parts_2",
         "nc4nix": "nc4nix",
         "nextcloud-testumgebung": "nextcloud-testumgebung",
+        "nix-secrets": "nix-secrets",
         "nixpkgs": "nixpkgs_2",
         "nixpkgs-stable": "nixpkgs-stable",
         "secrets": "secrets",
-        "sops-nix": "sops-nix",
         "systems": "systems_3"
       }
     },
@@ -335,11 +355,11 @@
     "secrets": {
       "flake": false,
       "locked": {
-        "lastModified": 1794746832,
-        "narHash": "sha256-9GS4FYnEsz4mWyXn7VHcHyzeBGQ4cDTKhIlawQNQuoI=",
+        "lastModified": 1795259315,
+        "narHash": "sha256-p93JwYfGzSMIoSPQYdCpOIsevJw0xKTbbLGg0xEkfzA=",
         "ref": "refs/heads/master",
-        "rev": "7f64bfcd0aab981d50193f89789b76418f328bc6",
-        "revCount": 66,
+        "rev": "7566fe139f71aff8db1d83f1b732d20a01ef875f",
+        "revCount": 70,
         "type": "git",
         "url": "file:./submodules/secrets"
       },
@@ -360,26 +380,6 @@
       "original": {
         "owner": "juspay",
         "repo": "services-flake",
-        "type": "github"
-      }
-    },
-    "sops-nix": {
-      "inputs": {
-        "nixpkgs": [
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1794866654,
-        "narHash": "sha256-Y28AMB8lyKjASdJ0BVsR2AqR1cUsVuo8RVVpzHoECho=",
-        "owner": "Mic92",
-        "repo": "sops-nix",
-        "rev": "7c637afdccdf9bcf35c4a2d67b58a77c1fd843a4",
-        "type": "github"
-      },
-      "original": {
-        "owner": "Mic92",
-        "repo": "sops-nix",
         "type": "github"
       }
     },

@@ -1,7 +1,7 @@
 { lib, ... }:
 {
   imports = [
-    ./sops.nix
+    ./secrets.nix
     ./networking
     ./services
     ./boot.nix

@@ -1,5 +1,4 @@
 {
-  inputs,
   config,
   pkgs,
   lib,
@@ -35,8 +34,8 @@ in
         enable = true;
         settings = {
           inherit (cfg) domain;
-          tls_key = config.sops.secrets."kanidm_tls_key".path;
-          tls_chain = config.sops.secrets."kanidm_tls_chain".path;
+          tls_key = config.security.nix-secrets.secrets."kanidm/tls_key".path;
+          tls_chain = config.security.nix-secrets.secrets."kanidm/tls_chain".path;
           origin = "https://${cfg.domain}";
           bindaddress = "127.0.0.1:${toString cfg.port}";
           http_client_address_info.x-forward-for = config.polaris.trustedNetworks;
@@ -46,7 +45,7 @@ in
         enable = true;
         settings = {
           uri = "https://127.0.0.1:${toString cfg.port}";
-          ca_path = config.sops.secrets."kanidm_tls_chain".path;
+          ca_path = config.security.nix-secrets.secrets."kanidm/tls_chain".path;
         };
       };
       provision = {
@@ -145,7 +144,7 @@ in
 
           preferShortUsername = true;
 
-          basicSecretFile = config.sops.secrets."kanidm.oauth2_proxy/clientSecret".path;
+          basicSecretFile = config.security.nix-secrets.templates."kanidm/oauth2_proxy/clientSecret".path;
           originUrl = lib.map (domain: "https://${domain}${cfg-svc.oauth2_proxy.urlPrefix}/callback") [
             "authtest.girl.pp.ua"
             cfg-svc.paperless.domain
@@ -180,7 +179,7 @@ in
           preferShortUsername = true;
           allowInsecureClientDisablePkce = true; # Oracle Cloud does not support PKCE
 
-          basicSecretFile = config.sops.secrets."ociTenancy/clientSecret".path;
+          basicSecretFile = config.security.nix-secrets.secrets."ociTenancy/clientSecret".path;
           originUrl = [
             "https://${secrets.ociTenancy.identityDomain}/oauth2/v1/social/callback"
             "https://${secrets.ociTenancy.identityDomain}:443/oauth2/v1/social/callback"
@@ -203,7 +202,7 @@ in
           preferShortUsername = true;
           enableLegacyCrypto = true; # Nextcloud does not support ES256
 
-          basicSecretFile = config.sops.secrets."kanidm.nextcloud/clientSecret".path;
+          basicSecretFile = config.security.nix-secrets.templates."kanidm/nextcloud/clientSecret".path;
           originUrl = [
             "https://${cfg-svc.nextcloud.domain}/apps/user_oidc/code"
             "https://${cfg-svc.nextcloud.intraDomain}/apps/user_oidc/code"
@@ -231,7 +230,7 @@ in
 
           preferShortUsername = true;
 
-          basicSecretFile = config.sops.secrets."kanidm.paperless/clientSecret".path;
+          basicSecretFile = config.security.nix-secrets.templates."kanidm/paperless/clientSecret".path;
           originUrl = [
             "https://${cfg-svc.paperless.domain}/accounts/oidc/kanidm/login/callback/"
             "https://${cfg-svc.paperless.intraDomain}/accounts/oidc/kanidm/login/callback/"
@@ -258,7 +257,7 @@ in
 
           preferShortUsername = true;
 
-          basicSecretFile = config.sops.secrets."kanidm.immich/clientSecret".path;
+          basicSecretFile = config.security.nix-secrets.templates."kanidm/immich/clientSecret".path;
           originUrl = [
             "https://${cfg-svc.immich.domain}/auth/login"
             "https://${cfg-svc.immich.domain}/user-settings"
@@ -291,7 +290,7 @@ in
 
           preferShortUsername = true;
 
-          basicSecretFile = config.sops.secrets."kanidm.bookorbit/clientSecret".path;
+          basicSecretFile = config.security.nix-secrets.templates."kanidm/bookorbit/clientSecret".path;
           originUrl = [
             "https://${cfg-svc.bookorbit.domain}/oauth2-callback"
             "bookorbit://oauth2-callback"
@@ -316,7 +315,7 @@ in
 
           preferShortUsername = true;
 
-          basicSecretFile = config.sops.secrets."kanidm.karakeep/clientSecret".path;
+          basicSecretFile = config.security.nix-secrets.templates."kanidm/karakeep/clientSecret".path;
           originUrl = [
             "https://${cfg-svc.karakeep.domain}/api/auth/callback/custom"
           ];
@@ -338,7 +337,7 @@ in
 
           preferShortUsername = true;
 
-          basicSecretFile = config.sops.secrets."kanidm.home-assistant/clientSecret".path;
+          basicSecretFile = config.security.nix-secrets.templates."kanidm/home-assistant/clientSecret".path;
           originUrl = [
             "https://${cfg-svc.home-assistant.domain}/auth/oidc/callback"
           ];
@@ -364,7 +363,7 @@ in
 
           preferShortUsername = true;
 
-          basicSecretFile = config.sops.secrets."kanidm.grafana/clientSecret".path;
+          basicSecretFile = config.security.nix-secrets.templates."kanidm/grafana/clientSecret".path;
           originUrl = [
             "https://${cfg-svc.monitoring.server.domain}/login/generic_oauth"
           ];
@@ -390,7 +389,7 @@ in
 
           preferShortUsername = true;
 
-          basicSecretFile = config.sops.secrets."kanidm.forgejo/clientSecret".path;
+          basicSecretFile = config.security.nix-secrets.templates."kanidm/forgejo/clientSecret".path;
           originUrl = [
             "https://${cfg-svc.forgejo.domain}/user/oauth2/kanidm_internal/callback"
             "https://${cfg-svc.forgejo.intraDomain}/user/oauth2/kanidm_internal/callback"
@@ -423,74 +422,57 @@ in
           header @versioned >Cache-Control "public, max-age=31536000, immutable"
           reverse_proxy https://127.0.0.1:${toString cfg.port} {
             transport http {
-              tls_trust_pool file ${config.sops.secrets."kanidm_caddy_tls_chain".path}
+              tls_trust_pool file ${config.security.nix-secrets.templates."kanidm/caddy_tls_chain".path}
             }
           }
         '';
       };
     };
 
-    sops.secrets =
+    security.nix-secrets =
       let
         kanidmSecret = {
           mode = "0400";
           owner = "kanidm";
           group = "kanidm";
         };
+        clients = [
+          "oauth2_proxy"
+          "nextcloud"
+          "paperless"
+          "immich"
+          "forgejo"
+          "bookorbit"
+          "karakeep"
+          "home-assistant"
+          "grafana"
+        ];
       in
       {
-        "ociTenancy/clientSecret" = kanidmSecret;
-        "kanidm.oauth2_proxy/clientSecret" = kanidmSecret // {
-          key = "oauth2_proxy/clientSecret";
-        };
-        "kanidm.nextcloud/clientSecret" = kanidmSecret // {
-          key = "nextcloud/clientSecret";
-        };
-        "kanidm.paperless/clientSecret" = kanidmSecret // {
-          key = "paperless/clientSecret";
-        };
-        "kanidm.immich/clientSecret" = kanidmSecret // {
-          key = "immich/clientSecret";
-        };
-        "kanidm.forgejo/clientSecret" = kanidmSecret // {
-          key = "forgejo/clientSecret";
-        };
-        "kanidm.bookorbit/clientSecret" = kanidmSecret // {
-          key = "bookorbit/clientSecret";
-        };
-        "kanidm.karakeep/clientSecret" = kanidmSecret // {
-          key = "karakeep/clientSecret";
-        };
-        "kanidm.home-assistant/clientSecret" = kanidmSecret // {
-          key = "home-assistant/clientSecret";
-        };
-        "kanidm.grafana/clientSecret" = kanidmSecret // {
-          key = "grafana/clientSecret";
-        };
-        "kanidm_tls_key" = kanidmSecret // {
-          sopsFile = builtins.path {
-            path = "${inputs.secrets}/certs/tls_key.sops.pem";
-            name = "tls_key.sops.pem";
+        secrets = {
+          "ociTenancy/clientSecret" = kanidmSecret;
+          "kanidm/tls_key" = kanidmSecret;
+          "kanidm/tls_chain" = kanidmSecret;
+        }
+        // lib.genAttrs (map (client: "${client}/clientSecret") clients) (_: { });
+        templates =
+          lib.genAttrs' clients (
+            client:
+            lib.nameValuePair "kanidm/${client}/clientSecret" (
+              kanidmSecret
+              // {
+                content = config.security.nix-secrets.secrets."${client}/clientSecret".templateKey;
+              }
+            )
+          )
+          // {
+            "kanidm/caddy_tls_chain" = {
+              mode = "0400";
+              owner = "caddy";
+              group = "caddy";
+              content = config.security.nix-secrets.secrets."kanidm/tls_chain".templateKey;
+            };
           };
-          format = "binary";
-        };
-        "kanidm_tls_chain" = kanidmSecret // {
-          sopsFile = builtins.path {
-            path = "${inputs.secrets}/certs/tls_chain.sops.pem";
-            name = "tls_chain.sops.pem";
-          };
-          format = "binary";
-        };
-        "kanidm_caddy_tls_chain" = {
-          sopsFile = builtins.path {
-            path = "${inputs.secrets}/certs/tls_chain.sops.pem";
-            name = "tls_chain.sops.pem";
-          };
-          format = "binary";
-          mode = "0400";
-          owner = "caddy";
-          group = "caddy";
-        };
       };
   };
 }

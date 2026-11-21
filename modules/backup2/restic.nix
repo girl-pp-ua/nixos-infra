@@ -9,7 +9,7 @@ let
 
   repo = {
     repository = "${cfg.repository}/${host}";
-    passwordFile = config.sops.secrets."backup/restic/${host}/password".path;
+    passwordFile = config.security.nix-secrets.secrets."backup/restic/${host}/password".path;
     inherit (cfg) rcloneConfigFile environmentFile;
   };
   common = {
@@ -108,6 +108,6 @@ in
       restic-backups-backup2-maintenance = common;
     };
 
-    sops.secrets."backup/restic/${host}/password" = { };
+    security.nix-secrets.secrets."backup/restic/${host}/password" = { };
   };
 }

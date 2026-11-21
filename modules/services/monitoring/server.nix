@@ -238,7 +238,7 @@ in
     };
 
     systemd.services.victoriametrics.serviceConfig.LoadCredential = lib.mapAttrsToList (
-      job: _: "${job}:${config.sops.secrets."monitoring/${job}".path}"
+      job: ts: "${job}:${config.security.nix-secrets.secrets.${(lib.head ts).bearerTokenSecret}.path}"
     ) tokenJobs;
 
     services.victorialogs = {
@@ -272,7 +272,7 @@ in
           user = "grafana";
         };
         security = {
-          secret_key = "$__file{${config.sops.secrets."grafana/secret_key".path}}";
+          secret_key = "$__file{${config.security.nix-secrets.secrets."grafana/secret_key".path}}";
           cookie_secure = true;
           disable_gravatar = true;
           disable_initial_admin_creation = true;
@@ -311,7 +311,7 @@ in
           enabled = true;
           name = "Kanidm";
           inherit (cfg) client_id;
-          client_secret = "$__file{${config.sops.secrets."grafana/clientSecret".path}}";
+          client_secret = "$__file{${config.security.nix-secrets.secrets."grafana/clientSecret".path}}";
           scopes = "openid profile email groups";
           auth_url = idp.user_auth;
           token_url = idp.token_endpoint;
@@ -396,7 +396,7 @@ in
       };
     };
 
-    sops.secrets =
+    security.nix-secrets.secrets =
       let
         grafanaSecret = {
           mode = "0400";
@@ -408,8 +408,6 @@ in
         "grafana/secret_key" = grafanaSecret;
         "grafana/clientSecret" = grafanaSecret;
       }
-      // lib.mapAttrs' (
-        job: ts: lib.nameValuePair "monitoring/${job}" { key = (lib.head ts).bearerTokenSecret; }
-      ) tokenJobs;
+      // lib.mapAttrs' (_: ts: lib.nameValuePair (lib.head ts).bearerTokenSecret { }) tokenJobs;
   };
 }

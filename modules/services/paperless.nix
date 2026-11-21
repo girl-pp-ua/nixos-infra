@@ -97,8 +97,8 @@ in
       database.createLocally = true;
       configureTika = true;
 
-      passwordFile = config.sops.secrets."paperless/password".path;
-      environmentFile = config.sops.templates."paperless.env".path;
+      passwordFile = config.security.nix-secrets.secrets."paperless/password".path;
+      environmentFile = config.security.nix-secrets.templates."paperless.env".path;
 
       settings = {
         PAPERLESS_URL = "https://${cfg.domain}";
@@ -138,7 +138,7 @@ in
       };
     };
 
-    sops =
+    security.nix-secrets =
       let
         owned = {
           owner = "paperless";
@@ -153,7 +153,7 @@ in
         secrets."paperless/clientSecret" = { };
         templates."paperless.env" = owned // {
           content = ''
-            PAPERLESS_SECRET_KEY=${config.sops.placeholder."paperless/secretKey"}
+            PAPERLESS_SECRET_KEY=${config.security.nix-secrets.secrets."paperless/secretKey".templateKey}
             PAPERLESS_SOCIALACCOUNT_PROVIDERS=${
               builtins.toJSON {
                 openid_connect = {
@@ -169,7 +169,7 @@ in
                       provider_id = "kanidm";
                       name = "Girlcock";
                       client_id = "paperless";
-                      secret = config.sops.placeholder."paperless/clientSecret";
+                      secret = config.security.nix-secrets.secrets."paperless/clientSecret".templateKey;
                       settings = {
                         server_url = idp.oidc_discovery;
                         fetch_userinfo = true;

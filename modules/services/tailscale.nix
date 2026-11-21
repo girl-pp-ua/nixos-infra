@@ -34,7 +34,7 @@ in
         extraUpFlags = commonFlags ++ [
           "--advertise-tags=${lib.concatStringsSep "," cfg.tags}"
         ];
-        authKeyFile = config.sops.secrets."tailscale/authKey".path;
+        authKeyFile = config.security.nix-secrets.secrets."tailscale/authKey".path;
         authKeyParameters = {
           ephemeral = false;
           preauthorized = true;
@@ -57,7 +57,7 @@ in
     systemd.services.tailscaled.restartIfChanged = false; # just don't.
     # restartIfChanged = !polaris.services.tailscale.isTsDeploy;
 
-    sops.secrets."tailscale/authKey" = {
+    security.nix-secrets.secrets."tailscale/authKey" = {
       mode = "0400";
       owner = "root";
       group = "root";

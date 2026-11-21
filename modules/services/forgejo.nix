@@ -67,10 +67,10 @@ in
       };
       useWizard = false;
       secrets = {
-        security.SECRET_KEY = lib.mkForce config.sops.secrets."forgejo/secret_key".path;
-        security.INTERNAL_TOKEN = lib.mkForce config.sops.secrets."forgejo/internal_token".path;
-        oauth2.JWT_SECRET = lib.mkForce config.sops.secrets."forgejo/jwt_secret".path;
-        server.LFS_JWT_SECRET = lib.mkForce config.sops.secrets."forgejo/lfs_jwt_secret".path;
+        security.SECRET_KEY = lib.mkForce config.security.nix-secrets.secrets."forgejo/secret_key".path;
+        security.INTERNAL_TOKEN = lib.mkForce config.security.nix-secrets.secrets."forgejo/internal_token".path;
+        oauth2.JWT_SECRET = lib.mkForce config.security.nix-secrets.secrets."forgejo/jwt_secret".path;
+        server.LFS_JWT_SECRET = lib.mkForce config.security.nix-secrets.secrets."forgejo/lfs_jwt_secret".path;
       };
       settings = {
         server = {
@@ -263,7 +263,7 @@ in
               quota-group-map = builtins.toJSON { internal = [ "internal" ]; };
               quota-group-map-removal = true;
             };
-            secretFile = config.sops.secrets."forgejo/clientSecret".path;
+            secretFile = config.security.nix-secrets.secrets."forgejo/clientSecret".path;
           }
           {
             args = {
@@ -271,8 +271,8 @@ in
               name = "github";
               scopes = "read:user user:email";
             };
-            keyFile = config.sops.secrets."forgejo/github/clientId".path;
-            secretFile = config.sops.secrets."forgejo/github/clientSecret".path;
+            keyFile = config.security.nix-secrets.secrets."forgejo/github/clientId".path;
+            secretFile = config.security.nix-secrets.secrets."forgejo/github/clientSecret".path;
           }
           {
             args = {
@@ -284,8 +284,8 @@ in
               custom-profile-url = "https://codeberg.org/login/oauth/userinfo";
               icon-url = "https://codeberg.org/assets/img/favicon.svg";
             };
-            keyFile = config.sops.secrets."forgejo/codeberg/clientId".path;
-            secretFile = config.sops.secrets."forgejo/codeberg/clientSecret".path;
+            keyFile = config.security.nix-secrets.secrets."forgejo/codeberg/clientId".path;
+            secretFile = config.security.nix-secrets.secrets."forgejo/codeberg/clientSecret".path;
           }
           {
             args = {
@@ -293,8 +293,8 @@ in
               name = "gitlab";
               scopes = "read_user";
             };
-            keyFile = config.sops.secrets."forgejo/gitlab/clientId".path;
-            secretFile = config.sops.secrets."forgejo/gitlab/clientSecret".path;
+            keyFile = config.security.nix-secrets.secrets."forgejo/gitlab/clientId".path;
+            secretFile = config.security.nix-secrets.secrets."forgejo/gitlab/clientSecret".path;
           }
         ];
         customConf = "--work-path ${config.services.forgejo.stateDir} --config ${config.services.forgejo.customDir}/conf/app.ini";
@@ -456,7 +456,7 @@ in
     '';
     polaris.services.monitoring.exports.forgejo.port = cfg.metricsPort;
 
-    sops.secrets = {
+    security.nix-secrets.secrets = {
       "forgejo/secret_key" = { };
       "forgejo/internal_token" = { };
       "forgejo/jwt_secret" = { };

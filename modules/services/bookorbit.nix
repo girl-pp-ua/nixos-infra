@@ -202,7 +202,7 @@ in
         LIBRARY_BROWSE_ROOT = cfg.booksDir;
         DISABLE_LOCAL_AUTH = "true";
       };
-      environmentFile = config.sops.templates."bookorbit.env".path;
+      environmentFile = config.security.nix-secrets.templates."bookorbit.env".path;
     };
 
     systemd.tmpfiles.rules = [
@@ -221,7 +221,7 @@ in
         User = config.services.bookorbit.user;
         Group = config.services.bookorbit.group;
         LoadCredential = [
-          "clientSecret:${config.sops.secrets."bookorbit/clientSecret".path}"
+          "clientSecret:${config.security.nix-secrets.secrets."bookorbit/clientSecret".path}"
         ];
       };
       script = ''
@@ -266,20 +266,20 @@ in
       wants = [ "bookorbit-sso-provision.service" ];
     };
 
-    sops.secrets = {
+    security.nix-secrets.secrets = {
       "bookorbit/clientSecret" = { };
       "bookorbit/jwt_secret" = { };
       "bookorbit/podcast_encryption_key" = { };
       "bookorbit/book_request_encryption_key" = { };
       "bookorbit/setup_bootstrap_token" = { };
     };
-    sops.templates."bookorbit.env" = {
+    security.nix-secrets.templates."bookorbit.env" = {
       mode = "0400";
       content = ''
-        JWT_SECRET=${config.sops.placeholder."bookorbit/jwt_secret"}
-        PODCAST_ENCRYPTION_KEY=${config.sops.placeholder."bookorbit/podcast_encryption_key"}
-        BOOK_REQUEST_ENCRYPTION_KEY=${config.sops.placeholder."bookorbit/book_request_encryption_key"}
-        SETUP_BOOTSTRAP_TOKEN=${config.sops.placeholder."bookorbit/setup_bootstrap_token"}
+        JWT_SECRET=${config.security.nix-secrets.secrets."bookorbit/jwt_secret".templateKey}
+        PODCAST_ENCRYPTION_KEY=${config.security.nix-secrets.secrets."bookorbit/podcast_encryption_key".templateKey}
+        BOOK_REQUEST_ENCRYPTION_KEY=${config.security.nix-secrets.secrets."bookorbit/book_request_encryption_key".templateKey}
+        SETUP_BOOTSTRAP_TOKEN=${config.security.nix-secrets.secrets."bookorbit/setup_bootstrap_token".templateKey}
       '';
     };
 

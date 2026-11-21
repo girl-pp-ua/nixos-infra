@@ -49,7 +49,7 @@ in
     services.oauth2-proxy = {
       enable = true;
 
-      keyFile = config.sops.templates."oauth2_proxy.keyFile".path;
+      keyFile = config.security.nix-secrets.templates."oauth2_proxy.keyFile".path;
 
       httpAddress = "http://127.0.0.1:${toString cfg.port}";
       proxyPrefix = cfg.urlPrefix;
@@ -142,7 +142,7 @@ in
       }
     '';
 
-    sops =
+    security.nix-secrets =
       let
         perms = {
           mode = "0400";
@@ -155,8 +155,8 @@ in
         secrets."oauth2_proxy/cookieSecret" = { };
         templates."oauth2_proxy.keyFile" = perms // {
           content = ''
-            OAUTH2_PROXY_CLIENT_SECRET=${config.sops.placeholder."oauth2_proxy/clientSecret"}
-            OAUTH2_PROXY_COOKIE_SECRET=${config.sops.placeholder."oauth2_proxy/cookieSecret"}
+            OAUTH2_PROXY_CLIENT_SECRET=${config.security.nix-secrets.secrets."oauth2_proxy/clientSecret".templateKey}
+            OAUTH2_PROXY_COOKIE_SECRET=${config.security.nix-secrets.secrets."oauth2_proxy/cookieSecret".templateKey}
           '';
         };
       };

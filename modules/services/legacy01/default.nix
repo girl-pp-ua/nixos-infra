@@ -1,7 +1,7 @@
 # legacy01: isolated nixos-container for legacy side projects (devlootbox + its postgres + garage)
 #
 # state lives on the host in ${stateDir} and is bind-mounted into the container,
-# secrets are decrypted by sops on the host and handed to the container as nspawn credentials
+# secrets are decrypted by nix-secrets on the host and handed to the container as nspawn credentials
 {
   config,
   lib,
@@ -88,7 +88,7 @@ in
       };
 
       extraFlags = lib.mapAttrsToList (
-        id: secret: "--load-credential=${id}:${config.sops.secrets.${secret}.path}"
+        id: secret: "--load-credential=${id}:${config.security.nix-secrets.secrets.${secret}.path}"
       ) credentials;
 
       specialArgs = {
@@ -124,12 +124,10 @@ in
       inherit (cfg) externalInterface;
     };
 
-    sops.secrets = lib.mapAttrs' (
-      _: secret:
-      lib.nameValuePair secret {
-        restartUnits = [ "container@${name}.service" ];
-      }
-    ) credentials;
+    security.nix-secrets.secrets = lib.genAttrs (builtins.attrValues credentials) (_: { });
+    systemd.services."container@${name}".restartTriggers = map (
+      secret: "${config.security.nix-secrets.storage}/${secret}.enc"
+    ) (builtins.attrValues credentials);
 
     services.caddy.virtualHosts."media-cdn.devlootbox.on.lunya.cc".extraConfig = ''
       import encode

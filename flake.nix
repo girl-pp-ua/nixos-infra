@@ -15,8 +15,8 @@
       url = "git+file:./submodules/devlootbox";
     };
 
-    sops-nix = {
-      url = "github:Mic92/sops-nix";
+    nix-secrets = {
+      url = "github:unnamed-systems/nix-secrets";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     deploy-rs = {
@@ -70,7 +70,7 @@
             };
             modules = [
               ./modules
-              inputs.sops-nix.nixosModules.sops
+              inputs.nix-secrets.nixosModules.default
             ]
             ++ extraModules;
           });
@@ -141,18 +141,20 @@
             devShells.default = pkgs.mkShell {
               packages = [
                 inputs'.deploy-rs.packages.deploy-rs
+                (pkgs.writeShellScriptBin "nix-secrets" ''
+                  exec ${inputs'.nix-secrets.packages.nix-secrets}/bin/nix-secrets \
+                    -i "$HOME/.ssh/nixos_infra" "$@"
+                '')
               ]
               ++ (with pkgs; [
                 nil
                 nixd
                 nixfmt
                 nixfmt-tree
-                sops
                 age
-                ssh-to-age
               ]);
               shellHook = ''
-                export SOPS_AGE_KEY=$(ssh-to-age -i ~/.ssh/id_ed25519 -private-key)
+                export NIX_SECRETS_STORAGE_PATH="$PWD/submodules/secrets/storage"
               '';
             };
           };

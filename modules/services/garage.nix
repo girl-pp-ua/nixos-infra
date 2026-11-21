@@ -47,7 +47,7 @@ in
         # metadata_fsync = true;
         # data_fsync = false;
 
-        rpc_secret_file = config.sops.secrets."garage/rpc_secret".path;
+        rpc_secret_file = config.security.nix-secrets.secrets."garage/rpc_secret".path;
         rpc_bind_addr = "[::]:${toString cfg.rpc_port}";
         rpc_bind_outgoing = true;
 
@@ -64,8 +64,8 @@ in
 
         admin = {
           api_bind_addr = "[::]:3903";
-          admin_token_file = config.sops.secrets."garage/admin_token".path;
-          metrics_token_file = config.sops.secrets."garage/metrics_token".path;
+          admin_token_file = config.security.nix-secrets.secrets."garage/admin_token".path;
+          metrics_token_file = config.security.nix-secrets.secrets."garage/metrics_token".path;
           metrics_require_token = true;
         };
       };
@@ -109,7 +109,7 @@ in
       ];
     };
 
-    sops.secrets =
+    security.nix-secrets.secrets =
       let
         usr = {
           mode = "0400";

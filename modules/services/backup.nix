@@ -50,13 +50,13 @@ in
         persistentTimer = true;
         encryption = {
           mode = "repokey";
-          passCommand = "cat ${config.sops.secrets."borg/data0/passphrase".path}";
+          passCommand = "cat ${config.security.nix-secrets.secrets."borg/data0/passphrase".path}";
         };
         compression = "auto,zstd";
       };
     };
 
-    sops.secrets = {
+    security.nix-secrets.secrets = {
       "borg/data0/passphrase" = { };
     };
   };

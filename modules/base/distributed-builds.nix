@@ -2,11 +2,10 @@
   lib,
   pkgs,
   config,
-  inputs,
   ...
 }:
 let
-  sshKey = config.sops.secrets."keys/builder".path;
+  sshKey = config.security.nix-secrets.secrets."keys/builder".path;
 
   machines = {
     astra = {
@@ -77,7 +76,7 @@ let
     #   speedFactor = 30;
     # };
   };
-  builderPubkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJz3xo+K9lHHXuR5rLWhwxok1/CP9KBFs7GEdEIYFl9t";
+  builderPubkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHVq+61zP0TvFXblmxghQ+5CHQ/H+BPbhfQLSlFfEC9G";
   isBuildMachine = machines ? ${config.networking.hostName};
   dispatchesBuilds = config.services.hydra.enable;
 in
@@ -89,12 +88,7 @@ in
         buildMachines = builtins.attrValues machines;
       };
 
-      sops.secrets."keys/builder" = {
-        sopsFile = builtins.path {
-          path = "${inputs.secrets}/keys/builder.sops";
-          name = "builder.sops";
-        };
-        format = "binary";
+      security.nix-secrets.secrets."keys/builder" = {
         mode = "0400";
         owner = "hydra-queue-runner";
         group = "hydra";

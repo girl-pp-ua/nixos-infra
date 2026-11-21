@@ -166,7 +166,7 @@ in
         LOG_LEVEL = "info";
         NO_COLOR = "true";
       };
-      environmentFile = config.sops.templates."karakeep.env".path;
+      environmentFile = config.security.nix-secrets.templates."karakeep.env".path;
     };
 
     polaris.backup2 = {
@@ -202,13 +202,13 @@ in
     # (tesseract downloads language data on first use)
     systemd.services.karakeep-workers.serviceConfig.CacheDirectory = "karakeep-ocr";
 
-    sops.secrets."karakeep/clientSecret" = { };
-    sops.templates."karakeep.env" = {
+    security.nix-secrets.secrets."karakeep/clientSecret" = { };
+    security.nix-secrets.templates."karakeep.env" = {
       mode = "0400";
       owner = "karakeep";
       group = "karakeep";
       content = ''
-        OAUTH_CLIENT_SECRET=${config.sops.placeholder."karakeep/clientSecret"}
+        OAUTH_CLIENT_SECRET=${config.security.nix-secrets.secrets."karakeep/clientSecret".templateKey}
       '';
     };
 
