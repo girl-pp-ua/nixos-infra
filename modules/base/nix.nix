@@ -6,24 +6,18 @@
 }:
 {
   nix = {
-    # lixPackageSets.git is broken as of nixpkgs 09063bd
-    package = pkgs.lixPackageSets.latest.lix;
-    # package = pkgs.lix;
+    package = pkgs.nixVersions.git;
     settings = {
       experimental-features = [
-        # 2024-11-17
-        # https://git.lix.systems/lix-project/lix/src/branch/main/src/libutil/experimental-features
+        # `nix __dump-xp-features`
         "auto-allocate-uids"
         "cgroups"
-        "daemon-trust-override"
         # "fetch-closure"
         "flakes"
         "nix-command"
-        # "no-url-literals"
         # "parse-toml-timestamps"
-        "pipe-operator"
+        "pipe-operators"
         "read-only-local-store"
-        "repl-automation"
       ];
       system-features = [
         "uid-range"
