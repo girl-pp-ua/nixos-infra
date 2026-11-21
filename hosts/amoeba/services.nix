@@ -8,7 +8,14 @@
     bookorbit.enable = true;
     karakeep.enable = true;
     attic.enable = true;
-    hydra.enable = true;
+    hydra = {
+      enable = true;
+      builder = {
+        enable = true;
+        maxJobs = 8;
+        speedFactor = 20;
+      };
+    };
     monitoring.server.enable = true;
 
     legacy01.enable = true; # devlootbox

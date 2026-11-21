@@ -11,25 +11,13 @@ let
   secrets' = config.security.nix-secrets.secrets;
   hostName = config.networking.hostName;
 
-  # machines running hydra-queue-builder-dev
-  builders = {
-    amoeba = {
-      maxJobs = 8;
-      speedFactor = 20;
-    };
-    astra = {
-      maxJobs = 8;
-      speedFactor = 10;
-    };
-    dell-sv = {
-      maxJobs = 4;
-      speedFactor = 10;
-    };
-  };
-
-  hydraHost = lib.findFirst (
-    name: inputs.self.nixosConfigurations.${name}.config.polaris.services.hydra.enable
-  ) null (lib.attrNames inputs.self.nixosConfigurations);
+  hosts = inputs.self.nixosConfigurations;
+  hydraHost = lib.findFirst (name: hosts.${name}.config.polaris.services.hydra.enable) null (
+    lib.attrNames hosts
+  );
+  builderHosts = lib.filter (name: hosts.${name}.config.polaris.services.hydra.builder.enable) (
+    lib.attrNames hosts
+  );
 
   grpcPort = 16113;
   restPort = 16114;
@@ -80,6 +68,18 @@ in
       type = lib.types.str;
       default = "hydra.lunya.cc";
     };
+    # dials in to the queue runner over tailscale
+    builder = {
+      enable = lib.mkEnableOption "hydra builder";
+      maxJobs = lib.mkOption {
+        type = lib.types.ints.positive;
+        default = 4;
+      };
+      speedFactor = lib.mkOption {
+        type = lib.types.ints.positive;
+        default = 1;
+      };
+    };
   };
 
   config = lib.mkMerge [
@@ -122,7 +122,7 @@ in
           port = grpcPort;
         };
         rest.port = restPort;
-        settings.tokenPaths = map (name: secrets'."hydra/builders/${name}".path) (lib.attrNames builders);
+        settings.tokenPaths = map (name: secrets'."hydra/builders/${name}".path) builderHosts;
       };
       # only builders on the tailnet, and they still need a token
       networking.firewall.interfaces.${config.services.tailscale.interfaceName}.allowedTCPPorts = [
@@ -157,7 +157,7 @@ in
           push = [ "main" ];
         };
       }
-      // lib.concatMapAttrs (name: _: builderToken name) builders;
+      // lib.mergeAttrsList (map builderToken builderHosts);
 
       # base/nix.nix turns these off, hydra needs them
       nix.settings.keep-derivations = lib.mkForce true;
@@ -194,24 +194,15 @@ in
           '';
         };
       };
-
-      systemd.services.kick-hydra = {
-        script = ''
-          ${pkgs.systemd}/bin/systemctl restart hydra-evaluator
-          ${pkgs.systemd}/bin/systemctl restart hydra-queue-runner-dev
-        '';
-        startAt = "0/6:00";
-        wantedBy = [ "multi-user.target" ];
-      };
     })
 
-    (lib.mkIf (hydraHost != null && builders ? ${hostName}) {
+    (lib.mkIf (hydraHost != null && cfg.builder.enable) {
       services.hydra-queue-builder-dev = {
         enable = true;
         queueRunnerAddr = "http://${config.polaris.hosts.${hydraHost}.internal.fqdn}:${toString grpcPort}";
         authorizationFile = secrets'."hydra/builders/${hostName}".path;
         settings = {
-          inherit (builders.${hostName}) maxJobs speedFactor;
+          inherit (cfg.builder) maxJobs speedFactor;
         };
       };
       security.nix-secrets.secrets = builderToken hostName;

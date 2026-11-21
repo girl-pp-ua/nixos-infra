@@ -18,6 +18,12 @@
       repo = "/mnt/data/backups";
     };
 
+    hydra.builder = {
+      enable = true;
+      maxJobs = 4;
+      speedFactor = 10;
+    };
+
     # experimental stuff:
     # experimental = {
     #   gayming-nixos = {
