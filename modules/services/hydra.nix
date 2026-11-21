@@ -161,6 +161,14 @@ in
       services.postgresql.enable = true;
       polaris.services.oauth2_proxy.enable = true;
 
+      services.anubis.instances.hydra.settings = {
+        TARGET = "http://127.0.0.1:${toString cfg.port}";
+        SERVE_ROBOTS_TXT = true;
+      };
+      users.users.caddy.extraGroups = [
+        config.services.anubis.instances.hydra.group
+      ];
+
       systemd.services.hydra-init = {
         after = [ "postgresql.target" ];
         requires = [ "postgresql.target" ];
@@ -322,6 +330,18 @@ in
             handle_path /ws* {
               reverse_proxy [::1]:${toString wsPort}
             }
+
+            @anubis {
+              not client_ip ${lib.concatStringsSep " " config.polaris.trustedNetworks}
+              not path /api/* /ws* ${config.polaris.services.oauth2_proxy.urlPrefix}/*
+              not path_regexp /badge$
+            }
+            handle @anubis {
+              reverse_proxy unix/${config.services.anubis.instances.hydra.settings.BIND} {
+                header_up X-Real-IP {client_ip}
+              }
+            }
+
             reverse_proxy 127.0.0.1:${toString cfg.port}
           '';
         };
