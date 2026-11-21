@@ -562,12 +562,15 @@ in
 
     # metricsToken: a jwt signed with metricsJwtKey, with iss = "prometheus"
     # .storage/http pins hass to localhost (it wins over the yaml), so caddy fronts the scrape
-    services.caddy.virtualHosts."http://:${toString cfg.metricsPort}".extraConfig = ''
-      handle /api/prometheus {
-        reverse_proxy 127.0.0.1:${toString cfg.port}
-      }
-      respond 403
-    '';
+    services.caddy.virtualHosts."http://:${toString cfg.metricsPort}" = {
+      listenAddresses = config.polaris.services.caddy.internalListenAddresses;
+      extraConfig = ''
+        handle /api/prometheus {
+          reverse_proxy 127.0.0.1:${toString cfg.port}
+        }
+        respond 403
+      '';
+    };
     polaris.services.monitoring.exports.home-assistant = {
       port = cfg.metricsPort;
       path = "/api/prometheus";
