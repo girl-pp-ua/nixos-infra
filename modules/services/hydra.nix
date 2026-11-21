@@ -31,6 +31,10 @@ let
 
   # same as what the web ui does when a declarative spec is set
   provisionProjectSql = pkgs.writeText "hydra-provision-project.sql" ''
+    INSERT INTO users (username, fullname, emailaddress, password)
+    VALUES (:'owner', 'Declarative projects', ''', '!')
+    ON CONFLICT (username) DO NOTHING;
+
     INSERT INTO projects (name, displayname, description, enabled, hidden, owner, declfile, decltype, declvalue)
     VALUES (:'name', :'displayname', :'description', 1, 0, :'owner', :'declfile', :'decltype', :'declvalue')
     ON CONFLICT (name) DO UPDATE SET
@@ -115,10 +119,10 @@ in
               type = lib.types.str;
               default = "";
             };
-            # HACK: has to exist as a hydra user; oidc users are <provider>:<kanidm uuid>
+            # local hydra user, created if missing
             owner = lib.mkOption {
               type = lib.types.str;
-              default = "kanidm:c11d492a-577c-4abe-b9f9-1a35ec902b73"; # luna
+              default = "declarative";
             };
             spec = {
               file = lib.mkOption { type = lib.types.str; };
