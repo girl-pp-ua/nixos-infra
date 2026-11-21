@@ -49,11 +49,11 @@
         "systems": "systems_2"
       },
       "locked": {
-        "lastModified": 1785252066,
-        "narHash": "sha256-/oYJKYWYYDrQXt5VHqlLD4lXJnPEV8hfpE8ppNIiFMQ=",
+        "lastModified": 1795268632,
+        "narHash": "sha256-PeRYfIQ7K16rZtYW46IT/7MJjfnIze9+QIDe2qJUa6g=",
         "ref": "refs/heads/production",
-        "rev": "8f25360a8809f78f19c1bb3b3ed865353056d95e",
-        "revCount": 106,
+        "rev": "bab7b96b7bcf6aa006352b9ea80f0b1152834192",
+        "revCount": 107,
         "type": "git",
         "url": "file:./submodules/devlootbox"
       },
