@@ -18,11 +18,27 @@ let
     let
       # if navigating to any admin page and not re-authenticated...
       # ...force reload so redirect properly takes over
+      #
+      # immich (3.4) treats an admin as logged out if GET /api/admin/config fails on load,
+      # so fake an empty one while oauth2-proxy is 403ing it.
+      # admin pages always reload (above), so they never see the fake
       script = ''
         document.addEventListener('click', (e) => {
           const a = e.target.closest?.('a[href="/admin"], a[href^="/admin/"]');
           if (a) a.dataset.sveltekitReload = document.cookie.includes('_oauth2_proxy_pass=') ? 'off' : 'true';
         }, true);
+
+        const nativeFetch = window.fetch;
+        window.fetch = async (input, init) => {
+          const res = await nativeFetch(input, init);
+          const req = input instanceof Request ? input : null;
+          const url = new URL(req ? req.url : input, location.href);
+          const method = (init?.method ?? req?.method ?? 'GET').toUpperCase();
+          if (res.status === 403 && method === 'GET' && url.pathname === '/api/admin/config') {
+            return new Response('{}', { status: 200, headers: { 'content-type': 'application/json' } });
+          }
+          return res;
+        };
       '';
     in
     pkgs.runCommand "immich-index.html" { } ''
