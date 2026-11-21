@@ -115,10 +115,10 @@ in
               type = lib.types.str;
               default = "";
             };
-            # has to exist as a hydra user
+            # HACK: has to exist as a hydra user; oidc users are <provider>:<kanidm uuid>
             owner = lib.mkOption {
               type = lib.types.str;
-              default = "luna";
+              default = "kanidm:c11d492a-577c-4abe-b9f9-1a35ec902b73"; # luna
             };
             spec = {
               file = lib.mkOption { type = lib.types.str; };
@@ -159,6 +159,8 @@ in
           max_output_size = ${toString (8 * 1024 * 1024 * 1024)}
           ws_endpoint = wss://${cfg.domain}/ws
           queue_runner_endpoint = http://[::1]:${toString restPort}
+          # sso only
+          local_auth_enabled = 0
 
           <runcommand>
             job = *:*:*
