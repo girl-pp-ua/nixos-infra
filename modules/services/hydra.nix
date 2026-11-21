@@ -143,6 +143,10 @@ in
           secrets'."ci/github/devlootbox_token".templateKey;
       };
 
+      systemd.tmpfiles.rules = lib.mkBefore [
+        "d /var/lib/hydra/runcommand-logs 0750 hydra-queue-runner hydra -"
+      ];
+
       # runcommand plugins run inside hydra-notify
       systemd.services.hydra-notify.serviceConfig.LoadCredential = [
         "attic-token:${secrets'."hydra/attic_token".path}"
