@@ -4,12 +4,13 @@
   lib,
   libx,
   inputs,
+  secrets,
   ...
 }:
 let
   cfg = config.polaris.services.nixbot;
   cfg-svc = config.polaris.services;
-  secrets = config.security.nix-secrets.secrets;
+  secrets' = config.security.nix-secrets.secrets;
   kanidmPersons =
     (lib.findFirst (host: host.config.polaris.services.kanidm.enable) (throw "no host runs kanidm") (
       lib.attrValues inputs.self.nixosConfigurations
@@ -53,7 +54,7 @@ in
     };
     github.appId = lib.mkOption {
       type = lib.types.nullOr lib.types.int;
-      default = null;
+      default = secrets.nixbot.github.appId or null;
       description = "GitHub App id";
     };
   };
@@ -79,22 +80,22 @@ in
         name = "Girlcock";
         discoveryUrl = idp.oidc_discovery;
         clientId = cfg.client_id;
-        clientSecretFile = secrets."nixbot/clientSecret".path;
+        clientSecretFile = secrets'."nixbot/clientSecret".path;
         mapping.username = "preferred_username";
       };
 
       gitea = {
         enable = true;
         instanceUrl = "https://${cfg-svc.forgejo.domain}";
-        tokenFile = secrets."nixbot/forgejo_token".path;
+        tokenFile = secrets'."nixbot/forgejo_token".path;
         topic = "nixbot";
       };
 
       github = lib.mkIf (cfg.github.appId != null) {
         enable = true;
         inherit (cfg.github) appId;
-        appSecretKeyFile = secrets."nixbot/github/app_key".path;
-        webhookSecretFile = secrets."nixbot/github/webhook_secret".path;
+        appSecretKeyFile = secrets'."nixbot/github/app_key".path;
+        webhookSecretFile = secrets'."nixbot/github/webhook_secret".path;
         topic = "nixbot";
       };
 
@@ -111,7 +112,7 @@ in
     # upstream binds the port on every interface, caddy is the only client
     systemd.sockets.nixbot.socketConfig.ListenStream = lib.mkForce "127.0.0.1:${toString cfg.port}";
     systemd.services.nixbot.serviceConfig.LoadCredential = [
-      "attic-token:${secrets."nixbot/attic_token".path}"
+      "attic-token:${secrets'."nixbot/attic_token".path}"
     ];
 
     security.nix-secrets.secrets = {
@@ -124,9 +125,11 @@ in
         netrc = false;
       };
     }
+    // {
+      "nixbot/github/webhook_secret".generator.alphanumeric.length = 64;
+    }
     // lib.optionalAttrs (cfg.github.appId != null) {
       "nixbot/github/app_key" = { };
-      "nixbot/github/webhook_secret" = { };
     };
 
     services.caddy.virtualHosts.${cfg.domain}.extraConfig = ''
