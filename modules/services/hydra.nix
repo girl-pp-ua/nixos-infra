@@ -9,6 +9,10 @@
 let
   cfg = config.polaris.services.hydra;
   secrets' = config.security.nix-secrets.secrets;
+  idp = libx.idp {
+    domain = config.polaris.services.kanidm.domain;
+    inherit (cfg) client_id;
+  };
   hostName = config.networking.hostName;
 
   hosts = inputs.self.nixosConfigurations;
@@ -96,6 +100,10 @@ in
       type = lib.types.str;
       default = "hydra.lunya.cc";
     };
+    client_id = lib.mkOption {
+      type = lib.types.str;
+      default = "hydra";
+    };
     projects = lib.mkOption {
       description = "Declarative projects";
       default = { };
@@ -156,6 +164,15 @@ in
             job = *:*:*
             command = ${atticPush}
           </runcommand>
+
+          <oidc>
+            <provider kanidm>
+              display_name = "Kanidm"
+              discovery_url = ${idp.oidc_discovery}
+              client_id = ${cfg.client_id}
+              client_secret_file = ${secrets'."hydra/clientSecret".path}
+            </provider>
+          </oidc>
         '';
       };
       services.postgresql.enable = true;
@@ -289,6 +306,13 @@ in
       ];
 
       security.nix-secrets.secrets = {
+        # only hydra-server reads this
+        "hydra/clientSecret" = {
+          generator.alphanumeric.length = 64;
+          mode = "0400";
+          owner = "hydra-www";
+          group = "hydra";
+        };
         "ci/github/secrets_token" = { };
         "ci/github/devlootbox_token" = { };
         "hydra/attic_token".generator.attic-token = {

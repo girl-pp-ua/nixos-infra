@@ -79,6 +79,7 @@ in
               "karakeep.admin"
               "home-assistant.admin"
               "grafana.admin"
+              "hydra.admin"
               "hydra.downloads"
             ];
           };
@@ -388,6 +389,26 @@ in
           };
         };
 
+        groups."hydra.access".members = [ "hydra.admin" ];
+        groups."hydra.admin" = { };
+        systems.oauth2.${cfg-svc.hydra.client_id} = {
+          displayName = "Hydra";
+          originLanding = "https://${cfg-svc.hydra.domain}/";
+
+          basicSecretFile = config.security.nix-secrets.templates."kanidm/hydra/clientSecret".path;
+          # the last path segment is the <provider> name in hydra.conf
+          originUrl = [
+            "https://${cfg-svc.hydra.domain}/oidc-callback/kanidm"
+          ];
+
+          scopeMaps."hydra.access" = [
+            "openid"
+            "email"
+            "profile"
+          ];
+          claimMaps.hydra_roles.valuesByGroup."hydra.admin" = [ "admin" ];
+        };
+
         groups."forgejo.access".members = [ "forgejo.admin" ];
         groups."forgejo.admin" = { };
         systems.oauth2.${cfg-svc.forgejo.client_id} = {
@@ -454,6 +475,7 @@ in
           "karakeep"
           "home-assistant"
           "grafana"
+          "hydra"
         ];
       in
       {
