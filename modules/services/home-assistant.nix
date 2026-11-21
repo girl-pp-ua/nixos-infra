@@ -39,6 +39,10 @@ in
       type = lib.types.int;
       default = 8123;
     };
+    metricsPort = lib.mkOption {
+      type = lib.types.port;
+      default = 16131;
+    };
     lanInterface = lib.mkOption {
       type = lib.types.str;
       default = "eth0";
@@ -557,8 +561,15 @@ in
     };
 
     # metricsToken: a jwt signed with metricsJwtKey, with iss = "prometheus"
+    # .storage/http pins hass to localhost (it wins over the yaml), so caddy fronts the scrape
+    services.caddy.virtualHosts."http://:${toString cfg.metricsPort}".extraConfig = ''
+      handle /api/prometheus {
+        reverse_proxy 127.0.0.1:${toString cfg.port}
+      }
+      respond 403
+    '';
     polaris.services.monitoring.exports.home-assistant = {
-      inherit (cfg) port;
+      port = cfg.metricsPort;
       path = "/api/prometheus";
       bearerTokenSecret = "home-assistant/metricsToken";
     };
