@@ -76,7 +76,7 @@ let
     #   speedFactor = 30;
     # };
   };
-  builderPubkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHVq+61zP0TvFXblmxghQ+5CHQ/H+BPbhfQLSlFfEC9G";
+  builderPubkey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIG4nyexgv9f/uqBnD1tVzyhZ237AxtLxWv4h4dyxtOLW";
   isBuildMachine = machines ? ${config.networking.hostName};
 in
 {
