@@ -1,0 +1,19 @@
+{
+  "enabled": 1,
+  "hidden": false,
+  "description": "nixos-infra jobsets",
+  "nixexprinput": "src",
+  "nixexprpath": "hydra/jobsets.nix",
+  "checkinterval": 300,
+  "schedulingshares": 10,
+  "enableemail": false,
+  "emailoverride": "",
+  "keepnr": 1,
+  "inputs": {
+    "src": {
+      "type": "git",
+      "value": "https://github.com/girl-pp-ua/nixos-infra master",
+      "emailresponsible": false
+    }
+  }
+}
