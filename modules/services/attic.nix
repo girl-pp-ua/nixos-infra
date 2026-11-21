@@ -104,7 +104,8 @@ in
             cfg.intraDomain
           ];
 
-          database.url = "postgresql:///atticd?host=/run/postgresql";
+          # sqlx defaults to user "anonymous" without one
+          database.url = "postgresql:///atticd?host=/run/postgresql&user=atticd";
 
           garbage-collection = {
             interval = "12 hours";
@@ -134,17 +135,18 @@ in
 
       systemd.services.atticd-provision = {
         description = "Provision attic caches";
-        after = [ "atticd.service" ];
-        requires = [ "atticd.service" ];
-        wantedBy = [ "multi-user.target" ];
+        after = [ "postgresql.target" ];
+        requires = [ "postgresql.target" ];
+        before = [ "atticd.service" ];
+        wantedBy = [ "atticd.service" ];
         path = [ config.services.postgresql.package ];
         serviceConfig = {
           Type = "oneshot";
           RemainAfterExit = true;
-          TimeoutStartSec = "2min";
           DynamicUser = true;
           User = config.services.atticd.user;
           Group = config.services.atticd.group;
+          EnvironmentFile = config.services.atticd.environmentFile;
           PrivateNetwork = true;
           RestrictAddressFamilies = [ "AF_UNIX" ];
           inherit (config.systemd.services.atticd.serviceConfig)
@@ -174,12 +176,10 @@ in
             name: _: "${name}:${config.security.nix-secrets.secrets.${secretName name}.path}"
           ) cfg.caches;
         };
-        # atticd runs migrations on startup, Type=simple doesn't wait for that
+        # migrate here so the cache table exists before atticd
         script = ''
+          ${lib.removeSuffix "--mode ${config.services.atticd.mode}" config.systemd.services.atticd.serviceConfig.ExecStart} --mode db-migrations
           db=${lib.escapeShellArg config.services.atticd.settings.database.url}
-          until [ "$(psql "$db" -tAc "SELECT to_regclass('public.cache') IS NOT NULL")" = t ]; do
-            sleep 1
-          done
         ''
         + lib.concatStrings (
           lib.mapAttrsToList (name: c: ''
