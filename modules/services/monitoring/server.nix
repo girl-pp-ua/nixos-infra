@@ -165,6 +165,15 @@ let
 
   hasAttic = config.polaris.services.attic.enable;
 
+  grafana-postgresql-datasource = pkgs.grafanaPlugins.grafanaPlugin {
+    pname = "grafana-postgresql-datasource";
+    version = "13.0.7";
+    packages.linux-amd64 = {
+      url = "https://grafana.com/api/plugins/grafana-postgresql-datasource/versions/13.0.7/download?os=linux&arch=amd64";
+      hash = "sha256-vHIvwZQHM5CsX7+KSyRwlj6m+0mwrFyeRfpgNnnNEbg=";
+    };
+  };
+
   dashboards = pkgs.linkFarm "grafana-dashboards" (
     lib.optionalAttrs hasAttic { "Services/attic.json" = atticDashboard; }
     // {
@@ -388,10 +397,14 @@ in
 
     services.grafana = {
       enable = true;
-      declarativePlugins = with pkgs.grafanaPlugins; [
-        victoriametrics-logs-datasource
-        grafana-metricsdrilldown-app
-      ];
+      declarativePlugins =
+        with pkgs.grafanaPlugins;
+        [
+          prometheus
+          victoriametrics-logs-datasource
+          grafana-metricsdrilldown-app
+        ]
+        ++ lib.optional hasAttic grafana-postgresql-datasource;
       settings = {
         server = {
           http_addr = "127.0.0.1";
