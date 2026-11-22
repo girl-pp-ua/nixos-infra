@@ -19,5 +19,10 @@
     monitoring.server.enable = true;
 
     legacy01.enable = true; # devlootbox
+
+    minecraft-servers.sillicon = {
+      enable = true;
+      bluemap.domain = "staging.silliconproject.lunya.cc";
+    };
   };
 }

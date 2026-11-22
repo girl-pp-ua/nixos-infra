@@ -10,7 +10,7 @@ in
     SOA = {
       nameServer = "ns1.${name}.";
       adminEmail = "hostmaster@${name}";
-      serial = 2026112101; # YYYYMMDDNN
+      serial = 2026112201; # YYYYMMDDNN
     };
 
     NS = [
@@ -64,6 +64,9 @@ in
         CNAME = [ "t.sni.global.fastly.net." ];
         subdomains._acme-challenge.CNAME = [ "nctt1lrellffmz7wiv.fastly-validations.com." ];
       };
+
+      # minecraft servers
+      silliconproject.subdomains.staging.CNAME = [ "amoeba" ];
 
       _atproto.TXT = [ "did=did:plc:wvftnj7awmh4gwf3pt5mlvwq" ];
     };

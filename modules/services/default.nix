@@ -19,6 +19,7 @@
     ./karakeep
     ./kanidm.nix
     ./legacy01
+    ./minecraft-servers
     ./monitoring
     ./ntfy.nix
     ./oauth2-proxy.nix
