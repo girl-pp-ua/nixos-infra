@@ -108,12 +108,11 @@ in
     enable = lib.mkEnableOption "Sillicon modded minecraft server";
     version = lib.mkOption {
       type = lib.types.str;
-      default = "0.20.1-testing";
+      default = "0.20.3";
     };
     packHash = lib.mkOption {
       type = lib.types.str;
-      default = "sha256-RyVH60R0Zaab8JV5KTaLfhokAAad+uhJk7Apm9VGluM=";
-      description = "Hash of the server-side pack contents (fetchModrinthModpack output, not the .mrpack)";
+      default = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
     };
     serverFiles = lib.mkOption {
       type = with lib.types; nullOr path;
@@ -131,7 +130,6 @@ in
       port = lib.mkOption {
         type = lib.types.port;
         default = 8100;
-        description = "Loopback port caddy serves the BlueMap webroot on, behind anubis";
       };
       domain = lib.mkOption {
         type = with lib.types; nullOr str;
