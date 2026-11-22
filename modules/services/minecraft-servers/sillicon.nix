@@ -64,35 +64,41 @@ let
     '';
   };
 
-  configDir = pkgs.runCommand "sillicon-config-${cfg.version}" { nativeBuildInputs = [ pkgs.unzip ]; } ''
-    cp -r ${pack}/config $out
-    chmod -R u+w $out
-    ${
-      if cfg.serverFiles != null then
-        ''
-          cp ${cfg.serverFiles}/config/lss-server-config.yaml $out/
-        ''
-      else
-        # the mod's own template, generation off and radius 128 so LODs only come from
-        # pregenerated terrain. its built-in default is generation on at 512 chunks
-        ''
-          unzip -p ${pack}/mods/lod-server-support-*.jar dev/vox/lss/settings/server.yaml \
-            | sed -E \
-              -e 's/^(  enabled: )true( # Generate missing terrain)/\1false\2/' \
-              -e 's/^(    default_chunks: )512/\1128/' \
-              -e 's/^(      "minecraft:(overworld|the_end)": )512/\1128/' \
-            > $out/lss-server-config.yaml
-          [ "$(grep -cE '^  enabled: false # Generate|: 128 #' $out/lss-server-config.yaml)" = 4 ]
-        ''
-    }
-    ${lib.optionalString bluemapProxied (
-      lib.concatStrings (
-        lib.mapAttrsToList (name: text: ''
-          install -Dm644 ${pkgs.writeText (baseNameOf name) text} $out/bluemap/${name}
-        '') bluemapConfigs
-      )
-    )}
-  '';
+  configDir =
+    pkgs.runCommand "sillicon-config-${cfg.version}" { nativeBuildInputs = [ pkgs.unzip ]; }
+      ''
+        cp -r ${pack}/config $out
+        chmod -R u+w $out
+        ${
+          if cfg.serverFiles != null then
+            ''
+              cp ${cfg.serverFiles}/config/lss-server-config.yaml $out/
+            ''
+          else
+            # the mod's own template, generation off and radius 128 so LODs only come from
+            # pregenerated terrain. its built-in default is generation on at 512 chunks
+            ''
+              unzip -p ${pack}/mods/lod-server-support-*.jar dev/vox/lss/settings/server.yaml \
+                | sed -E \
+                  -e 's/^(  enabled: )true( # Generate missing terrain)/\1false\2/' \
+                  -e 's/^(    default_chunks: )512/\1128/' \
+                  -e 's/^(      "minecraft:(overworld|the_end)": )512/\1128/' \
+                > $out/lss-server-config.yaml
+              [ "$(grep -cE '^  enabled: false # Generate|: 128 #' $out/lss-server-config.yaml)" = 4 ]
+            ''
+        }
+        ${lib.optionalString bluemapProxied (
+          lib.concatStrings (
+            lib.mapAttrsToList (name: text: ''
+              install -Dm644 ${pkgs.writeText (baseNameOf name) text} $out/bluemap/${name}
+            '') bluemapConfigs
+          )
+        )}
+
+        # make bluemap render all chunks :3
+        sed -i 's/^min-inhabited-time: .*/min-inhabited-time: 0/' $out/bluemap/maps/*.conf
+        [ "$(grep -l '^min-inhabited-time: 0$' $out/bluemap/maps/*.conf | wc -l)" = "$(ls $out/bluemap/maps/*.conf | wc -l)" ]
+      '';
 
   tmux = "${lib.getBin pkgs.tmux}/bin/tmux";
   sock = mcCfg.managementSystem.tmux.socketPath "sillicon";
