@@ -112,7 +112,7 @@ in
     };
     packHash = lib.mkOption {
       type = lib.types.str;
-      default = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+      default = "sha256-u6eCMnxh5rE8NMhLfC1KF9IbZ9m2UIRM1h7rYgBrsTs=";
     };
     serverFiles = lib.mkOption {
       type = with lib.types; nullOr path;
