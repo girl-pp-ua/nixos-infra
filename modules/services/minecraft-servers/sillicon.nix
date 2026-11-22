@@ -18,10 +18,28 @@ let
     side = "server";
   };
 
+  # silliconmc-jarjar is an FML locator service;
+  # those are only picked up from -DlegacyClassPath
+  server =
+    let
+      base = mcPkgs.neoforgeServers.neoforge-1_21_1-21_1_265;
+    in
+    pkgs.runCommand "sillicon-${base.name}" { meta.mainProgram = "minecraft-server"; } ''
+      jar=$(echo ${pack}/mods/silliconmc-jarjar-*.jar)
+      args=$(find ${base}/libraries -name unix_args.txt)
+      mkdir -p $out/bin
+      sed "s|-DlegacyClassPath=[^ ]*|&:$jar|" "$args" > $out/unix_args.txt
+      grep -qF "$jar" $out/unix_args.txt
+      sed "s|@$args|@$out/unix_args.txt|" ${lib.getExe base} > $out/bin/minecraft-server
+      grep -qF "@$out/unix_args.txt" $out/bin/minecraft-server
+      chmod +x $out/bin/minecraft-server
+    '';
+
   mods = pkgs.runCommand "sillicon-mods-${cfg.version}" { } ''
     cp -as ${pack}/mods $out
+    chmod u+w $out
+    rm $out/silliconmc-jarjar-*.jar
     ${lib.optionalString (!cfg.bluemap.enable) ''
-      chmod u+w $out
       find $out -iname '*bluemap*' -delete
     ''}
   '';
@@ -46,12 +64,27 @@ let
     '';
   };
 
-  configDir = pkgs.runCommand "sillicon-config-${cfg.version}" { } ''
+  configDir = pkgs.runCommand "sillicon-config-${cfg.version}" { nativeBuildInputs = [ pkgs.unzip ]; } ''
     cp -r ${pack}/config $out
     chmod -R u+w $out
-    ${lib.optionalString (cfg.serverFiles != null) ''
-      cp ${cfg.serverFiles}/config/lss-server-config.yaml $out/
-    ''}
+    ${
+      if cfg.serverFiles != null then
+        ''
+          cp ${cfg.serverFiles}/config/lss-server-config.yaml $out/
+        ''
+      else
+        # the mod's own template, generation off and radius 128 so LODs only come from
+        # pregenerated terrain. its built-in default is generation on at 512 chunks
+        ''
+          unzip -p ${pack}/mods/lod-server-support-*.jar dev/vox/lss/settings/server.yaml \
+            | sed -E \
+              -e 's/^(  enabled: )true( # Generate missing terrain)/\1false\2/' \
+              -e 's/^(    default_chunks: )512/\1128/' \
+              -e 's/^(      "minecraft:(overworld|the_end)": )512/\1128/' \
+            > $out/lss-server-config.yaml
+          [ "$(grep -cE '^  enabled: false # Generate|: 128 #' $out/lss-server-config.yaml)" = 4 ]
+        ''
+    }
     ${lib.optionalString bluemapProxied (
       lib.concatStrings (
         lib.mapAttrsToList (name: text: ''
@@ -107,7 +140,7 @@ in
       eula = true;
       servers.sillicon = {
         enable = true;
-        package = mcPkgs.neoforgeServers.neoforge-1_21_1-21_1_265;
+        package = server;
         # user_jvm_args.txt from the pack is ignored, the launcher doesn't read it
         jvmOpts = lib.concatStringsSep " " [
           "-Xms4G"
@@ -135,11 +168,14 @@ in
 
         symlinks.mods = mods;
         files = {
-          config = configDir;
           defaultconfigs = "${pack}/defaultconfigs";
           journeymap = "${pack}/journeymap";
           kubejs = "${pack}/kubejs";
         };
+        extraStartPre = ''
+          mkdir -p config
+          cp -rT --no-preserve=mode,ownership ${configDir} config
+        '';
 
         serverProperties = {
           server-port = 25565;
@@ -171,6 +207,8 @@ in
 
     networking.firewall.allowedUDPPorts = [
       cfg.voicechatPort
+      # sable UDP transport
+      mcCfg.servers.sillicon.serverProperties.server-port
     ];
 
     services.caddy.virtualHosts = lib.mkIf bluemapProxied {
