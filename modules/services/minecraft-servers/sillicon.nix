@@ -192,7 +192,7 @@ in
           difficulty = "normal";
           spawn-protection = 0;
           allow-flight = true;
-          view-distance = 8;
+          view-distance = 14;
           simulation-distance = 5;
           entity-broadcast-range-percentage = 100;
           network-compression-threshold = 256;
