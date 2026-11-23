@@ -219,6 +219,9 @@ in
       "${cfg.bluemap.domain}".extraConfig = ''
         import encode
 
+        redir / /bluemap/
+        redir /bluemap /bluemap/
+
         @anubis not client_ip ${lib.concatStringsSep " " config.polaris.trustedNetworks}
         handle @anubis {
           reverse_proxy unix/${config.services.anubis.instances.bluemap.settings.BIND} {
@@ -238,17 +241,20 @@ in
         ];
         extraConfig = ''
           root * ${bluemapWebroot}
-          file_server
 
-          @gz path /maps/*/textures.json *.prbm
-          handle @gz {
-            try_files {path}.gz =204
-            header Content-Encoding gzip
-          }
+          handle_path /bluemap/* {
+            file_server
 
-          @tiles path */tiles/*
-          handle @tiles {
-            try_files {path} =204
+            @gz path /maps/*/textures.json *.prbm
+            handle @gz {
+              try_files {path}.gz =204
+              header Content-Encoding gzip
+            }
+
+            @tiles path */tiles/*
+            handle @tiles {
+              try_files {path} =204
+            }
           }
         '';
       };
