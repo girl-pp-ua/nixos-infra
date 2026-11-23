@@ -411,19 +411,49 @@ in
           # existing users of the kanidm source
           source_id=$(fj admin auth list | grep -w kanidm_internal | cut -f1)
           [[ -n $source_id ]] || { echo "auth source kanidm_internal not found" >&2; exit 1; }
+          add_internal() {
+            code=$(api -X PUT "$base/internal/users/$1")
+            # (409 = already a member)
+            [[ $code == 2* || $code == 409 ]] || echo "adding $1 to quota group 'internal' failed: HTTP $code" >&2
+          }
+          declare -A internal_users=()
           page=1
           while :; do
             users=$(curl_api -f "$api_base/admin/users?source_id=$source_id&limit=50&page=$page" | jq -r '.[].login')
             [[ -n $users ]] || break
             for user in $users; do
-              code=$(api -X PUT "$base/internal/users/$user")
-              # (409 = already a member)
-              [[ $code == 2* || $code == 409 ]] || echo "adding $user to quota group 'internal' failed: HTTP $code" >&2
+              internal_users[$user]=1
+              add_internal "$user"
+            done
+            page=$((page + 1))
+          done
+
+          page=1
+          while :; do
+            orgs=$(curl_api -f "$api_base/admin/orgs?limit=50&page=$page" | jq -r '.[].username')
+            [[ -n $orgs ]] || break
+            for org in $orgs; do
+              owners_team=$(curl_api -f "$api_base/orgs/$org/teams?limit=50" | jq -r '.[] | select(.name == "Owners") | .id')
+              [[ -n $owners_team ]] || continue
+              for owner in $(curul_api -f "$api_base/teams/$owners_team/members?limit=50" | jq -r '.[].login'); do
+                if [[ -n ''${internal_users[$owner]:-} ]]; then
+                  add_internal "$org"
+                  break
+                fi
+              done
             done
             page=$((page + 1))
           done
         '';
       };
+    # picks up orgs created since the last run
+    systemd.timers.forgejo-quota-groups = {
+      wantedBy = [ "timers.target" ];
+      timerConfig = {
+        OnCalendar = "hourly";
+        RandomizedDelaySec = "5m";
+      };
+    };
 
     # specify secrets explicitly
     systemd.services.forgejo-secrets.script = lib.mkForce "${pkgs.coreutils}/bin/true";
