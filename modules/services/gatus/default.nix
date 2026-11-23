@@ -192,6 +192,15 @@ in
                   "[BODY] == pat(*NoSuchKey*)"
                 ];
               };
+              zz-game-servers = mkEndpoints {
+                minecraft-sillicon = mkUrl' "tcp://staging.silliconproject.lunya.cc:25565" [
+                  "[CONNECTED] == true"
+                ];
+                bluemap-sillicon = mkUrl' "https://staging.silliconproject.lunya.cc/bluemap/settings.json" [
+                  "[STATUS] == 200"
+                  "len([BODY].maps) > 0"
+                ];
+              };
             });
           };
         };
