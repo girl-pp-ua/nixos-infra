@@ -108,11 +108,11 @@ in
     enable = lib.mkEnableOption "Sillicon modded minecraft server";
     version = lib.mkOption {
       type = lib.types.str;
-      default = "0.20.4";
+      default = "0.20.8";
     };
     packHash = lib.mkOption {
       type = lib.types.str;
-      default = "sha256-WLhkGbvc5IJI9LKvyVv2ZqN4f8j3ujSsTiUiUreV44I=";
+      default = "sha256-mMWBA8pzlBDNly29XRZdu6UGGTC71io/XV/C+1d0G5U=";
     };
     serverFiles = lib.mkOption {
       type = with lib.types; nullOr path;
