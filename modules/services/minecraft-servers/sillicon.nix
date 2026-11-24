@@ -108,11 +108,11 @@ in
     enable = lib.mkEnableOption "Sillicon modded minecraft server";
     version = lib.mkOption {
       type = lib.types.str;
-      default = "0.22.2";
+      default = "0.23.1";
     };
     packHash = lib.mkOption {
       type = lib.types.str;
-      default = "sha256-3BSPNIRMcDaO6t4w8W36H0xrkDT781K4iY/ozYZoO+Q=";
+      default = "sha256-Nrc+7GiS05Nh9Tts6+9u7e4wv8eQ51JCYM5R/LJUfyE=";
     };
     serverFiles = lib.mkOption {
       type = with lib.types; nullOr path;
@@ -183,7 +183,7 @@ in
 
         serverProperties = {
           server-port = 25565;
-          motd = "\\u00A76Sillicon";
+          motd = "\\u00A76Sillicon [STAGING SERVER]";
           max-players = 100;
           online-mode = true;
           enforce-secure-profile = false;
