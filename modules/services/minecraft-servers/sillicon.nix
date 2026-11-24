@@ -14,7 +14,8 @@ let
   pack = mcPkgs.fetchModrinthModpack {
     pname = "sillicon";
     inherit (cfg) version packHash;
-    url = "https://git.lunya.cc/SilliconMC/releases/releases/download/v${cfg.version}/Sillicon-${cfg.version}.mrpack";
+    # TODO drop -server-fix on the next release
+    url = "https://git.lunya.cc/SilliconMC/releases/releases/download/v${cfg.version}/Sillicon-${cfg.version}-server-fix.mrpack";
     side = "server";
   };
 
@@ -64,41 +65,21 @@ let
     '';
   };
 
-  configDir =
-    pkgs.runCommand "sillicon-config-${cfg.version}" { nativeBuildInputs = [ pkgs.unzip ]; }
-      ''
-        cp -r ${pack}/config $out
-        chmod -R u+w $out
-        ${
-          if cfg.serverFiles != null then
-            ''
-              cp ${cfg.serverFiles}/config/lss-server-config.yaml $out/
-            ''
-          else
-            # the mod's own template, generation off and radius 128 so LODs only come from
-            # pregenerated terrain. its built-in default is generation on at 512 chunks
-            ''
-              unzip -p ${pack}/mods/lod-server-support-*.jar dev/vox/lss/settings/server.yaml \
-                | sed -E \
-                  -e 's/^(  enabled: )true( # Generate missing terrain)/\1false\2/' \
-                  -e 's/^(    default_chunks: )512/\1128/' \
-                  -e 's/^(      "minecraft:(overworld|the_end)": )512/\1128/' \
-                > $out/lss-server-config.yaml
-              [ "$(grep -cE '^  enabled: false # Generate|: 128 #' $out/lss-server-config.yaml)" = 4 ]
-            ''
-        }
-        ${lib.optionalString bluemapProxied (
-          lib.concatStrings (
-            lib.mapAttrsToList (name: text: ''
-              install -Dm644 ${pkgs.writeText (baseNameOf name) text} $out/bluemap/${name}
-            '') bluemapConfigs
-          )
-        )}
+  configDir = pkgs.runCommand "sillicon-config-${cfg.version}" { } ''
+    cp -r ${pack}/config $out
+    chmod -R u+w $out
+    ${lib.optionalString bluemapProxied (
+      lib.concatStrings (
+        lib.mapAttrsToList (name: text: ''
+          install -Dm644 ${pkgs.writeText (baseNameOf name) text} $out/bluemap/${name}
+        '') bluemapConfigs
+      )
+    )}
 
-        # make bluemap render all chunks :3
-        sed -i 's/^min-inhabited-time: .*/min-inhabited-time: 0/' $out/bluemap/maps/*.conf
-        [ "$(grep -l '^min-inhabited-time: 0$' $out/bluemap/maps/*.conf | wc -l)" = "$(ls $out/bluemap/maps/*.conf | wc -l)" ]
-      '';
+    # make bluemap render all chunks :3
+    sed -i 's/^min-inhabited-time: .*/min-inhabited-time: 0/' $out/bluemap/maps/*.conf
+    [ "$(grep -l '^min-inhabited-time: 0$' $out/bluemap/maps/*.conf | wc -l)" = "$(ls $out/bluemap/maps/*.conf | wc -l)" ]
+  '';
 
   tmux = "${lib.getBin pkgs.tmux}/bin/tmux";
   sock = mcCfg.managementSystem.tmux.socketPath "sillicon";
@@ -112,12 +93,7 @@ in
     };
     packHash = lib.mkOption {
       type = lib.types.str;
-      default = "sha256-Nrc+7GiS05Nh9Tts6+9u7e4wv8eQ51JCYM5R/LJUfyE=";
-    };
-    serverFiles = lib.mkOption {
-      type = with lib.types; nullOr path;
-      default = null;
-      description = "The pack repo's server/ directory";
+      default = "sha256-C2W8uzFQ1iD+T+qCsLbhkuG4Grd1GlOEz3CDrf765Fc=";
     };
     voicechatPort = lib.mkOption {
       type = lib.types.port;
@@ -179,6 +155,9 @@ in
         extraStartPre = ''
           mkdir -p config
           cp -rT --no-preserve=mode,ownership ${configDir} config
+          # the pack runs LSS on the mod's defaults, drop the file it writes so a newer
+          # jar's defaults apply
+          rm -f config/lss-server-config.yaml
         '';
 
         serverProperties = {
