@@ -151,6 +151,7 @@ in
           "-XX:MaxTenuringThreshold=1"
           "-XX:+UseStringDeduplication"
           "-XX:+UseCompactObjectHeaders"
+          "-XX:+UseTransparentHugePages"
         ];
         openFirewall = true;
 
