@@ -23,7 +23,9 @@ let
   # those are only picked up from -DlegacyClassPath
   server =
     let
-      base = mcPkgs.neoforgeServers.neoforge-1_21_1-21_1_265;
+      base = mcPkgs.neoforgeServers.neoforge-1_21_1-21_1_265.override {
+        jre_headless = cfg.java;
+      };
     in
     pkgs.runCommand "sillicon-${base.name}" { meta.mainProgram = "minecraft-server"; } ''
       jar=$(echo ${pack}/mods/silliconmc-jarjar-*.jar)
@@ -94,6 +96,11 @@ in
     packHash = lib.mkOption {
       type = lib.types.str;
       default = "sha256-C2W8uzFQ1iD+T+qCsLbhkuG4Grd1GlOEz3CDrf765Fc=";
+    };
+    java = lib.mkOption {
+      type = lib.types.package;
+      default = pkgs.temurin-jre-bin-27;
+      defaultText = lib.literalExpression "pkgs.temurin-jre-bin-27";
     };
     voicechatPort = lib.mkOption {
       type = lib.types.port;
