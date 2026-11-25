@@ -195,6 +195,12 @@ in
 
     systemd.services.minecraft-server-sillicon.serviceConfig = {
       TimeoutStopSec = lib.mkForce "10min";
+      NoNewPrivileges = true;
+      RemoveIPC = true;
+      ProtectSystem = "strict";
+      ReadWritePaths = [ dataDir ] ++ lib.optional bluemapProxied bluemapWebroot;
+      SystemCallFilter = [ "@system-service" ];
+      SystemCallErrorNumber = "EPERM";
     };
 
     networking.firewall.allowedUDPPorts = [
