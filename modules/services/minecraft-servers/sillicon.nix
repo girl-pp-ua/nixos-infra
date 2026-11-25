@@ -99,8 +99,8 @@ in
     };
     java = lib.mkOption {
       type = lib.types.package;
-      default = pkgs.temurin-jre-bin-27;
-      defaultText = lib.literalExpression "pkgs.temurin-jre-bin-27";
+      default = pkgs.graalvmPackages.graalvm-oracle;
+      defaultText = lib.literalExpression "pkgs.graalvmPackages.graalvm-oracle";
     };
     voicechatPort = lib.mkOption {
       type = lib.types.port;
