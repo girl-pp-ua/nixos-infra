@@ -143,6 +143,7 @@ in
           "-XX:+PerfDisableSharedMem"
           "-XX:MaxTenuringThreshold=1"
           "-XX:+UseStringDeduplication"
+          "-XX:+UseCompactObjectHeaders"
         ];
         openFirewall = true;
 
