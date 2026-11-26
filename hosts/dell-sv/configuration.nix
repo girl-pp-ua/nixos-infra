@@ -17,6 +17,8 @@
   networking.hostName = "dell-sv";
   networking.domain = "polaris";
 
+  polaris.remoteBuilder.enable = true;
+
   # reduce swappiness
   boot.kernel.sysctl = {
     "vm.swappiness" = 10;

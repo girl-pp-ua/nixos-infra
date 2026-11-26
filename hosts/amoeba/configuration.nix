@@ -11,6 +11,8 @@
   networking.hostName = "amoeba";
   networking.domain = "polaris";
 
+  polaris.remoteBuilder.enable = true;
+
   networking.interfaces.eth0 = {
     useDHCP = false;
     ipv4.addresses = [

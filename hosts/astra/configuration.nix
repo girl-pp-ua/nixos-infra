@@ -11,6 +11,8 @@
   networking.hostName = "astra";
   networking.domain = "polaris";
 
+  polaris.remoteBuilder.enable = true;
+
   boot.binfmt.emulatedSystems = [
     "x86_64-linux"
   ];
