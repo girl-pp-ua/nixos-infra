@@ -316,11 +316,11 @@
         "systems": "systems_3"
       },
       "locked": {
-        "lastModified": 1795417663,
-        "narHash": "sha256-Bl7wrdHLvrl76g50/V+Hz5J+6dIukGNsXbXzeJwWgR8=",
+        "lastModified": 1795328210,
+        "narHash": "sha256-q7Kjji2d9YvD52oLmK0yED61qCqFyjmVbR3ItbOfgo8=",
         "owner": "Infinidoge",
         "repo": "nix-minecraft",
-        "rev": "893b8a9c150acc5e939cf609b230c3ddf700dfbb",
+        "rev": "e4d91c02ea21e59b1569cb6774dc129b37bb0a1c",
         "type": "github"
       },
       "original": {
@@ -334,11 +334,11 @@
         "nixpkgs": "nixpkgs_3"
       },
       "locked": {
-        "lastModified": 1795437558,
-        "narHash": "sha256-yKt1FQlLIG+pH+EJ3ARKon4sR0XkVaTpyxRv2Iy2Erk=",
+        "lastModified": 1795379759,
+        "narHash": "sha256-xwQP4fLPmXt67fMc5BaSKgrfsaSbv8tR+Z7kTSn6OqY=",
         "owner": "unnamed-systems",
         "repo": "nix-secrets",
-        "rev": "6cd0e31794dce50f3f84f197558d0cd067f59a6f",
+        "rev": "be3ce57ffaa4ad372b983928906344da592579a3",
         "type": "github"
       },
       "original": {
@@ -395,11 +395,11 @@
     },
     "nixpkgs-stable": {
       "locked": {
-        "lastModified": 1795370043,
-        "narHash": "sha256-s/0jq8usZtLVOolYBwmyUmd3JsfAu7w3FU+a0dgMqSY=",
+        "lastModified": 1795258312,
+        "narHash": "sha256-IEuDsf80ubivfpidbRsIm30HVo7PZIdZt1stRsbaY4Y=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "0dc498bfe49baeb18b0f9891e800b53bb2603193",
+        "rev": "94c3211b0ee8ba969a3f12eb4aff8ba0f72971dd",
         "type": "github"
       },
       "original": {
@@ -507,11 +507,11 @@
     "secrets": {
       "flake": false,
       "locked": {
-        "lastModified": 1795736106,
-        "narHash": "sha256-SmUttS22ByWnJMMvhxtjv48P7i7yLV6jS4LTWulqDdY=",
+        "lastModified": 1795278992,
+        "narHash": "sha256-uSQ03qI+wL4solEhS7WgQTHkESTKMqpnXRClM5lhukc=",
         "ref": "refs/heads/master",
-        "rev": "4f53028385e06a13cf5ed20d82900410d9dfe3e3",
-        "revCount": 81,
+        "rev": "39c22b977b1c7bc9532617a34e20bd49cfa046f0",
+        "revCount": 80,
         "type": "git",
         "url": "file:./submodules/secrets"
       },
