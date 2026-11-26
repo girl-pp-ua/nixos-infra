@@ -12,7 +12,6 @@ let
       hostName = "astra.polaris";
       systems = [ "aarch64-linux" ];
       supportedFeatures = [
-        "kvm"
         "big-parallel"
         "nixos-test"
       ];
