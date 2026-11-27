@@ -162,8 +162,8 @@ in
         # user_jvm_args.txt from the pack is ignored, the launcher doesn't read it
         jvmOpts = lib.concatStringsSep " " (
           [
-            "-Xms4G"
-            "-Xmx9G"
+            "-Xms5G"
+            "-Xmx10G"
             "-XX:+UseG1GC"
             "-XX:+ParallelRefProcEnabled"
             "-XX:MaxGCPauseMillis=200"
