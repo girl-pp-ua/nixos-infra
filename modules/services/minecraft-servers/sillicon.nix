@@ -41,7 +41,6 @@ let
     cp -as ${pack}/mods $out
     chmod u+w $out
     rm $out/silliconmc-jarjar-*.jar
-    rm $out/servux*.jar # HACK, remove once server fixed
     ${lib.optionalString (!cfg.bluemap.enable) ''
       find $out -iname '*bluemap*' -delete
     ''}
@@ -109,11 +108,11 @@ in
     enable = lib.mkEnableOption "Sillicon modded minecraft server";
     version = lib.mkOption {
       type = lib.types.str;
-      default = "0.24.1-testing";
+      default = "0.24.2-testing";
     };
     packHash = lib.mkOption {
       type = lib.types.str;
-      default = "sha256-+GE2mNJ4Io4uOoWy/M2ptK0hcDzRx1XvfyxKJ/Hg2uQ=";
+      default = "sha256-2qq0bsxr7WRyF56RiN7pMEC79mWYympulxFOZXflmnE=";
     };
     java = lib.mkOption {
       type = lib.types.package;
