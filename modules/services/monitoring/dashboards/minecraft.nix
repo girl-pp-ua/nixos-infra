@@ -10,7 +10,8 @@ let
     type = "victoriametrics-logs-datasource";
     uid = "victorialogs";
   };
-  logsSel = "server:$server";
+  logsSel = ''server:~".+" server:$server'';
+  status = metric: "max without (server_version) (${metric}{${sel}})";
   chatFilter = ''${logsSel} logger:"net.minecraft.server.MinecraftServer" _msg:~"^(\\[Not Secure\\] )?<[^>]+> "'';
   logs = y: x: w: h: title: expr: {
     type = "logs";
@@ -130,7 +131,7 @@ pkgs.writeText "minecraft.json" (
     ];
     panels = [
       (
-        stat 0 "Status" "none" "minecraft_status_healthy{${sel}}"
+        stat 0 "Status" "none" (status "minecraft_status_healthy")
         // {
           fieldConfig.defaults = {
             mappings = [
@@ -152,14 +153,14 @@ pkgs.writeText "minecraft.json" (
           };
         }
       )
-      (stat 4 "Players" "none" "minecraft_status_players_online_count{${sel}}")
+      (stat 4 "Players" "none" (status "minecraft_status_players_online_count"))
       (stat 8 "MSPT" "ms" "minecraft_tick_time_milliseconds{${sel}}")
       (stat 12 "TPS" "none" "clamp_max(1000 / minecraft_tick_time_milliseconds{${sel}}, 20)")
       (stat 16 "Heap used" "bytes" ''jvm_memory_used_bytes{${sel},job="minecraft-jvm",area="heap"}'')
-      (stat 20 "Ping" "s" "minecraft_status_response_time_seconds{${sel}}")
+      (stat 20 "Ping" "s" (status "minecraft_status_response_time_seconds"))
 
       (graph 0 4 "Players online" "none" [
-        (target "minecraft_status_players_online_count{${sel}}" "online")
+        (target (status "minecraft_status_players_online_count") "online")
       ])
       (
         graph 12 4 "Tick time" "ms" [ (target "minecraft_tick_time_milliseconds{${sel}}" "mspt") ]

@@ -324,7 +324,7 @@ in
           {
             name = "loki";
             match = "minecraft.sillicon";
-            host = config.polaris.hosts.${config.polaris.services.monitoring.agent.collector}.internal.fqdn;
+            host = config.polaris.services.monitoring.agent.ingestHost;
             port = config.polaris.services.monitoring.server.ingestPort;
             uri = "/insert/loki/api/v1/push";
             compress = "gzip";
