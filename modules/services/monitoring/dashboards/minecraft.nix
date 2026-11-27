@@ -1,5 +1,5 @@
-# jobs from the minecraft-servers modules (minecraft-status, minecraft-jvm)
-{ pkgs, ... }:
+# jobs from the minecraft-servers modules (minecraft-status, minecraft-jvm) and node exporter (systemd)
+{ pkgs, lib, ... }:
 let
   ds = {
     type = "prometheus";
@@ -12,6 +12,16 @@ let
   };
   logsSel = ''server:~".+" server:$server'';
   status = metric: "max without (server_version) (${metric}{${sel}})";
+  unitState =
+    state: ''max(node_systemd_unit_state{${sel},name=~"minecraft-server-.*\\.service",state${state}})'';
+  healthy = "max(minecraft_status_healthy{${sel}})";
+  serverStatus = lib.concatStringsSep " or " [
+    "(${unitState ''="deactivating"''} == 1)"
+    "((${unitState ''="active"''} == 1 and ${healthy} == 1) * 3)"
+    "((${unitState ''=~"activating|active"''} == 1) * 2)"
+    "((${unitState ''=~"inactive|failed"''} == 1) * 0)"
+    "(${healthy} * 3)"
+  ];
   chatFilter = ''${logsSel} logger:"net.minecraft.server.MinecraftServer" _msg:~"^(\\[Not Secure\\] )?<[^>]+> "'';
   logs = y: x: w: h: title: expr: {
     type = "logs";
@@ -132,7 +142,7 @@ pkgs.writeText "minecraft.json" (
     ];
     panels = [
       (
-        stat 0 "Status" "none" (status "minecraft_status_healthy")
+        stat 0 "Status" "none" serverStatus
         // {
           fieldConfig.defaults = {
             mappings = [
@@ -144,6 +154,14 @@ pkgs.writeText "minecraft.json" (
                     color = "red";
                   };
                   "1" = {
+                    text = "stopping";
+                    color = "orange";
+                  };
+                  "2" = {
+                    text = "starting";
+                    color = "yellow";
+                  };
+                  "3" = {
                     text = "up";
                     color = "green";
                   };
