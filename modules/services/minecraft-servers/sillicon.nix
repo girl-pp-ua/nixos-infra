@@ -14,8 +14,7 @@ let
   pack = mcPkgs.fetchModrinthModpack {
     pname = "sillicon";
     inherit (cfg) version packHash;
-    # TODO drop -server-fix on the next release
-    url = "https://git.lunya.cc/SilliconMC/releases/releases/download/v${cfg.version}/Sillicon-${cfg.version}-server-fix.mrpack";
+    url = "https://git.lunya.cc/SilliconMC/releases/releases/download/v${cfg.version}/Sillicon-${cfg.version}.mrpack";
     side = "server";
   };
 
@@ -109,11 +108,11 @@ in
     enable = lib.mkEnableOption "Sillicon modded minecraft server";
     version = lib.mkOption {
       type = lib.types.str;
-      default = "0.23.1";
+      default = "0.24.1-testing";
     };
     packHash = lib.mkOption {
       type = lib.types.str;
-      default = "sha256-C2W8uzFQ1iD+T+qCsLbhkuG4Grd1GlOEz3CDrf765Fc=";
+      default = "sha256-+GE2mNJ4Io4uOoWy/M2ptK0hcDzRx1XvfyxKJ/Hg2uQ=";
     };
     java = lib.mkOption {
       type = lib.types.package;
