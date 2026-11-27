@@ -360,6 +360,7 @@ in
       let
         fj = config.services.forgejo;
         bot = "quota-provisioner";
+        scopes = "write:admin,read:organization";
       in
       {
         description = "Provision forgejo quota groups";
@@ -383,14 +384,15 @@ in
 
           fj() { ${lib.getExe fj.package} --work-path ${fj.stateDir} --config ${fj.customDir}/conf/app.ini "$@"; }
           tokenFile=${fj.stateDir}/${bot}.token
-          if [[ ! -s $tokenFile ]]; then
+          if [[ ! -s $tokenFile || "$(cat "$tokenFile.scopes" 2>/dev/null)" != ${scopes} ]]; then
             if ! fj admin user list --admin | grep -qw ${bot}; then
               fj admin user create --admin --username ${bot} --email ${bot}@localhost \
                 --random-password --must-change-password=false >/dev/null
             fi
             (umask 077; fj admin user generate-access-token --username ${bot} \
-              --token-name "provisioning-$(date +%s)" --scopes write:admin --raw > "$tokenFile.tmp")
+              --token-name "provisioning-$(date +%s)" --scopes ${scopes} --raw > "$tokenFile.tmp")
             mv "$tokenFile.tmp" "$tokenFile"
+            echo ${scopes} > "$tokenFile.scopes"
           fi
           curl_api() {
             curl -sS --unix-socket ${fj.settings.server.HTTP_ADDR} \
@@ -435,7 +437,7 @@ in
             for org in $orgs; do
               owners_team=$(curl_api -f "$api_base/orgs/$org/teams?limit=50" | jq -r '.[] | select(.name == "Owners") | .id')
               [[ -n $owners_team ]] || continue
-              for owner in $(curul_api -f "$api_base/teams/$owners_team/members?limit=50" | jq -r '.[].login'); do
+              for owner in $(curl_api -f "$api_base/teams/$owners_team/members?limit=50" | jq -r '.[].login'); do
                 if [[ -n ''${internal_users[$owner]:-} ]]; then
                   add_internal "$org"
                   break
