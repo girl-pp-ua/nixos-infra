@@ -102,7 +102,7 @@ in
               "forgejo.access"
               "paperless.access"
               "home-assistant.admin" # :3
-              "grafana.access"
+              "grafana.viewer"
               "karakeep.access"
             ];
           };
@@ -360,11 +360,13 @@ in
         };
 
         groups."grafana.access".members = [
+          "grafana.viewer"
           "grafana.editor"
           "grafana.admin"
         ];
         groups."grafana.editor" = { };
         groups."grafana.admin" = { };
+        groups."grafana.viewer" = { };
         systems.oauth2.${cfg-svc.monitoring.server.client_id} = {
           displayName = "Grafana";
           imageFile = "${root + "/assets/sso-images/grafana.svg"}";
@@ -384,6 +386,7 @@ in
             "groups"
           ];
           claimMaps.grafana_role.valuesByGroup = {
+            "grafana.viewer" = [ "Viewer" ];
             "grafana.editor" = [ "Editor" ];
             "grafana.admin" = [ "GrafanaAdmin" ];
           };
