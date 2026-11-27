@@ -41,6 +41,7 @@ let
     cp -as ${pack}/mods $out
     chmod u+w $out
     rm $out/silliconmc-jarjar-*.jar
+    rm $out/servux*.jar # HACK, remove once server fixed
     ${lib.optionalString (!cfg.bluemap.enable) ''
       find $out -iname '*bluemap*' -delete
     ''}
