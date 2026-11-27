@@ -37,7 +37,8 @@ let
     options = {
       showTime = true;
       wrapLogMessage = true;
-      sortOrder = "Descending";
+      sortOrder = "Ascending";
+      enableInfiniteScrolling = true;
       enableLogDetails = true;
       dedupStrategy = "none";
     };
