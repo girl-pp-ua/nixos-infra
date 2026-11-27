@@ -83,6 +83,24 @@ let
     [ "$(grep -l '^min-inhabited-time: 0$' $out/bluemap/maps/*.conf | wc -l)" = "$(ls $out/bluemap/maps/*.conf | wc -l)" ]
   '';
 
+  jmxAgent = pkgs.fetchurl {
+    url = "https://github.com/prometheus/jmx_exporter/releases/download/1.7.0/jmx_prometheus_javaagent-1.7.0.jar";
+    hash = "sha256-CthDJhxWfRkkoBfVQuFMQPKv/1I9lAwl7gAHQv3ks6k=";
+  };
+  jmxConfig = pkgs.writeText "sillicon-jmx.json" (
+    builtins.toJSON {
+      includeObjectNames = [ "net.minecraft.server:type=Server" ];
+      rules = [
+        {
+          pattern = "net.minecraft.server<type=Server><>averageTickTime";
+          name = "minecraft_tick_time_milliseconds";
+          help = "average tick time over the last 100 ticks";
+          type = "GAUGE";
+        }
+      ];
+    }
+  );
+
   tmux = "${lib.getBin pkgs.tmux}/bin/tmux";
   sock = mcCfg.managementSystem.tmux.socketPath "sillicon";
 in
@@ -101,6 +119,19 @@ in
       type = lib.types.package;
       default = pkgs.graalvmPackages.graalvm-oracle;
       defaultText = lib.literalExpression "pkgs.graalvmPackages.graalvm-oracle";
+    };
+    monitoring = {
+      enable = lib.mkEnableOption "monitoring exporters" // {
+        default = true;
+      };
+      jvmPort = lib.mkOption {
+        type = lib.types.port;
+        default = 16160;
+      };
+      statusPort = lib.mkOption {
+        type = lib.types.port;
+        default = 16161;
+      };
     };
     voicechatPort = lib.mkOption {
       type = lib.types.port;
@@ -129,30 +160,33 @@ in
         enable = true;
         package = server;
         # user_jvm_args.txt from the pack is ignored, the launcher doesn't read it
-        jvmOpts = lib.concatStringsSep " " [
-          "-Xms4G"
-          "-Xmx9G"
-          "-XX:+UseG1GC"
-          "-XX:+ParallelRefProcEnabled"
-          "-XX:MaxGCPauseMillis=200"
-          "-XX:+UnlockExperimentalVMOptions"
-          "-XX:+DisableExplicitGC"
-          "-XX:G1NewSizePercent=30"
-          "-XX:G1MaxNewSizePercent=40"
-          "-XX:G1HeapRegionSize=8M"
-          "-XX:G1ReservePercent=20"
-          "-XX:G1HeapWastePercent=5"
-          "-XX:G1MixedGCCountTarget=4"
-          "-XX:InitiatingHeapOccupancyPercent=15"
-          "-XX:G1MixedGCLiveThresholdPercent=90"
-          "-XX:G1RSetUpdatingPauseTimePercent=5"
-          "-XX:SurvivorRatio=32"
-          "-XX:+PerfDisableSharedMem"
-          "-XX:MaxTenuringThreshold=1"
-          "-XX:+UseStringDeduplication"
-          "-XX:+UseCompactObjectHeaders"
-          "-XX:+UseTransparentHugePages"
-        ];
+        jvmOpts = lib.concatStringsSep " " (
+          [
+            "-Xms4G"
+            "-Xmx9G"
+            "-XX:+UseG1GC"
+            "-XX:+ParallelRefProcEnabled"
+            "-XX:MaxGCPauseMillis=200"
+            "-XX:+UnlockExperimentalVMOptions"
+            "-XX:+DisableExplicitGC"
+            "-XX:G1NewSizePercent=30"
+            "-XX:G1MaxNewSizePercent=40"
+            "-XX:G1HeapRegionSize=8M"
+            "-XX:G1ReservePercent=20"
+            "-XX:G1HeapWastePercent=5"
+            "-XX:G1MixedGCCountTarget=4"
+            "-XX:InitiatingHeapOccupancyPercent=15"
+            "-XX:G1MixedGCLiveThresholdPercent=90"
+            "-XX:G1RSetUpdatingPauseTimePercent=5"
+            "-XX:SurvivorRatio=32"
+            "-XX:+PerfDisableSharedMem"
+            "-XX:MaxTenuringThreshold=1"
+            "-XX:+UseStringDeduplication"
+            "-XX:+UseCompactObjectHeaders"
+            "-XX:+UseTransparentHugePages"
+          ]
+          ++ lib.optional cfg.monitoring.enable "-javaagent:${jmxAgent}=${toString cfg.monitoring.jvmPort}:${jmxConfig}"
+        );
         openFirewall = true;
 
         symlinks.mods = mods;
@@ -189,6 +223,7 @@ in
           log-ips = true;
           max-chained-neighbor-updates = 1000000;
           enable-command-block = true;
+          enable-jmx-monitoring = cfg.monitoring.enable;
         };
       };
     };
@@ -202,6 +237,108 @@ in
       SystemCallFilter = [ "@system-service" ];
       SystemCallErrorNumber = "EPERM";
     };
+
+    # export player count/ping
+    systemd.services.sillicon-status-exporter = lib.mkIf cfg.monitoring.enable {
+      description = "Prometheus exporter for the Sillicon server status";
+      wantedBy = [ "multi-user.target" ];
+      after = [ "network.target" ];
+      serviceConfig = {
+        ExecStart = lib.escapeShellArgs [
+          (lib.getExe pkgs.mc-monitor)
+          "export-for-prometheus"
+          "-servers"
+          "localhost:${toString mcCfg.servers.sillicon.serverProperties.server-port}"
+          "-port"
+          (toString cfg.monitoring.statusPort)
+          "-timeout"
+          "10s"
+        ];
+        DynamicUser = true;
+        Restart = "on-failure";
+        CapabilityBoundingSet = "";
+        PrivateDevices = true;
+        ProtectHome = true;
+        RestrictAddressFamilies = [
+          "AF_INET"
+          "AF_INET6"
+        ];
+        SystemCallFilter = [ "@system-service" ];
+      };
+    };
+
+    polaris.services.monitoring.exports = lib.mkIf cfg.monitoring.enable {
+      minecraft-jvm.port = cfg.monitoring.jvmPort;
+      minecraft-status.port = cfg.monitoring.statusPort;
+    };
+
+    # logs/latest.log to victorialogs
+    services.fluent-bit.settings = lib.mkIf cfg.monitoring.enable {
+      parsers = [
+        {
+          name = "minecraft";
+          format = "regex";
+          # [27Nov2026 00:14:32.770] [Server thread/INFO] [net.minecraft.server.MinecraftServer/]: msg
+          regex = ''^\[[^\]]+\] \[[^\]]*/(?<level>[A-Z]+)\] \[(?<logger>[^\]]*?)/?\]: (?<message>[\s\S]*?)\s*\z'';
+        }
+      ];
+      multiline_parsers = [
+        {
+          name = "minecraft";
+          type = "regex";
+          flush_timeout = 1000;
+          rules = [
+            {
+              state = "start_state";
+              regex = ''/^\[\d{2}\w{3}\d{4} /'';
+              next_state = "cont";
+            }
+            {
+              state = "cont";
+              regex = ''/^(?!\[\d{2}\w{3}\d{4} )/'';
+              next_state = "cont";
+            }
+          ];
+        }
+      ];
+      pipeline = {
+        inputs = [
+          {
+            name = "tail";
+            tag = "minecraft.sillicon";
+            path = "${dataDir}/logs/latest.log";
+            db = "/var/lib/fluent-bit/minecraft-sillicon.db";
+            "multiline.parser" = "minecraft";
+            mem_buf_limit = "8M";
+          }
+        ];
+        filters = [
+          {
+            name = "parser";
+            match = "minecraft.sillicon";
+            key_name = "log";
+            parser = "minecraft";
+          }
+        ];
+        outputs = [
+          {
+            name = "loki";
+            match = "minecraft.sillicon";
+            host = config.polaris.hosts.${config.polaris.services.monitoring.agent.collector}.internal.fqdn;
+            port = config.polaris.services.monitoring.server.ingestPort;
+            uri = "/insert/loki/api/v1/push";
+            compress = "gzip";
+            labels = "host=${config.networking.hostName}, server=sillicon, level=$level, logger=$logger";
+            remove_keys = "level, logger";
+            drop_single_key = "raw";
+            retry_limit = 10;
+          }
+        ];
+      };
+    };
+    systemd.services.fluent-bit.serviceConfig.SupplementaryGroups = lib.mkIf cfg.monitoring.enable [
+      mcCfg.group
+    ];
 
     networking.firewall.allowedUDPPorts = [
       cfg.voicechatPort
