@@ -17,6 +17,11 @@ in
       type = lib.types.str;
       default = "amoeba";
     };
+    ingestHost = lib.mkOption {
+      type = lib.types.str;
+      internal = true;
+      default = if cfg.collector == config.networking.hostName then "127.0.0.1" else collector.fqdn;
+    };
   };
 
   config = lib.mkIf cfg.enable {
@@ -93,7 +98,7 @@ in
             {
               name = "loki";
               match = "journal";
-              host = collector.fqdn;
+              host = cfg.ingestHost;
               port = cfg-server.ingestPort;
               uri = "/insert/loki/api/v1/push";
               compress = "gzip";
