@@ -112,7 +112,7 @@ in
     };
     packHash = lib.mkOption {
       type = lib.types.str;
-      default = "sha256-m9jpGCBtorHXr8p3sP0Dusiqlvp0y5FQrdW7F28ZwJQ=";
+      default = "sha256-OIqkEtJc6GIEqb8Vun59R7gGHxapFfZ0MNU0boVychU=";
     };
     java = lib.mkOption {
       type = lib.types.package;
